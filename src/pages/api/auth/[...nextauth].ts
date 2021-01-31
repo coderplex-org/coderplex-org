@@ -25,6 +25,7 @@ const options: InitOptions = {
     Providers.LinkedIn({
       clientId: process.env.LINKEDIN_ID,
       clientSecret: process.env.LINKEDIN_SECRET,
+      scope: 'r_liteprofile r_emailaddress',
     }),
   ],
   adapter: Fauna.Adapter({ faunaClient }),
