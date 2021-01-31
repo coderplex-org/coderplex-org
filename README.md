@@ -14,6 +14,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Useful Links
 
-- [Live demo](https://coderplex-org-five.vercel.app/)
+- [Live demo](https://beta.coderplex.org)
 - [Website Spec](https://github.com/coderplex-org/coderplex/wiki/New-Coderplex-Community-Website)
-- [Contact Us on Discord](https://chat.coderplex.org)
+- [Contact us on Discord](https://chat.coderplex.org)
