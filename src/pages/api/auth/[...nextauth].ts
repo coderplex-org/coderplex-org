@@ -9,7 +9,7 @@ const faunaClient = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET,
   scheme: isProduction ? 'https' : 'http',
   domain: isProduction ? 'db.fauna.com' : 'localhost',
-  port: 8443,
+  ...(isProduction ? {} : { port: 8443 }),
 })
 
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options)
