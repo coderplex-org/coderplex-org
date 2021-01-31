@@ -1,2 +1,5 @@
-export { default as NavBar } from './NavBar'
+export { default as AppNavBar } from './AppNavBar'
+export { default as AppFooter } from './AppFooter'
 export * from './seo'
+export { default as A } from './A'
+export { default as Logo } from './Logo'

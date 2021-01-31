@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@/components": ["src/components/index"],
-      "@/adapters": ["src/adapters/fauna/index"]
+      "@/adapters": ["src/adapters/fauna/index"],
+      "@/ui": ["src/ui/index"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

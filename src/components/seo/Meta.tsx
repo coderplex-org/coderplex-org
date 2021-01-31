@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 export default function Meta() {
-  const baseUrl = 'https://next-starter.bhanuteja.dev'
+  const baseUrl = 'https://coderplex-org-five.vercel.app'
   const router = useRouter()
   return (
     <Head>
@@ -17,7 +17,7 @@ export default function Meta() {
         name="twitter:card"
         content="summary_large_image"
       />
-      <meta key="twitter:site" name="twitter:site" content="@pbteja1998" />
+      <meta key="twitter:site" name="twitter:site" content="@coderplex_org" />
       <meta
         key="twitter:image"
         name="twitter:image"

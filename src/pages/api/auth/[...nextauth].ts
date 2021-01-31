@@ -28,6 +28,16 @@ const options: InitOptions = {
     }),
   ],
   adapter: Fauna.Adapter({ faunaClient }),
-
   secret: process.env.SECRET,
+  pages: {
+    signIn: '/login',
+  },
+  callbacks: {
+    session: async (session, user) => {
+      return Promise.resolve({
+        ...session,
+        user: { ...session.user, id: (user as any).id },
+      })
+    },
+  },
 }

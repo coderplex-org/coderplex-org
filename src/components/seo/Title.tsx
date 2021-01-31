@@ -1,7 +1,7 @@
 import Head from 'next/head'
 
 export default function Title({
-  suffix = 'Next Starter',
+  suffix = 'Coderplex',
   children,
 }: {
   suffix?: string

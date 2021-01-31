@@ -41,12 +41,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   const description =
     meta.metaDescription ||
     meta.description ||
-    'A Next.js starter kit template with React 17 + Typescript + Tailwind CSS 2 + React Query 3 + GitHub Auth + Passwordless Auth + Fauna DB'
+    "We're a non-profit startup on a mission to improve the state of tech across India"
 
   return (
     <QueryClientProvider client={queryClient}>
       <Provider session={pageProps.session}>
-        <Title suffix="Next Starter">{meta.metaTitle || meta.title}</Title>
+        <Title suffix="Coderplex">{meta.metaTitle || meta.title}</Title>
         <Description>{description}</Description>
         <Meta />
         <Layout {...layoutProps}>

@@ -12,7 +12,15 @@ module.exports = {
     },
     extend: {
       colors: {
-        violet: colors.violet,
+        blueGray: colors.blueGray,
+        coolGray: colors.coolGray,
+        brand: colors.indigo,
+        success: colors.green,
+        danger: colors.red,
+        warning: colors.yellow,
+        info: colors.blue,
+        normal: colors.gray,
+        lightSurface: 'hsl(210, 20%, 98%)',
       },
     },
   },
