@@ -12,7 +12,8 @@
     "format": "npm run prettier -- --write",
     "check-format": "npm run prettier -- --list-different",
     "validate": "npm-run-all --parallel check-types check-format lint build",
-    "setup-db": "node ./src/adapters/fauna/setup.mjs"
+    "setup-db": "node ./src/adapters/fauna/setup.mjs",
+    "clear-db": "node ./src/adapters/fauna/clear-db.mjs"
   },
   "dependencies": {
     "@badrap/bar-of-progress": "0.1.1",

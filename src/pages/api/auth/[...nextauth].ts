@@ -20,7 +20,7 @@ const options: InitOptions = {
     Providers.GitHub({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
-      scope: 'user:email',
+      scope: 'read:user',
     }),
     Providers.LinkedIn({
       clientId: process.env.LINKEDIN_ID,
