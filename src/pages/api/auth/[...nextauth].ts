@@ -4,9 +4,10 @@ import { NextApiHandler } from 'next'
 import Fauna from '@/adapters'
 
 import faunadb from 'faunadb'
+import slugify from 'slugify'
 const isProduction = process.env.NODE_ENV === 'production'
 const faunaClient = new faunadb.Client({
-  secret: process.env.FAUNADB_SECRET,
+  secret: process.env.FAUNADB_SECRET ?? 'secret',
   scheme: isProduction ? 'https' : 'http',
   domain: isProduction ? 'db.fauna.com' : 'localhost',
   ...(isProduction ? {} : { port: 8443 }),
@@ -20,15 +21,46 @@ const options: InitOptions = {
     Providers.GitHub({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
-      scope: 'read:user',
+      scope: 'user:email',
+      // @ts-ignore
+      profile: (profileData) => {
+        console.log({ profileData })
+        return {
+          id: profileData.id,
+          name: profileData.name || profileData.login,
+          email: profileData.email,
+          image: profileData.avatar_url,
+          username: profileData.login,
+        }
+      },
     }),
     Providers.LinkedIn({
       clientId: process.env.LINKEDIN_ID,
       clientSecret: process.env.LINKEDIN_SECRET,
-      scope: 'r_liteprofile r_emailaddress',
+      scope: 'r_liteprofile',
+      // @ts-ignore
+      profileUrl:
+        'https://api.linkedin.com/v2/me?projection=(id,localizedFirstName,localizedLastName,profilePicture(displayImage~digitalmediaAsset:playableStreams))',
+      // @ts-ignore
+      profile: (profileData) => {
+        const profileImage =
+          profileData?.profilePicture?.['displayImage~']?.elements[0]
+            ?.identifiers?.[0]?.identifier ?? ''
+        const name =
+          profileData.localizedFirstName + ' ' + profileData.localizedLastName
+        const username = slugify(name + ' ' + profileData.id, { lower: true })
+        return {
+          id: profileData.id,
+          name,
+          email: null,
+          image: profileImage,
+          username,
+        }
+      },
     }),
   ],
   adapter: Fauna.Adapter({ faunaClient }),
+
   secret: process.env.SECRET,
   pages: {
     signIn: '/login',
@@ -37,7 +69,7 @@ const options: InitOptions = {
     session: async (session, user) => {
       return Promise.resolve({
         ...session,
-        user: { ...session.user, id: (user as any).id },
+        user,
       })
     },
   },

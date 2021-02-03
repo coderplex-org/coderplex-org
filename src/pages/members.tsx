@@ -2,9 +2,20 @@ import { Members } from '@/components'
 import { PaddedLayout } from 'src/layouts'
 import { InferGetServerSidePropsType } from 'next'
 
+import faunadb from 'faunadb'
+const q = faunadb.query
+const isProduction = process.env.NODE_ENV === 'production'
+const client = new faunadb.Client({
+  secret: process.env.FAUNADB_SECRET ?? 'secret',
+  scheme: isProduction ? 'https' : 'http',
+  domain: isProduction ? 'db.fauna.com' : 'localhost',
+  ...(isProduction ? {} : { port: 8443 }),
+})
+
 export default function MembersPage({
   users,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  console.log({ users })
   return (
     <>
       <Members users={users} />
@@ -28,20 +39,19 @@ export type User = Partial<{
 }>
 
 export const getServerSideProps = async () => {
-  const users: User[] = [
-    {
-      id: '289394667716346368',
-      name: 'Bhanu Teja Pachipulusu',
-      email: 'pbteja1998@gmail.com',
-      image: 'https://avatars.githubusercontent.com/u/17903466?v=4',
-    },
-    {
-      id: '289395621535678976',
-      name: 'Bhanu Teja Pachipulusu',
-      email: '',
-      image: '',
-    },
-  ]
+  const response: any = await client.query(
+    q.Map(q.Paginate(q.Documents(q.Collection('users'))), (userRef) => {
+      const user = q.Get(userRef)
+      return {
+        id: q.Select(['ref', 'id'], user),
+        name: q.Select(['data', 'name'], user),
+        username: q.Select(['data', 'username'], user),
+        email: q.Select(['data', 'email'], user),
+        image: q.Select(['data', 'image'], user),
+      }
+    })
+  )
+  let users: User[] = response.data
   return {
     props: {
       users,

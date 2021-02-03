@@ -1,9 +1,3 @@
-/**
- * https://github.com/nextauthjs/next-auth/pull/708
- * https://github.com/nextauthjs/next-auth/pull/968
- * https://github.com/nextauthjs/next-auth/pull/1134
- */
-
 import { query as q } from 'faunadb'
 import { createHash, randomBytes } from 'crypto'
 
@@ -50,6 +44,7 @@ const Adapter = (config, options = {}) => {
           emailVerified: profile.emailVerified
             ? q.Time(profile.emailVerified.toISOString())
             : null,
+          username: profile.username ?? '',
           createdAt: q.Now(),
           updatedAt: q.Now(),
         },
@@ -160,6 +155,7 @@ const Adapter = (config, options = {}) => {
           emailVerified: user.emailVerified
             ? q.Time(user.emailVerified.toISOString())
             : null,
+          username: user.username ?? '',
           updatedAt: q.Now(),
         },
       })
