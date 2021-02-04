@@ -5,6 +5,7 @@ import Fauna from '@/adapters'
 
 import faunadb from 'faunadb'
 import slugify from 'slugify'
+import { User } from 'src/pages/members'
 const isProduction = process.env.NODE_ENV === 'production'
 const faunaClient = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET ?? 'secret',
@@ -66,10 +67,14 @@ const options: InitOptions = {
     signIn: '/login',
   },
   callbacks: {
-    session: async (session, user) => {
+    session: async (session, user: User) => {
       return Promise.resolve({
         ...session,
-        user,
+        user: {
+          ...user,
+          email: typeof user.email === 'object' ? null : user.email,
+          username: typeof user.username === 'object' ? null : user.username,
+        },
       })
     },
   },

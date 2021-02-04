@@ -52,6 +52,15 @@ export const getServerSideProps = async () => {
     })
   )
   let users: User[] = response.data
+  users = users.map((user) => {
+    if (typeof user.email === 'object') {
+      user.email = null
+    }
+    if (typeof user.username === 'object') {
+      user.username = null
+    }
+    return user
+  })
   return {
     props: {
       users,
