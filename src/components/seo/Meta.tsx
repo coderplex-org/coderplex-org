@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 export default function Meta() {
-  const baseUrl = 'https://coderplex-org-five.vercel.app'
+  const baseUrl = 'https://beta.coderplex.org'
   const router = useRouter()
   return (
     <Head>
