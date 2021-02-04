@@ -44,23 +44,14 @@ export const getServerSideProps = async () => {
       const user = q.Get(userRef)
       return {
         id: q.Select(['ref', 'id'], user),
-        name: q.Select(['data', 'name'], user),
-        username: q.Select(['data', 'username'], user),
-        email: q.Select(['data', 'email'], user),
-        image: q.Select(['data', 'image'], user),
+        name: q.Select(['data', 'name'], user, null),
+        username: q.Select(['data', 'username'], user, null),
+        email: q.Select(['data', 'email'], user, null),
+        image: q.Select(['data', 'image'], user, null),
       }
     })
   )
-  let users: User[] = response.data
-  users = users.map((user) => {
-    if (typeof user.email === 'object') {
-      user.email = null
-    }
-    if (typeof user.username === 'object') {
-      user.username = null
-    }
-    return user
-  })
+  const users: User[] = response.data
   return {
     props: {
       users,

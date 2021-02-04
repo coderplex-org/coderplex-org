@@ -19,7 +19,9 @@ export default function UserProfile({
   return (
     <>
       <Title>{user.username}</Title>
-      <p>Hello World - User Profile</p>
+      <p>
+        Profile of <b>{user.name ?? user.username}</b>
+      </p>
     </>
   )
 }
@@ -29,10 +31,10 @@ export const getServerSideProps = async (context) => {
   const dbUser = q.Get(q.Match(q.Index('user_by_username'), username))
   const user = (await client.query({
     id: q.Select(['ref', 'id'], dbUser),
-    name: q.Select(['data', 'name'], dbUser),
-    username: q.Select(['data', 'username'], dbUser),
-    email: q.Select(['data', 'email'], dbUser),
-    image: q.Select(['data', 'image'], dbUser),
+    name: q.Select(['data', 'name'], dbUser, null),
+    username: q.Select(['data', 'username'], dbUser, null),
+    email: q.Select(['data', 'email'], dbUser, null),
+    image: q.Select(['data', 'image'], dbUser, null),
   })) as User
   return {
     props: {
