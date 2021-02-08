@@ -3,10 +3,10 @@ import { useState } from 'react'
 import type { TablerIcon } from 'tabler-icons'
 import type { Icon as PhosphorIcon } from 'phosphor-react'
 import classNames from 'classnames'
-import { ProfileSettings } from '@/components'
+import { ProfileSettings, SocialMediaSettings } from '@/components'
 import { PaddedLayout } from 'src/layouts'
 
-const tabValues = ['profile'] as const
+const tabValues = ['profile', 'social'] as const
 
 type Tab = {
   name: string
@@ -18,6 +18,11 @@ const tabs: Tab[] = [
   {
     name: 'Profile',
     value: tabValues[0],
+    icon: UserCircle,
+  },
+  {
+    name: 'Social Media',
+    value: tabValues[1],
     icon: UserCircle,
   },
 ]
@@ -79,6 +84,7 @@ export default function Settings() {
 
         <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
           {selectedTab === 'profile' && <ProfileSettings />}
+          {selectedTab === 'social' && <SocialMediaSettings />}
         </div>
       </div>
     </>

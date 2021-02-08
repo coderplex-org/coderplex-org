@@ -10,8 +10,8 @@ export default function Member({ user }: { user: User }) {
         <Avatar src={user.image} className="w-32 h-32 mx-auto" />
         <h3 className="mt-6 text-gray-900 text-sm font-medium">{user.name}</h3>
         <dl className="mt-1 flex-grow flex flex-col justify-between">
-          {/* <dt className="sr-only">Title</dt>
-          <dd className="text-gray-500 text-sm">{user.email}</dd> */}
+          <dt className="sr-only">Bio</dt>
+          <dd className="text-gray-500 text-sm">{user.account?.bio}</dd>
           <dt className="sr-only">Role</dt>
           <dd className="mt-3">
             <span className="px-2 py-1 text-green-800 text-xs font-medium bg-green-100 rounded-full">

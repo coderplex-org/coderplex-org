@@ -1,4 +1,4 @@
-import { Input, TextArea, Button } from '@/ui'
+import { Input, Button } from '@/ui'
 import { useSession } from 'next-auth/client'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -7,10 +7,11 @@ import { User } from 'src/pages/members'
 import toast, { Toaster } from 'react-hot-toast'
 
 type Inputs = {
-  username: string
-  firstName: string
-  lastName: string
-  bio: string
+  github: string
+  facebook: string
+  twitter: string
+  linkedin: string
+  codepen: string
 }
 
 export default function ProfileSettings() {
@@ -20,13 +21,13 @@ export default function ProfileSettings() {
   const toastId = useRef('')
 
   const { mutate } = useMutation(
-    (data: Inputs) =>
-      fetch(`/api/fauna/update-profile?id=${user.id}`, {
+    (socials: Inputs) =>
+      fetch(`/api/fauna/update-socials?id=${user.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user: data }),
+        body: JSON.stringify({ socials }),
       }).then((res) => {
         if (!res.ok) {
           throw new Error('Something went wrong!!')
@@ -57,7 +58,7 @@ export default function ProfileSettings() {
     return <p>You are not logged in...</p>
   }
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: Inputs) => {
     const id = toast.loading('updating user details...')
 
     toastId.current = id
@@ -72,80 +73,69 @@ export default function ProfileSettings() {
           <div className="px-4 py-6 space-y-6 bg-white sm:p-6">
             <div>
               <h3 className="text-lg font-medium leading-6 text-gray-900">
-                Profile
+                Social Media
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                This information will be displayed publicly so be careful what
-                you share.
+                Share your social media links so that others can connect with
+                you easily. Please fill only the usernames.
               </p>
             </div>
 
             <div className="grid grid-cols-4 gap-6">
               <Input
-                label="Username"
+                label="GitHub"
                 type="text"
-                leadingAddon="coderplex.org/"
-                name="username"
+                leadingAddon="github.com/"
+                name="github"
                 className="col-span-4 sm:col-span-2"
-                defaultValue={user.username}
-                ref={register({
-                  required: true,
-                  validate: (username: string) => {
-                    if (username === user.username) {
-                      return true
-                    }
-                    return fetch(`/api/fauna/is-unique-username`, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({ username }),
-                    })
-                      .then((res) => res.json())
-                      .then((data) => data.isValid)
-                  },
-                })}
-                hasError={Boolean(errors.username)}
-                errorMessage={
-                  errors.username?.type === 'validate'
-                    ? 'Username is already taken'
-                    : 'This field is required'
-                }
-              />
-
-              <TextArea
-                className="col-span-4 sm:col-span-3"
-                label="About"
-                name="bio"
-                rows={3}
-                placeholder="Software Engineer, Tech Blogger..."
-                helpText="Brief description for your profile. URLs are hyperlinked."
+                defaultValue={user.socials?.github ?? ''}
                 ref={register}
-                hasError={Boolean(errors.bio)}
+                hasError={Boolean(errors.github)}
                 errorMessage="Something went wrong!!"
-                defaultValue={user.account?.bio ?? ''}
-              ></TextArea>
-
-              <Input
-                label="First name"
-                type="text"
-                name="firstName"
-                className="col-span-4 sm:col-span-2"
-                defaultValue={user.account?.firstName ?? user.name}
-                ref={register({ required: true })}
-                hasError={Boolean(errors.firstName)}
-                errorMessage="This field is required"
               />
-
               <Input
-                label="Last name"
+                label="Facebook"
                 type="text"
-                name="lastName"
+                leadingAddon="facebook.com/"
+                name="facebook"
                 className="col-span-4 sm:col-span-2"
+                defaultValue={user.socials?.facebook ?? ''}
                 ref={register}
-                hasError={Boolean(errors.lastName)}
+                hasError={Boolean(errors.facebook)}
                 errorMessage="Something went wrong!!"
-                defaultValue={user.account?.lastName ?? ''}
+              />
+              <Input
+                label="Twitter"
+                type="text"
+                leadingAddon="twitter.com/"
+                name="twitter"
+                className="col-span-4 sm:col-span-2"
+                defaultValue={user.socials?.twitter ?? ''}
+                ref={register}
+                hasError={Boolean(errors.twitter)}
+                errorMessage="Something went wrong!!"
+              />
+              <Input
+                label="LinkedIn"
+                type="text"
+                leadingAddon="linkedin.com/in/"
+                name="linkedin"
+                className="col-span-4 sm:col-span-2"
+                defaultValue={user.socials?.linkedin ?? ''}
+                ref={register}
+                hasError={Boolean(errors.linkedin)}
+                errorMessage="Something went wrong!!"
+              />
+              <Input
+                label="CodePen"
+                type="text"
+                leadingAddon="codepen.io/"
+                name="codepen"
+                className="col-span-4 sm:col-span-2"
+                defaultValue={user.socials?.codepen ?? ''}
+                ref={register}
+                hasError={Boolean(errors.codepen)}
+                errorMessage="Something went wrong!!"
               />
             </div>
           </div>

@@ -41,6 +41,13 @@ export type User = Partial<{
     lastName: string
     bio: string
   }>
+  socials: Partial<{
+    github: string
+    facebook: string
+    twitter: string
+    linkedin: string
+    codepen: string
+  }>
 }>
 
 export const getServerSideProps = async () => {
@@ -53,6 +60,8 @@ export const getServerSideProps = async () => {
         username: q.Select(['data', 'username'], user, null),
         email: q.Select(['data', 'email'], user, null),
         image: q.Select(['data', 'image'], user, null),
+        account: q.Select(['data', 'account'], user, {}),
+        socials: q.Select(['data', 'socials'], user, {}),
       }
     })
   )
