@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import { User } from 'src/pages/members'
 import toast, { Toaster } from 'react-hot-toast'
+import Checkbox from 'src/ui/form/Checkbox'
 
 type Inputs = {
   userType: 'developer' | 'employer'
@@ -59,7 +60,6 @@ export default function OtherSettings() {
 
   const onSubmit = async (data: Inputs) => {
     const id = toast.loading('updating user details...')
-
     toastId.current = id
     mutate(data)
   }
@@ -90,6 +90,14 @@ export default function OtherSettings() {
                 ref={register({ minLength: 10, maxLength: 10 })}
                 hasError={Boolean(errors.mobile)}
                 errorMessage="Mobile number should have 10 digits!!"
+              />
+              <Checkbox
+                id="isCurrentlyWorkingInput"
+                label="Are you currently working?"
+                className="col-span-4 sm:col-span-3"
+                name="isCurrentlyWorking"
+                defaultChecked={user.otherDetails?.isCurrentlyWorking}
+                ref={register}
               />
             </div>
           </div>
