@@ -3,6 +3,7 @@ import { signIn, signOut, useSession } from 'next-auth/client'
 import { Logo } from '@/components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { User } from 'src/pages/members'
 
 const navbarItems = [
   {
@@ -83,7 +84,10 @@ export default function AppNavBar() {
                   }
                   className="z-10 ml-3"
                 >
-                  <Link href="/profile" passHref={true}>
+                  <Link
+                    href={`/${(session.user as User).username}`}
+                    passHref={true}
+                  >
                     <Menu.Item>Your Profile</Menu.Item>
                   </Link>
                   <Link href="/profile/settings" passHref={true}>

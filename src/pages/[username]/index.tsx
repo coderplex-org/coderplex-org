@@ -1,4 +1,4 @@
-import { Title } from '@/components'
+import { Profile, Title } from '@/components'
 import { PaddedLayout } from 'src/layouts'
 
 import faunadb from 'faunadb'
@@ -19,9 +19,7 @@ export default function UserProfile({
   return (
     <>
       <Title>{user.username}</Title>
-      <p>
-        Profile of <b>{user.name ?? user.username}</b>
-      </p>
+      <Profile user={user} />
     </>
   )
 }
@@ -35,6 +33,7 @@ export const getServerSideProps = async (context) => {
     username: q.Select(['data', 'username'], dbUser, null),
     email: q.Select(['data', 'email'], dbUser, null),
     image: q.Select(['data', 'image'], dbUser, null),
+    account: q.Select(['data', 'account'], dbUser, null),
   })) as User
   return {
     props: {

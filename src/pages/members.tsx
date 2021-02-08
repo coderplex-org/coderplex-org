@@ -36,6 +36,11 @@ export type User = Partial<{
   name: string
   email: string
   image: string
+  account: Partial<{
+    firstName: string
+    lastName: string
+    bio: string
+  }>
 }>
 
 export const getServerSideProps = async () => {
