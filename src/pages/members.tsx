@@ -47,6 +47,8 @@ export type User = Partial<{
     twitter: string
     linkedin: string
     codepen: string
+    discord: string
+    blog: string
   }>
 }>
 

@@ -83,6 +83,17 @@ export default function Member({ user }: { user: User }) {
                     </A>
                   </li>
                 )}
+                {socials.blog && (
+                  <li>
+                    <A
+                      href={socials.blog}
+                      className="text-gray-400 hover:text-gray-500"
+                    >
+                      <span className="sr-only">Blog</span>
+                      <IconExternalLink className="w-5 h-5" />
+                    </A>
+                  </li>
+                )}
               </ul>
             </dd>
           )}

@@ -12,6 +12,8 @@ type Inputs = {
   twitter: string
   linkedin: string
   codepen: string
+  discord: string
+  blog: string
 }
 
 export default function ProfileSettings() {
@@ -141,6 +143,28 @@ export default function ProfileSettings() {
                 hasError={Boolean(errors.codepen)}
                 errorMessage="Something went wrong!!"
                 placeholder="coderplex"
+              />
+              <Input
+                label="Discord"
+                type="text"
+                name="discord"
+                className="col-span-4 sm:col-span-2"
+                defaultValue={user.socials?.discord ?? ''}
+                ref={register}
+                hasError={Boolean(errors.discord)}
+                errorMessage="Something went wrong!!"
+                placeholder="coderplex"
+              />
+              <Input
+                label="Blog / Resume"
+                type="text"
+                name="blog"
+                className="col-span-4 sm:col-span-2"
+                defaultValue={user.socials?.blog ?? ''}
+                ref={register}
+                hasError={Boolean(errors.blog)}
+                errorMessage="Something went wrong!!"
+                placeholder="https://blog.coderplex.org"
               />
             </div>
           </div>

@@ -40,6 +40,8 @@ const FaunaCreateHandler: NextApiHandler = async (
                 twitter: socials.twitter,
                 linkedin: socials.linkedin,
                 codepen: socials.codepen,
+                discord: socials.discord,
+                blog: socials.blog,
               },
               timestamps: { updatedAt: q.Now() },
             },
