@@ -16,7 +16,7 @@ type Inputs = {
   blog: string
 }
 
-export default function ProfileSettings() {
+export default function SocialMediaSettings() {
   const [session, loading] = useSession()
   const [user, setUser] = useState<User>({})
   const { register, handleSubmit, errors } = useForm<Inputs>()

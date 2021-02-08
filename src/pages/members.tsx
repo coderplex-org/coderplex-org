@@ -50,6 +50,12 @@ export type User = Partial<{
     discord: string
     blog: string
   }>
+  otherDetails: Partial<{
+    userType: 'developer' | 'employer'
+    mobile: string
+    isCurrentlyWorking: boolean
+    technologiesFamiliarWith: string[]
+  }>
 }>
 
 export const getServerSideProps = async () => {
@@ -64,6 +70,7 @@ export const getServerSideProps = async () => {
         image: q.Select(['data', 'image'], user, null),
         account: q.Select(['data', 'account'], user, {}),
         socials: q.Select(['data', 'socials'], user, {}),
+        otherDetails: q.Select(['data', 'otherDetails'], user, {}),
       }
     })
   )
