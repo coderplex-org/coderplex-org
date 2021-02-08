@@ -92,6 +92,7 @@ export default function ProfileSettings() {
                 ref={register}
                 hasError={Boolean(errors.github)}
                 errorMessage="Something went wrong!!"
+                placeholder="coderplex"
               />
               <Input
                 label="Facebook"
@@ -103,6 +104,7 @@ export default function ProfileSettings() {
                 ref={register}
                 hasError={Boolean(errors.facebook)}
                 errorMessage="Something went wrong!!"
+                placeholder="coderplex"
               />
               <Input
                 label="Twitter"
@@ -114,6 +116,7 @@ export default function ProfileSettings() {
                 ref={register}
                 hasError={Boolean(errors.twitter)}
                 errorMessage="Something went wrong!!"
+                placeholder="coderplex"
               />
               <Input
                 label="LinkedIn"
@@ -125,6 +128,7 @@ export default function ProfileSettings() {
                 ref={register}
                 hasError={Boolean(errors.linkedin)}
                 errorMessage="Something went wrong!!"
+                placeholder="coderplex"
               />
               <Input
                 label="CodePen"
@@ -136,6 +140,7 @@ export default function ProfileSettings() {
                 ref={register}
                 hasError={Boolean(errors.codepen)}
                 errorMessage="Something went wrong!!"
+                placeholder="coderplex"
               />
             </div>
           </div>
