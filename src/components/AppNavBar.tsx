@@ -103,7 +103,7 @@ export default function AppNavBar() {
                   variantColor="brand"
                   onClick={() => signIn()}
                 >
-                  Log In
+                  Join
                 </Button>
               </>
             ))}

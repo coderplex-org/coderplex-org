@@ -74,6 +74,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 Login.layoutProps = {
   meta: {
-    title: 'Login',
+    title: 'Join',
   },
 }

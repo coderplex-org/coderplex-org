@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import { User } from 'src/pages/members'
 import toast, { Toaster } from 'react-hot-toast'
+import { Router, useRouter } from 'next/router'
 
 type Inputs = {
   username: string
@@ -14,12 +15,13 @@ type Inputs = {
 }
 
 export default function ProfileSettings() {
+  const router = useRouter()
   const [session, loading] = useSession()
   const [user, setUser] = useState<User>({})
   const { register, handleSubmit, errors } = useForm<Inputs>()
   const toastId = useRef('')
 
-  const { isError, isLoading, isSuccess, mutate, data: response } = useMutation(
+  const { mutate } = useMutation(
     (data: { username: string; firstName: string; lastName: string }) =>
       fetch(`/api/fauna/update-profile?id=${user.id}`, {
         method: 'POST',
@@ -27,7 +29,12 @@ export default function ProfileSettings() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ user: data }),
-      }).then((res) => res.json()),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
+      }),
     {
       onSuccess: () => {
         toast.success('Successfully updated!', { id: toastId.current })
@@ -83,9 +90,29 @@ export default function ProfileSettings() {
                 name="username"
                 className="col-span-4 sm:col-span-2"
                 defaultValue={user.username}
-                ref={register({ required: true })}
+                ref={register({
+                  required: true,
+                  validate: (username: string) => {
+                    if (username === user.username) {
+                      return true
+                    }
+                    return fetch(`/api/fauna/is-unique-username`, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ username }),
+                    })
+                      .then((res) => res.json())
+                      .then((data) => data.isValid)
+                  },
+                })}
                 hasError={Boolean(errors.username)}
-                errorMessage="This field is required"
+                errorMessage={
+                  errors.username?.type === 'validate'
+                    ? 'Username is already taken'
+                    : 'This field is required'
+                }
               />
 
               <TextArea

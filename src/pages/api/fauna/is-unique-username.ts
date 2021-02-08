@@ -1,4 +1,3 @@
-import { User } from 'src/pages/members'
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 
@@ -19,37 +18,21 @@ const FaunaCreateHandler: NextApiHandler = async (
   const session = await getSession({ req })
 
   if (!session) {
-    return res.status(401).json({ message: 'Unauthorized' })
-  }
-
-  if ((session.user as User).id !== req.query.id) {
-    return res.status(403).json({ message: 'Access Forbidden' })
+    res.status(401).json({ message: 'Unauthorized' })
   }
 
   try {
-    const id = req.query.id
-    const { user } = req.body
-    const response: any = await client.query(
+    const { username } = req.body
+    const user = await client.query(
       q.Let(
         {
-          userDoc: q.Update(q.Ref(q.Collection('users'), id), {
-            data: {
-              username: user.username,
-              account: {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                bio: user.bio,
-              },
-              timestamps: { updatedAt: q.Now() },
-            },
-          }),
+          ref: q.Match(q.Index('user_by_username'), username),
         },
-        {
-          id: q.Select(['ref', 'id'], q.Var('userDoc')),
-        }
+        q.If(q.Exists(q.Var('ref')), q.Get(q.Var('ref')), null)
       )
     )
-    res.status(200).json(response)
+
+    res.status(200).json({ isValid: !user })
   } catch (error) {
     console.error({ msg: error.message })
     res.status(500).json({ message: error.message })

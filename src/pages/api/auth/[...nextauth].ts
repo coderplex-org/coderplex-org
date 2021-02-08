@@ -25,7 +25,6 @@ const options: InitOptions = {
       scope: 'user:email',
       // @ts-ignore
       profile: (profileData) => {
-        console.log({ profileData })
         return {
           id: profileData.id,
           name: profileData.name || profileData.login,
@@ -71,7 +70,7 @@ const options: InitOptions = {
 
   secret: process.env.SECRET,
   pages: {
-    signIn: '/login',
+    signIn: '/join',
   },
   callbacks: {
     session: async (session, user: User) => {
