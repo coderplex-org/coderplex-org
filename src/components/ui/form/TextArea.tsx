@@ -56,7 +56,7 @@ const TextArea = React.forwardRef(
             id={id}
             rows={rows}
             className={classNames(
-              'block w-full max-w-lg rounded-md shadow-sm sm:text-sm',
+              'block w-full rounded-md shadow-sm sm:text-sm',
               hasError
                 ? `border-red-300 text-red-900 placeholder-red-900 
                       focus:ring-red-500 focus-within:border-red-500`

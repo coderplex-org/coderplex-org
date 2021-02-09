@@ -1,4 +1,4 @@
-import { Input, TextArea, Button } from '@/ui'
+import { Input, TextArea, Button, Avatar } from '@/ui'
 import { useSession } from 'next-auth/client'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -11,13 +11,15 @@ type Inputs = {
   firstName: string
   lastName: string
   bio: string
+  image: string
 }
 
 export default function ProfileSettings() {
   const [session, loading] = useSession()
   const [user, setUser] = useState<User>({})
-  const { register, handleSubmit, errors } = useForm<Inputs>()
+  const { register, handleSubmit, errors, watch } = useForm<Inputs>()
   const toastId = useRef('')
+  const { image } = watch()
 
   const { mutate } = useMutation(
     (data: Inputs) =>
@@ -29,6 +31,7 @@ export default function ProfileSettings() {
         body: JSON.stringify({
           user: {
             username: data.username,
+            image: data.image,
             account: {
               firstName: data.firstName,
               lastName: data.lastName,
@@ -90,37 +93,53 @@ export default function ProfileSettings() {
             </div>
 
             <div className="grid grid-cols-4 gap-6">
-              <Input
-                label="Username"
-                type="text"
-                leadingAddon="coderplex.org/"
-                name="username"
-                className="col-span-4 sm:col-span-2"
-                defaultValue={user.username}
-                ref={register({
-                  required: true,
-                  validate: (username: string) => {
-                    if (username === user.username) {
-                      return true
-                    }
-                    return fetch(`/api/fauna/is-unique-username`, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
+              <div className="col-span-4 grid grid-cols-4">
+                <div className="flex col-span-3 flex-col gap-6 max-w-lg">
+                  <Input
+                    label="Username"
+                    type="text"
+                    leadingAddon="coderplex.org/"
+                    name="username"
+                    defaultValue={user.username}
+                    ref={register({
+                      required: true,
+                      validate: (username: string) => {
+                        if (username === user.username) {
+                          return true
+                        }
+                        return fetch(`/api/fauna/is-unique-username`, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ username }),
+                        })
+                          .then((res) => res.json())
+                          .then((data) => data.isValid)
                       },
-                      body: JSON.stringify({ username }),
-                    })
-                      .then((res) => res.json())
-                      .then((data) => data.isValid)
-                  },
-                })}
-                hasError={Boolean(errors.username)}
-                errorMessage={
-                  errors.username?.type === 'validate'
-                    ? 'Username is already taken'
-                    : 'This field is required'
-                }
-              />
+                    })}
+                    hasError={Boolean(errors.username)}
+                    errorMessage={
+                      errors.username?.type === 'validate'
+                        ? 'Username is already taken'
+                        : 'This field is required'
+                    }
+                  />
+
+                  <Input
+                    label="Profile Picture"
+                    type="url"
+                    name="image"
+                    defaultValue={user.image ?? ''}
+                    ref={register({ required: true })}
+                    hasError={Boolean(errors.image)}
+                    errorMessage="This field is required"
+                  />
+                </div>
+                <div className="col-span-1 grid place-items-center">
+                  {image && <Avatar src={image} className="w-32 h-32" />}
+                </div>
+              </div>
 
               <TextArea
                 className="col-span-4 sm:col-span-3"
