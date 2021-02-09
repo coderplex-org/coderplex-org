@@ -1,6 +1,15 @@
 import { useSession } from 'next-auth/client'
 import { useEffect, useState } from 'react'
 import { User } from 'src/pages/members'
+import {
+  IconBrandCodepen,
+  IconBrandFacebook,
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconBrandTwitter,
+  IconExternalLink,
+} from 'tabler-icons'
+import { A } from '@/components'
 
 export default function Profile({ user }: { user: User }) {
   const [session, loading] = useSession()
@@ -32,17 +41,98 @@ export default function Profile({ user }: { user: User }) {
                 {user.account?.firstName ?? user.name}
               </p>
               <p className="text-sm font-medium text-gray-600">
-                {user.account?.bio ?? ''}
+                {user.account?.bio ?? 'Coderplex User'}
               </p>
+
+              <div>
+                <ul className="flex space-x-1.5 mt-1 items-center justify-center sm:justify-start">
+                  {user.socials?.github && (
+                    <li>
+                      <A
+                        href={`https://github.com/${user.socials.github}`}
+                        className="text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">GitHub</span>
+                        <IconBrandGithub className="w-5 h-5" />
+                      </A>
+                    </li>
+                  )}
+                  {user.socials?.facebook && (
+                    <li>
+                      <A
+                        href={`https://facebook.com/${user.socials.facebook}`}
+                        className="text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">Facebook</span>
+                        <IconBrandFacebook className="w-5 h-5" />
+                      </A>
+                    </li>
+                  )}
+                  {user.socials?.twitter && (
+                    <li>
+                      <A
+                        href={`https://twitter.com/${user.socials.twitter}`}
+                        className="text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">Twitter</span>
+                        <IconBrandTwitter className="w-5 h-5" />
+                      </A>
+                    </li>
+                  )}
+                  {user.socials?.linkedin && (
+                    <li>
+                      <A
+                        href={`https://linkedin.com/in/${user.socials.linkedin}`}
+                        className="text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">LinkedIn</span>
+                        <IconBrandLinkedin className="w-5 h-5" />
+                      </A>
+                    </li>
+                  )}
+                  {user.socials?.codepen && (
+                    <li>
+                      <A
+                        href={`https://codepen.io/${user.socials.codepen}`}
+                        className="text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">CodePen</span>
+                        <IconBrandCodepen className="w-5 h-5" />
+                      </A>
+                    </li>
+                  )}
+                  {user.socials?.blog && (
+                    <li>
+                      <A
+                        href={user.socials?.blog}
+                        className="text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">Blog</span>
+                        <IconExternalLink className="w-5 h-5" />
+                      </A>
+                    </li>
+                  )}
+                </ul>
+              </div>
             </div>
           </div>
-          {currentUser.username === user.username && (
+
+          {currentUser.username === user.username ? (
             <div className="mt-5 flex justify-center sm:mt-0">
               <a
                 href="/profile/settings"
                 className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
               >
                 Edit profile
+              </a>
+            </div>
+          ) : (
+            <div className="mt-5 flex justify-center sm:mt-0">
+              <a
+                href="/profile/settings"
+                className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                Follow
               </a>
             </div>
           )}

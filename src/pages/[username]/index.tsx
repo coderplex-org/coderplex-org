@@ -34,6 +34,7 @@ export const getServerSideProps = async (context) => {
     email: q.Select(['data', 'email'], dbUser, null),
     image: q.Select(['data', 'image'], dbUser, null),
     account: q.Select(['data', 'account'], dbUser, null),
+    socials: q.Select(['data', 'socials'], dbUser, null),
   })) as User
   return {
     props: {
