@@ -24,12 +24,16 @@ export default function OtherSettings() {
 
   const { mutate } = useMutation(
     (data: Inputs) =>
-      fetch(`/api/fauna/update-other-settings?id=${user.id}`, {
+      fetch(`/api/fauna/update-profile?id=${user.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ settings: data }),
+        body: JSON.stringify({
+          user: {
+            otherDetails: data,
+          },
+        }),
       }).then((res) => {
         if (!res.ok) {
           throw new Error('Something went wrong!!')

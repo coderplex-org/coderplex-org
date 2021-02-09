@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast'
 
 type Inputs = {
   email: string
+  careerGoal: string
 }
 
 export default function PrivateSettings() {
@@ -23,7 +24,14 @@ export default function PrivateSettings() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user: { email: data.email } }),
+        body: JSON.stringify({
+          user: {
+            email: data.email,
+            account: {
+              careerGoal: data.careerGoal,
+            },
+          },
+        }),
       }).then((res) => {
         if (!res.ok) {
           throw new Error('Something went wrong!!')
@@ -107,6 +115,16 @@ export default function PrivateSettings() {
                     ? 'There is another account with the same email'
                     : 'This field is required'
                 }
+              />
+              <Input
+                label="What is your current career goal?"
+                type="text"
+                name="careerGoal"
+                className="col-span-4 sm:col-span-2 sm:row-start-2"
+                defaultValue={user.account?.careerGoal ?? ''}
+                ref={register}
+                hasError={Boolean(errors.careerGoal)}
+                errorMessage="Something went wrong!"
               />
             </div>
           </div>

@@ -24,12 +24,12 @@ export default function SocialMediaSettings() {
 
   const { mutate } = useMutation(
     (socials: Inputs) =>
-      fetch(`/api/fauna/update-socials?id=${user.id}`, {
+      fetch(`/api/fauna/update-profile?id=${user.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ socials }),
+        body: JSON.stringify({ user: { socials } }),
       }).then((res) => {
         if (!res.ok) {
           throw new Error('Something went wrong!!')
