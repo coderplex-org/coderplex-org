@@ -145,7 +145,7 @@ export default function SocialMediaSettings() {
                 placeholder="coderplex"
               />
               <Input
-                label="Discord"
+                label="Discord Nickname"
                 type="text"
                 name="discord"
                 className="col-span-4 sm:col-span-2"

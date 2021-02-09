@@ -1,4 +1,4 @@
-import { Input, TextArea, Button } from '@/ui'
+import { Input, Button } from '@/ui'
 import { useSession } from 'next-auth/client'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -7,13 +7,10 @@ import { User } from 'src/pages/members'
 import toast, { Toaster } from 'react-hot-toast'
 
 type Inputs = {
-  username: string
-  firstName: string
-  lastName: string
-  bio: string
+  email: string
 }
 
-export default function ProfileSettings() {
+export default function PrivateSettings() {
   const [session, loading] = useSession()
   const [user, setUser] = useState<User>({})
   const { register, handleSubmit, errors } = useForm<Inputs>()
@@ -26,16 +23,7 @@ export default function ProfileSettings() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          user: {
-            username: data.username,
-            account: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-              bio: data.bio,
-            },
-          },
-        }),
+        body: JSON.stringify({ user: { email: data.email } }),
       }).then((res) => {
         if (!res.ok) {
           throw new Error('Something went wrong!!')
@@ -81,80 +69,44 @@ export default function ProfileSettings() {
           <div className="px-4 py-6 space-y-6 bg-white sm:p-6">
             <div>
               <h3 className="text-lg font-medium leading-6 text-gray-900">
-                Public Profile
+                Private Information
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                This information will be displayed publicly so be careful what
-                you share.
+                This information will <span className="font-bold">NOT</span> be
+                displayed publicly unless you allow us to.
               </p>
             </div>
 
             <div className="grid grid-cols-4 gap-6">
               <Input
-                label="Username"
-                type="text"
-                leadingAddon="coderplex.org/"
-                name="username"
+                label="Email"
+                type="email"
+                name="email"
                 className="col-span-4 sm:col-span-2"
-                defaultValue={user.username}
+                defaultValue={user.email}
                 ref={register({
                   required: true,
-                  validate: (username: string) => {
-                    if (username === user.username) {
+                  validate: (email: string) => {
+                    if (email === user.email) {
                       return true
                     }
-                    return fetch(`/api/fauna/is-unique-username`, {
+                    return fetch(`/api/fauna/is-unique-email`, {
                       method: 'POST',
                       headers: {
                         'Content-Type': 'application/json',
                       },
-                      body: JSON.stringify({ username }),
+                      body: JSON.stringify({ email }),
                     })
                       .then((res) => res.json())
                       .then((data) => data.isValid)
                   },
                 })}
-                hasError={Boolean(errors.username)}
+                hasError={Boolean(errors.email)}
                 errorMessage={
-                  errors.username?.type === 'validate'
-                    ? 'Username is already taken'
+                  errors.email?.type === 'validate'
+                    ? 'There is another account with the same email'
                     : 'This field is required'
                 }
-              />
-
-              <TextArea
-                className="col-span-4 sm:col-span-3"
-                label="About"
-                name="bio"
-                rows={3}
-                placeholder="Software Engineer, Tech Blogger..."
-                helpText="Brief description for your profile. URLs are hyperlinked."
-                ref={register}
-                hasError={Boolean(errors.bio)}
-                errorMessage="Something went wrong!!"
-                defaultValue={user.account?.bio ?? ''}
-              ></TextArea>
-
-              <Input
-                label="First name"
-                type="text"
-                name="firstName"
-                className="col-span-4 sm:col-span-2"
-                defaultValue={user.account?.firstName ?? user.name}
-                ref={register({ required: true })}
-                hasError={Boolean(errors.firstName)}
-                errorMessage="This field is required"
-              />
-
-              <Input
-                label="Last name"
-                type="text"
-                name="lastName"
-                className="col-span-4 sm:col-span-2"
-                ref={register}
-                hasError={Boolean(errors.lastName)}
-                errorMessage="Something went wrong!!"
-                defaultValue={user.account?.lastName ?? ''}
               />
             </div>
           </div>

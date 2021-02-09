@@ -5,12 +5,13 @@ import type { Icon as PhosphorIcon } from 'phosphor-react'
 import classNames from 'classnames'
 import {
   OtherSettings,
+  PrivateSettings,
   ProfileSettings,
   SocialMediaSettings,
 } from '@/components'
 import { PaddedLayout } from 'src/layouts'
 
-const tabValues = ['profile', 'social', 'other'] as const
+const tabValues = ['profile', 'private', 'social', 'other'] as const
 
 type Tab = {
   name: string
@@ -25,13 +26,18 @@ const tabs: Tab[] = [
     icon: UserCircle,
   },
   {
-    name: 'Social Media',
+    name: 'Private Details',
     value: tabValues[1],
     icon: UserCircle,
   },
   {
-    name: 'Other Details',
+    name: 'Social Media',
     value: tabValues[2],
+    icon: UserCircle,
+  },
+  {
+    name: 'Other Details',
+    value: tabValues[3],
     icon: UserCircle,
   },
 ]
@@ -93,6 +99,7 @@ export default function Settings() {
 
         <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
           {selectedTab === 'profile' && <ProfileSettings />}
+          {selectedTab === 'private' && <PrivateSettings />}
           {selectedTab === 'social' && <SocialMediaSettings />}
           {selectedTab === 'other' && <OtherSettings />}
         </div>
