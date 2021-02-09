@@ -13,6 +13,7 @@ async function main() {
   await client.query(q.CreateCollection({ name: 'sessions' }))
   await client.query(q.CreateCollection({ name: 'users' }))
   await client.query(q.CreateCollection({ name: 'verification_requests' }))
+  await client.query(q.CreateCollection({ name: 'user_followers' }))
 
   await client.query(
     q.CreateIndex({
@@ -59,6 +60,22 @@ async function main() {
       source: q.Collection('users'),
       unique: true,
       terms: [{ field: ['data', 'username'] }],
+    })
+  )
+
+  await client.query(
+    q.CreateIndex({
+      name: 'user_follower_by_user_and_follower',
+      source: q.Collection('user_followers'),
+      unique: true,
+      terms: [
+        {
+          field: ['data', 'user'],
+        },
+        {
+          field: ['data', 'follower'],
+        },
+      ],
     })
   )
 }

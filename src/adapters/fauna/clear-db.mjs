@@ -23,6 +23,10 @@ async function main() {
       q.Map(
         q.Paginate(q.Documents(q.Collection('verification_requests'))),
         (verificationRequestRef) => q.Delete(verificationRequestRef)
+      ),
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('user_followers'))),
+        (userFollower) => q.Delete(userFollower)
       )
     )
   )

@@ -10,6 +10,8 @@ import {
   IconExternalLink,
 } from 'tabler-icons'
 import { A } from '@/components'
+import { useMutation, useQuery } from 'react-query'
+import { Button } from '@/ui'
 
 export default function Profile({ user }: { user: User }) {
   const [session, loading] = useSession()
@@ -20,6 +22,46 @@ export default function Profile({ user }: { user: User }) {
       setCurrentUser(session.user)
     }
   }, [loading, session])
+
+  const { data: isFollowingData } = useQuery(
+    ['/api/isFollowing', currentUser?.id, user.id],
+    () => {
+      if (!session) {
+        return () => {}
+      }
+      return fetch(`/api/fauna/is-following`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
+      })
+    }
+  )
+
+  const { mutate } = useMutation(() =>
+    fetch(`/api/fauna/follow-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: user.id,
+      }),
+    }).then((res) => {
+      if (!res.ok) {
+        throw new Error('Something went wrong!!')
+      }
+      return res.json()
+    })
+  )
 
   return (
     <div className="rounded-lg bg-white overflow-hidden shadow">
@@ -127,14 +169,13 @@ export default function Profile({ user }: { user: User }) {
               </a>
             </div>
           ) : (
-            <div className="mt-5 flex justify-center sm:mt-0">
-              <a
-                href="/profile/settings"
-                className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Follow
-              </a>
-            </div>
+            session && (
+              <div className="mt-5 flex justify-center sm:mt-0">
+                <Button onClick={() => mutate()}>
+                  {isFollowingData?.isFollowing ? 'Unfollow' : 'Follow'}
+                </Button>
+              </div>
+            )
           )}
         </div>
       </div>
