@@ -1,5 +1,6 @@
-import { UserCircle } from 'phosphor-react'
+import { Gear, Lock, UserCircle } from 'phosphor-react'
 import { useState } from 'react'
+import { IconSocial } from 'tabler-icons'
 import type { TablerIcon } from 'tabler-icons'
 import type { Icon as PhosphorIcon } from 'phosphor-react'
 import classNames from 'classnames'
@@ -28,17 +29,17 @@ const tabs: Tab[] = [
   {
     name: 'Private Details',
     value: tabValues[1],
-    icon: UserCircle,
+    icon: Lock,
   },
   {
     name: 'Social Media',
     value: tabValues[2],
-    icon: UserCircle,
+    icon: IconSocial,
   },
   {
     name: 'Other Details',
     value: tabValues[3],
-    icon: UserCircle,
+    icon: Gear,
   },
 ]
 
