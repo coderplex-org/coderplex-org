@@ -15,7 +15,6 @@ const client = new faunadb.Client({
 export default function MembersPage({
   users,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log({ users })
   return (
     <>
       <Members users={users} />
@@ -51,9 +50,11 @@ export type User = Partial<{
     blog: string
   }>
   otherDetails: Partial<{
-    userType: 'developer' | 'employer'
+    userType: 'developer' | 'employer' | 'none'
     mobile: string
-    isCurrentlyWorking: boolean
+    isCurrentlyWorking: 'yes' | 'no' | 'none'
+    lookingForWork: 'yes' | 'no' | 'none'
+    company: string
     technologiesFamiliarWith: string[]
   }>
 }>

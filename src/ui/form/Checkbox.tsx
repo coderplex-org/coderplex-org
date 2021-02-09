@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { ChangeEvent } from 'react'
 
-type CheckboxProps = {
+export type CheckboxProps = {
   label?: string
   id?: string
   helpText?: string

@@ -38,6 +38,8 @@ const FaunaCreateHandler: NextApiHandler = async (
                 userType: settings.userType,
                 mobile: settings.mobile,
                 isCurrentlyWorking: settings.isCurrentlyWorking,
+                lookingForWork: settings.lookingForWork,
+                company: settings.company,
                 technologiesFamiliarWith: settings.technologiesFamiliarWith,
               },
               timestamps: { updatedAt: q.Now() },

@@ -1,24 +1,26 @@
-import { Input, Button } from '@/ui'
+import { Input, Button, Select } from '@/ui'
 import { useSession } from 'next-auth/client'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import { User } from 'src/pages/members'
 import toast, { Toaster } from 'react-hot-toast'
-import Checkbox from 'src/ui/form/Checkbox'
 
 type Inputs = {
-  userType: 'developer' | 'employer'
+  userType: 'developer' | 'employer' | 'none'
   mobile: string
-  isCurrentlyWorking: boolean
+  isCurrentlyWorking: 'yes' | 'no' | 'none'
+  lookingForWork: 'yes' | 'no' | 'none'
+  company: string
   technologiesFamiliarWith: string[]
 }
 
 export default function OtherSettings() {
   const [session, loading] = useSession()
   const [user, setUser] = useState<User>({})
-  const { register, handleSubmit, errors } = useForm<Inputs>()
+  const { register, handleSubmit, errors, watch } = useForm<Inputs>()
   const toastId = useRef('')
+  const { isCurrentlyWorking } = watch()
 
   const { mutate } = useMutation(
     (data: Inputs) =>
@@ -81,6 +83,18 @@ export default function OtherSettings() {
             </div>
 
             <div className="grid grid-cols-4 gap-6">
+              <Select
+                defaultValue={user.otherDetails?.userType ?? 'none'}
+                ref={register}
+                name="userType"
+                className="col-span-4 sm:col-span-2"
+                label="How do you best describe yourself as?"
+                key={`userType-${user.otherDetails?.userType ?? 'none'}`}
+              >
+                <option value="yes">Developer</option>
+                <option value="no">Employer</option>
+                <option value="none">Prefer not to say</option>
+              </Select>
               <Input
                 label="Contact Number"
                 type="number"
@@ -91,14 +105,51 @@ export default function OtherSettings() {
                 hasError={Boolean(errors.mobile)}
                 errorMessage="Mobile number should have 10 digits!!"
               />
-              <Checkbox
-                id="isCurrentlyWorkingInput"
-                label="Are you currently working?"
-                className="col-span-4 sm:col-span-3"
-                name="isCurrentlyWorking"
-                defaultChecked={user.otherDetails?.isCurrentlyWorking}
+              <Select
+                defaultValue={user.otherDetails?.isCurrentlyWorking ?? 'none'}
                 ref={register}
-              />
+                name="isCurrentlyWorking"
+                className="col-span-4 sm:col-span-2"
+                label="Are you currently working?"
+                key={`isCurrentlyWorking-${
+                  user.otherDetails?.isCurrentlyWorking ?? 'none'
+                }`}
+              >
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="none">Prefer not to say</option>
+              </Select>
+              {(isCurrentlyWorking === undefined ||
+                isCurrentlyWorking === 'yes') && (
+                <Input
+                  label="Where are you working at?"
+                  type="text"
+                  name="company"
+                  className="col-span-4 sm:col-span-2"
+                  defaultValue={user.otherDetails?.company ?? ''}
+                  ref={register}
+                  hasError={Boolean(errors.company)}
+                  errorMessage="Something went wrong!!!"
+                  key={`company-${user.otherDetails?.company ?? ''}`}
+                />
+              )}
+              {(isCurrentlyWorking === undefined ||
+                isCurrentlyWorking === 'no') && (
+                <Select
+                  defaultValue={user.otherDetails?.lookingForWork ?? 'none'}
+                  ref={register}
+                  name="lookingForWork"
+                  className="col-span-4 sm:col-span-2"
+                  label="Are you looking for work?"
+                  key={`lookingForWork-${
+                    user.otherDetails?.lookingForWork ?? 'none'
+                  }-${user.otherDetails?.isCurrentlyWorking ?? 'none'}`}
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                  <option value="none">Prefer not to say</option>
+                </Select>
+              )}
             </div>
           </div>
           <div className="px-4 py-3 text-right bg-gray-50 sm:px-6">
