@@ -1,17 +1,8 @@
-import {
-  GoalFeed,
-  GoalUpdate,
-  GoalUpdates,
-  NewUpdate,
-  Profile,
-  Title,
-} from '@/components'
+import { Goal, Profile, Title } from '@/components'
 import { PaddedLayout } from 'src/layouts'
-
 import faunadb from 'faunadb'
 import { InferGetServerSidePropsType } from 'next'
 import { User } from '../members'
-import { GoalUpdatesList } from 'src/components/goals/GoalUpdates'
 import { GoalUpdateType } from 'src/components/goals/GoalUpdate'
 import { DateTime } from 'luxon'
 const q = faunadb.query
@@ -51,18 +42,18 @@ export default function UserProfile({
     <>
       <Title>{user.username}</Title>
       <Profile user={user} />
-      <GoalFeed user={user} goal={goal}>
-        <GoalUpdates>
-          <GoalUpdatesList>
+      <Goal.Feed user={user} goal={goal}>
+        <Goal.Updates>
+          <Goal.UpdatesList>
             {updates.map((update) => (
-              <GoalUpdate user={user} update={update}>
+              <Goal.Update user={user} update={update}>
                 {update.description}
-              </GoalUpdate>
+              </Goal.Update>
             ))}
-          </GoalUpdatesList>
-          <NewUpdate user={user} />
-        </GoalUpdates>
-      </GoalFeed>
+          </Goal.UpdatesList>
+          <Goal.New user={user} />
+        </Goal.Updates>
+      </Goal.Feed>
     </>
   )
 }
