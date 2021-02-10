@@ -3,8 +3,8 @@ import { PaddedLayout } from 'src/layouts'
 import faunadb from 'faunadb'
 import { InferGetServerSidePropsType } from 'next'
 import { User } from '../members'
-import { GoalUpdateType } from 'src/components/goals/GoalUpdate'
 import { DateTime } from 'luxon'
+import { useQuery } from 'react-query'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -14,46 +14,90 @@ const client = new faunadb.Client({
   ...(isProduction ? {} : { port: 8443 }),
 })
 
-const updates: GoalUpdateType[] = [
-  {
-    description: `Opened an issue in [Coderplex](https://github.com/coderplex-org/coderplex-org) repo.`,
-    createdAt: DateTime.local().minus({ days: 2 }),
-  },
-  {
-    description: `Submitted a PR to [Coderplex](https://github.com/coderplex-org/coderplex-org) repo. Waiting for the review.`,
-    createdAt: DateTime.local().minus({ days: 4 }),
-  },
-]
-const goal = {
-  title: 'Contribute to Open Source',
-  description: `My goal is to contribute to any open source atleast once in a
-week. I would have achieved my goal if I complete all of the
-following.
+type Update = {
+  id: string
+  description: string
+  createdAt: number
+  postedBy: User
+}
 
-- Contribute to open source projects atleast once per week for 6 months.
-- Get atleast 1 pull request merged atleast once per month for 6 months.
-  `,
+type GoalResponse = {
+  id: string
+  title: string
+  description: string
+  createdAt: number
+  createdBy: User
+  participants: {
+    data: User[]
+  }
+  updates: {
+    data: Update[]
+  }
 }
 
 export default function UserProfile({
   user,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { isLoading, isError, data } = useQuery(
+    ['/api/fauna/goals/all-goals-by-user'],
+    () =>
+      fetch(`/api/fauna/goals/all-goals-by-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
+      })
+  )
+
+  const goalResponses = data?.response?.data ?? []
+
+  if (isLoading) {
+    return <p>loading...</p>
+  }
+
+  if (isError) {
+    return <p>Something went wrong!!!</p>
+  }
+
   return (
     <>
       <Title>{user.username}</Title>
       <Profile user={user} />
-      <Goal.Feed user={user} goal={goal}>
-        <Goal.Updates>
-          <Goal.UpdatesList>
-            {updates.map((update) => (
-              <Goal.Update user={user} update={update}>
-                {update.description}
-              </Goal.Update>
-            ))}
-          </Goal.UpdatesList>
-          <Goal.New user={user} />
-        </Goal.Updates>
-      </Goal.Feed>
+      {goalResponses.map((goalResponse: GoalResponse) => (
+        <Goal.Feed
+          createdBy={goalResponse.createdBy}
+          goal={{
+            title: goalResponse.title,
+            description: goalResponse.description,
+          }}
+          participants={goalResponse.participants.data}
+          createdAt={DateTime.fromMillis(goalResponse.createdAt)}
+          updatesCount={goalResponse.updates.data.length}
+        >
+          <Goal.Updates>
+            <Goal.UpdatesList>
+              {goalResponse.updates.data.map((update) => (
+                <Goal.Update
+                  postedBy={user}
+                  key={update.id}
+                  postedOn={DateTime.fromMillis(update.createdAt)}
+                >
+                  {update.description}
+                </Goal.Update>
+              ))}
+            </Goal.UpdatesList>
+            <Goal.New user={user} />
+          </Goal.Updates>
+        </Goal.Feed>
+      ))}
     </>
   )
 }

@@ -5,18 +5,19 @@ import { Markdown } from '@/components'
 import { DateTime } from 'luxon'
 
 export type GoalUpdateType = {
+  id: string
   description: string
   createdAt: DateTime
 }
 
 export default function GoalUpdate({
-  user,
-  update,
+  postedBy,
   children,
+  postedOn,
 }: {
-  user: User
-  update: GoalUpdateType
+  postedBy: User
   children: string
+  postedOn: DateTime
 }) {
   return (
     <li>
@@ -27,20 +28,20 @@ export default function GoalUpdate({
         ></span>
         <div className="relative flex items-start space-x-3">
           <div className="relative">
-            <Avatar src={user.image} />
+            <Avatar src={postedBy.image} />
           </div>
           <div className="min-w-0 flex-1">
             <div>
               <div className="text-sm">
                 <a href="/" className="font-medium text-gray-900">
-                  {user.account?.firstName ?? user.name}
+                  {postedBy.account?.firstName ?? postedBy.name}
                 </a>
               </div>
               <p className="mt-0.5 text-sm text-gray-500">
                 Posted on{' '}
-                {update.createdAt.toLocaleString(
-                  DateTime.DATE_MED_WITH_WEEKDAY
-                )}
+                <time dateTime={postedOn.toISO()}>
+                  {postedOn.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
+                </time>
               </p>
             </div>
             <div className="mt-2 text-sm text-gray-700">

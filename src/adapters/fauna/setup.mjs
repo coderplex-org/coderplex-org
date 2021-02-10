@@ -14,6 +14,34 @@ async function main() {
   await client.query(q.CreateCollection({ name: 'users' }))
   await client.query(q.CreateCollection({ name: 'verification_requests' }))
   await client.query(q.CreateCollection({ name: 'user_followers' }))
+  await client.query(q.CreateCollection({ name: 'goals' }))
+  await client.query(q.CreateCollection({ name: 'goal_participants' }))
+  await client.query(q.CreateCollection({ name: 'goal_updates' }))
+  // **GOAL**
+  // createdBy: User
+  // title: string
+  // description: string(markdown)
+  // timestamps {
+  // createdAt: Time
+  // updatedAt: Time
+  // }
+
+  // **GOAL_PARTICIPANTS**
+  // goal: Goal
+  // participant: User
+  // timestamps {
+  // createdAt: Time
+  // updatedAt: Time
+  // }
+
+  // **GOAL_UPDATES**
+  // goal: Goal
+  // postedBy: User
+  // description: string(markdown)
+  // timestamps {
+  // createdAt: Time
+  // updatedAt: Time
+  // }
 
   await client.query(
     q.CreateIndex({
@@ -74,6 +102,65 @@ async function main() {
         },
         {
           field: ['data', 'follower'],
+        },
+      ],
+    })
+  )
+
+  // Get all the goals that the user is participating in
+  await client.query(
+    q.CreateIndex({
+      name: 'all_goals_by_participant',
+      source: q.Collection('goal_participants'),
+      unique: false,
+      terms: [
+        {
+          field: ['data', 'participant'],
+        },
+      ],
+    })
+  )
+
+  // Get all the participants of a goal
+  await client.query(
+    q.CreateIndex({
+      name: 'all_participants_by_goal',
+      source: q.Collection('goal_participants'),
+      unique: false,
+      terms: [
+        {
+          field: ['data', 'goal'],
+        },
+      ],
+    })
+  )
+
+  // Get all updates of a goal
+  await client.query(
+    q.CreateIndex({
+      name: 'all_updates_by_goal',
+      source: q.Collection('goal_updates'),
+      unique: false,
+      terms: [
+        {
+          field: ['data', 'goal'],
+        },
+      ],
+    })
+  )
+
+  // Get all updates of a participant for a goal
+  await client.query(
+    q.CreateIndex({
+      name: 'all_updates_by_goal_and_participant',
+      source: q.Collection('goal_updates'),
+      unique: false,
+      terms: [
+        {
+          field: ['data', 'goal'],
+        },
+        {
+          field: ['data', 'postedBy'],
         },
       ],
     })

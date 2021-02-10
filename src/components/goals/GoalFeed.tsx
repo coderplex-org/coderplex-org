@@ -1,15 +1,22 @@
 import React, { ReactNode } from 'react'
 import { User } from 'src/pages/members'
 import { Goal } from '@/components'
+import { DateTime } from 'luxon'
 
 export default function GoalFeed({
-  user,
+  createdBy,
   goal,
   children,
+  participants,
+  createdAt,
+  updatesCount,
 }: {
-  user: User
+  createdBy: User
   goal: GoalType
   children: ReactNode
+  participants: User[]
+  createdAt: DateTime
+  updatesCount: number
 }) {
   return (
     <>
@@ -18,15 +25,25 @@ export default function GoalFeed({
           <div className="xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
             <div>
               <div>
-                <Goal.Title user={user}>{goal.title}</Goal.Title>
-                <Goal.Meta className="mt-8 xl:hidden" user={user} />
+                <Goal.Title createdBy={createdBy}>{goal.title}</Goal.Title>
+                <Goal.Meta
+                  className="mt-8 xl:hidden"
+                  participants={participants}
+                  createdAt={createdAt}
+                  updatesCount={updatesCount}
+                />
                 <Goal.Description>{goal.description}</Goal.Description>
               </div>
             </div>
 
             {children}
           </div>
-          <Goal.Meta className="hidden xl:block xl:pl-8" user={user} />
+          <Goal.Meta
+            className="hidden xl:block xl:pl-8"
+            participants={participants}
+            createdAt={createdAt}
+            updatesCount={updatesCount}
+          />
         </div>
       </div>
     </>

@@ -1,13 +1,14 @@
 import { User } from 'src/pages/members'
 import { IconEdit } from 'tabler-icons'
-import { Button } from '../ui/button'
+import { A } from '@/components'
+import { Button } from '@/ui'
 
 export default function GoalTitle({
   children,
-  user,
+  createdBy,
 }: {
   children: string
-  user: User
+  createdBy: User
 }) {
   return (
     <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:pb-6">
@@ -20,9 +21,12 @@ export default function GoalTitle({
         </h1>
         <p className="mt-2 text-sm text-gray-500">
           Created by{' '}
-          <a href="/" className="font-medium text-gray-900">
-            {user.account?.firstName ?? user.name}
-          </a>{' '}
+          <A
+            href={`/${createdBy.username}`}
+            className="font-medium text-gray-900"
+          >
+            {createdBy.account?.firstName ?? createdBy.name}
+          </A>{' '}
         </p>
       </div>
       <div className="mt-4 flex space-x-3 md:mt-0">

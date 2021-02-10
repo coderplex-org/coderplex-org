@@ -1,12 +1,17 @@
 import { User } from 'src/pages/members'
 import { Avatar } from '@/ui'
+import { DateTime } from 'luxon'
 
 export default function GoalMeta({
   className = '',
-  user,
+  participants,
+  createdAt,
+  updatesCount,
 }: {
   className?: string
-  user: User
+  participants: User[]
+  createdAt: DateTime
+  updatesCount: number
 }) {
   return (
     <aside className={className}>
@@ -42,7 +47,9 @@ export default function GoalMeta({
               clipRule="evenodd"
             ></path>
           </svg>
-          <span className="text-gray-900 text-sm font-medium">2 updates</span>
+          <span className="text-gray-900 text-sm font-medium">
+            {updatesCount} updates
+          </span>
         </div>
         <div className="flex items-center space-x-2">
           <svg
@@ -60,7 +67,10 @@ export default function GoalMeta({
             ></path>
           </svg>
           <span className="text-gray-900 text-sm font-medium">
-            Created on <time dateTime="2020-12-02">Dec 2, 2020</time>
+            Created on{' '}
+            <time dateTime={createdAt.toISO()}>
+              {createdAt.toLocaleString(DateTime.DATE_FULL)}
+            </time>
           </span>
         </div>
       </div>
@@ -69,16 +79,18 @@ export default function GoalMeta({
         <div>
           <h2 className="text-sm font-medium text-gray-500">Participants</h2>
           <ul className="mt-3 space-y-3">
-            <li className="flex justify-start">
-              <a href="/" className="flex items-end space-x-3">
-                <div className="flex-shrink-0">
-                  <Avatar src={user.image} size="2xs" />
-                </div>
-                <div className="text-sm font-medium text-gray-900">
-                  {user.account?.firstName ?? user.name}
-                </div>
-              </a>
-            </li>
+            {participants.map((participant) => (
+              <li className="flex justify-start" key={participant.id}>
+                <a href="/" className="flex items-end space-x-3">
+                  <div className="flex-shrink-0">
+                    <Avatar src={participant.image} size="2xs" />
+                  </div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {participant.account?.firstName ?? participant.name}
+                  </div>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
         <div>

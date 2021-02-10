@@ -27,6 +27,17 @@ async function main() {
       q.Map(
         q.Paginate(q.Documents(q.Collection('user_followers'))),
         (userFollower) => q.Delete(userFollower)
+      ),
+      q.Map(q.Paginate(q.Documents(q.Collection('goals'))), (goal) =>
+        q.Delete(goal)
+      ),
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('goal_participants'))),
+        (goalParticipant) => q.Delete(goalParticipant)
+      ),
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('goal_updates'))),
+        (goalUpdate) => q.Delete(goalUpdate)
       )
     )
   )
