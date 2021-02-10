@@ -10,12 +10,14 @@ import {
   IconExternalLink,
 } from 'tabler-icons'
 import { A } from '@/components'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Button } from '@/ui'
 
 export default function Profile({ user }: { user: User }) {
+  const queryClient = useQueryClient()
   const [session, loading] = useSession()
   const [currentUser, setCurrentUser] = useState<User>({})
+  const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
 
   useEffect(() => {
     if (!loading && session) {
@@ -46,21 +48,53 @@ export default function Profile({ user }: { user: User }) {
     }
   )
 
-  const { mutate } = useMutation(() =>
-    fetch(`/api/fauna/follow-user`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: user.id,
+  const { mutate: followUser } = useMutation(
+    () =>
+      fetch(`/api/fauna/follow-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
       }),
-    }).then((res) => {
-      if (!res.ok) {
-        throw new Error('Something went wrong!!')
-      }
-      return res.json()
-    })
+    {
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: ['/api/isFollowing', currentUser?.id, user.id],
+        })
+      },
+    }
+  )
+  const { mutate: unFollowUser } = useMutation(
+    () =>
+      fetch(`/api/fauna/unfollow-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
+      }),
+    {
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: ['/api/isFollowing', currentUser?.id, user.id],
+        })
+      },
+    }
   )
 
   return (
@@ -171,9 +205,23 @@ export default function Profile({ user }: { user: User }) {
           ) : (
             session && (
               <div className="mt-5 flex justify-center sm:mt-0">
-                <Button onClick={() => mutate()}>
-                  {isFollowingData?.isFollowing ? 'Unfollow' : 'Follow'}
-                </Button>
+                {isFollowingData?.isFollowing ? (
+                  <>
+                    <Button
+                      onClick={() => unFollowUser()}
+                      variant="solid"
+                      variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
+                      onMouseEnter={() => setIsHoveringFollowButton(true)}
+                      onMouseLeave={() => setIsHoveringFollowButton(false)}
+                    >
+                      {isHoveringFollowButton ? 'Unfollow' : 'Following'}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={() => followUser()}>Follow</Button>
+                  </>
+                )}
               </div>
             )
           )}
