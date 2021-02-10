@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 
-type SizeVariant = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+type SizeVariant = '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 export type AvatarProps = {
   className?: string
@@ -12,6 +12,7 @@ export type AvatarProps = {
 }
 
 const SIZE_VARIANT_STYLES: Record<SizeVariant, string> = {
+  '2xs': 'h-5 w-5',
   xs: 'h-6 w-6',
   sm: 'h-8 w-8',
   md: 'h-10 w-10',

@@ -1,9 +1,19 @@
-import { Profile, Title } from '@/components'
+import {
+  GoalFeed,
+  GoalUpdate,
+  GoalUpdates,
+  NewUpdate,
+  Profile,
+  Title,
+} from '@/components'
 import { PaddedLayout } from 'src/layouts'
 
 import faunadb from 'faunadb'
 import { InferGetServerSidePropsType } from 'next'
 import { User } from '../members'
+import { GoalUpdatesList } from 'src/components/goals/GoalUpdates'
+import { GoalUpdateType } from 'src/components/goals/GoalUpdate'
+import { DateTime } from 'luxon'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -13,6 +23,27 @@ const client = new faunadb.Client({
   ...(isProduction ? {} : { port: 8443 }),
 })
 
+const updates: GoalUpdateType[] = [
+  {
+    description: `Opened an issue in [Coderplex](https://github.com/coderplex-org/coderplex-org) repo.`,
+    createdAt: DateTime.local().minus({ days: 2 }),
+  },
+  {
+    description: `Submitted a PR to [Coderplex](https://github.com/coderplex-org/coderplex-org) repo. Waiting for the review.`,
+    createdAt: DateTime.local().minus({ days: 4 }),
+  },
+]
+const goal = {
+  title: 'Contribute to Open Source',
+  description: `My goal is to contribute to any open source atleast once in a
+week. I would have achieved my goal if I complete all of the
+following.
+
+- Contribute to open source projects atleast once per week for 6 months.
+- Get atleast 1 pull request merged atleast once per month for 6 months.
+  `,
+}
+
 export default function UserProfile({
   user,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -20,6 +51,18 @@ export default function UserProfile({
     <>
       <Title>{user.username}</Title>
       <Profile user={user} />
+      <GoalFeed user={user} goal={goal}>
+        <GoalUpdates>
+          <GoalUpdatesList>
+            {updates.map((update) => (
+              <GoalUpdate user={user} update={update}>
+                {update.description}
+              </GoalUpdate>
+            ))}
+          </GoalUpdatesList>
+          <NewUpdate user={user} />
+        </GoalUpdates>
+      </GoalFeed>
     </>
   )
 }
