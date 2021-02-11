@@ -1,4 +1,4 @@
-import { Goal, Profile, Title } from '@/components'
+import { Goal, NewGoal, Profile, Title } from '@/components'
 import { PaddedLayout } from 'src/layouts'
 import faunadb from 'faunadb'
 import { InferGetServerSidePropsType } from 'next'
@@ -39,7 +39,7 @@ export default function UserProfile({
   user,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { isLoading, isError, data } = useQuery(
-    ['/api/fauna/goals/all-goals-by-user'],
+    ['/api/fauna/goals/all-goals-by-user', user.id],
     () =>
       fetch(`/api/fauna/goals/all-goals-by-user`, {
         method: 'POST',
@@ -60,11 +60,21 @@ export default function UserProfile({
   const goalResponses = data?.response?.data ?? []
 
   if (isLoading) {
-    return <p>loading...</p>
+    return (
+      <>
+        <Title>{user.username}</Title>
+        <p>loading...</p>
+      </>
+    )
   }
 
   if (isError) {
-    return <p>Something went wrong!!!</p>
+    return (
+      <>
+        <Title>{user.username}</Title>
+        <p>Something went wrong!!!</p>
+      </>
+    )
   }
 
   return (
@@ -94,10 +104,11 @@ export default function UserProfile({
                 </Goal.Update>
               ))}
             </Goal.UpdatesList>
-            <Goal.New user={user} />
+            <Goal.NewUpdate user={user} />
           </Goal.Updates>
         </Goal.Feed>
       ))}
+      {goalResponses.length === 0 && <Goal.New />}
     </>
   )
 }

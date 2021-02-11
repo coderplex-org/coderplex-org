@@ -7,6 +7,7 @@ import {
   GoalUpdate,
   GoalUpdatesList,
   NewUpdate,
+  NewGoal,
 } from '.'
 
 const Goal = {
@@ -17,6 +18,7 @@ const Goal = {
   Updates: GoalUpdates,
   UpdatesList: GoalUpdatesList,
   Update: GoalUpdate,
-  New: NewUpdate,
+  NewUpdate: NewUpdate,
+  New: NewGoal,
 }
 export default Goal

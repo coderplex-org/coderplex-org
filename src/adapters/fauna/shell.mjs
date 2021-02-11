@@ -9,7 +9,7 @@ const client = new faunadb.Client({
 })
 
 async function main() {
-  const userId = '290148455774421504'
+  const userId = '290206001197482496'
   // Get all the participants of a goal
   const response = await client.query(
     q.Let(
