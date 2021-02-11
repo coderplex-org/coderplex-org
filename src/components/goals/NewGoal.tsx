@@ -2,9 +2,10 @@ import { Button, Input, TextArea } from '@/ui'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
+import { Markdown } from '@/components'
 
 type Inputs = {
   title: string
@@ -12,8 +13,9 @@ type Inputs = {
 }
 
 export default function NewGoal() {
+  const [descriptionStorage, setDescriptionStorage] = useState('')
   const queryClient = useQueryClient()
-  const { register, handleSubmit, errors } = useForm<Inputs>()
+  const { register, handleSubmit, errors, trigger } = useForm<Inputs>()
   const toastId = useRef('')
   const [session] = useSession()
   const { mutate } = useMutation(
@@ -70,6 +72,9 @@ export default function NewGoal() {
                 hasError={Boolean(errors.title)}
                 errorMessage="Title is required"
               />
+              <div className="prose max-w-none mt-2 border rounded p-4">
+                <Markdown>{descriptionStorage}</Markdown>
+              </div>
               <TextArea
                 ref={register}
                 name="description"
@@ -79,10 +84,14 @@ export default function NewGoal() {
                 helpText="Basic markdown is supported."
                 hasError={Boolean(errors.description)}
                 errorMessage="Something went wrong!!!"
-                onKeyDown={(e) => {
+                onKeyDown={async (e) => {
                   if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    await trigger()
                     handleSubmit(onSubmit)()
                   }
+                }}
+                onChange={(e) => {
+                  setDescriptionStorage(e.target.value)
                 }}
               ></TextArea>
               <div className="mt-6 flex items-center justify-end space-x-4">

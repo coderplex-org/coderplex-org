@@ -4,13 +4,15 @@ import { useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/client'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { Markdown } from '@/components'
 
 type Inputs = {
   description: string
 }
 
 export default function NewUpdate({ goalId }: { goalId: string }) {
+  const [descriptionStorage, setDescriptionStorage] = useState('')
   const queryClient = useQueryClient()
   const [session, loading] = useSession()
   const { handleSubmit, register, errors, reset } = useForm<Inputs>()
@@ -52,6 +54,7 @@ export default function NewUpdate({ goalId }: { goalId: string }) {
     const id = toast.loading('Posting your update...')
     toastId.current = id
     mutate(data)
+    setDescriptionStorage('')
   }
   if (loading) {
     return <p>loading...</p>
@@ -82,7 +85,16 @@ export default function NewUpdate({ goalId }: { goalId: string }) {
                     handleSubmit(onSubmit)()
                   }
                 }}
+                onChange={(e) => {
+                  setDescriptionStorage(e.target.value)
+                }}
               ></TextArea>
+              {descriptionStorage && (
+                <div className="prose max-w-none mt-2 border rounded p-4">
+                  <Markdown>{descriptionStorage}</Markdown>
+                </div>
+              )}
+
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button variant="solid" variantColor="brand" type="submit">
                   Add Update
