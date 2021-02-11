@@ -14,18 +14,23 @@ export default function GoalUpdate({
   postedBy,
   children,
   postedOn,
+  isLastUpdate = false,
 }: {
   postedBy: User
   children: string
   postedOn: DateTime
+  isLastUpdate?: boolean
 }) {
   return (
     <li>
       <div className="relative pb-8">
-        <span
-          className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-          aria-hidden="true"
-        ></span>
+        {!isLastUpdate && (
+          <span
+            className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
+            aria-hidden="true"
+          ></span>
+        )}
+
         <div className="relative flex items-start space-x-3">
           <div className="relative">
             <Avatar src={postedBy.image} />

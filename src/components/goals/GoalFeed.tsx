@@ -1,7 +1,8 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { User } from 'src/pages/members'
 import { Goal } from '@/components'
 import { DateTime } from 'luxon'
+import EditGoal from './EditGoal'
 
 export default function GoalFeed({
   createdBy,
@@ -18,6 +19,7 @@ export default function GoalFeed({
   createdAt: DateTime
   updatesCount: number
 }) {
+  const [isEditing, setIsEditing] = useState(false)
   return (
     <>
       <div className="py-8 xl:py-10">
@@ -25,14 +27,31 @@ export default function GoalFeed({
           <div className="xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
             <div>
               <div>
-                <Goal.Title createdBy={createdBy}>{goal.title}</Goal.Title>
+                {isEditing && (
+                  <EditGoal
+                    goal={goal}
+                    onCancelClick={() => setIsEditing(false)}
+                  />
+                )}
+
+                {!isEditing && (
+                  <Goal.Title
+                    createdBy={createdBy}
+                    onEditClick={() => setIsEditing(true)}
+                  >
+                    {goal.title}
+                  </Goal.Title>
+                )}
+                {!isEditing && (
+                  <Goal.Description>{goal.description}</Goal.Description>
+                )}
+
                 <Goal.Meta
                   className="mt-8 xl:hidden"
                   participants={participants}
                   createdAt={createdAt}
                   updatesCount={updatesCount}
                 />
-                <Goal.Description>{goal.description}</Goal.Description>
               </div>
             </div>
 
@@ -50,7 +69,9 @@ export default function GoalFeed({
   )
 }
 
-type GoalType = {
+export type GoalType = {
+  id: string
   title: string
   description: string
+  creatorId: string
 }

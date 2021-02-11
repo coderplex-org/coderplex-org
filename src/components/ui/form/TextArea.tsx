@@ -3,6 +3,7 @@ import classNames from 'classnames'
 
 export type TextAreaProps = {
   label?: string
+  hideLabel?: boolean
   id?: string
   rows?: number
   helpText?: string
@@ -21,6 +22,7 @@ const TextArea = React.forwardRef(
   (
     {
       label,
+      hideLabel = false,
       id,
       rows,
       helpText,
@@ -46,7 +48,10 @@ const TextArea = React.forwardRef(
       <div className={className}>
         <label
           htmlFor={id}
-          className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          className={classNames(
+            'block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2',
+            hideLabel && 'sr-only'
+          )}
         >
           {label}
         </label>

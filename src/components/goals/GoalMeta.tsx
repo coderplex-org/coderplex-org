@@ -75,7 +75,7 @@ export default function GoalMeta({
         </div>
       </div>
 
-      <div className="mt-6 border-t border-b xl:border-b-0 border-gray-200 py-6 space-y-8">
+      <div className="mt-6 border-t border-gray-200 py-6 space-y-8">
         <div>
           <h2 className="text-sm font-medium text-gray-500">Participants</h2>
           <ul className="mt-3 space-y-3">

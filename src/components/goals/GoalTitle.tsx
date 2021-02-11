@@ -6,9 +6,11 @@ import { Button } from '@/ui'
 export default function GoalTitle({
   children,
   createdBy,
+  onEditClick,
 }: {
   children: string
   createdBy: User
+  onEditClick: () => void
 }) {
   return (
     <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:pb-6">
@@ -30,7 +32,9 @@ export default function GoalTitle({
         </p>
       </div>
       <div className="mt-4 flex space-x-3 md:mt-0">
-        <Button leadingIcon={IconEdit}>Edit</Button>
+        <Button leadingIcon={IconEdit} onClick={() => onEditClick()}>
+          Edit
+        </Button>
       </div>
     </div>
   )

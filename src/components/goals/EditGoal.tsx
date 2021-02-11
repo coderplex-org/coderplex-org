@@ -5,27 +5,36 @@ import toast, { Toaster } from 'react-hot-toast'
 import { useRef } from 'react'
 import { useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
+import { GoalType } from '.'
 
 type Inputs = {
   title: string
   description: string
 }
 
-export default function NewGoal() {
+export default function EditGoal({
+  goal,
+  onCancelClick,
+}: {
+  goal: GoalType
+  onCancelClick: () => void
+}) {
   const queryClient = useQueryClient()
   const { register, handleSubmit, errors } = useForm<Inputs>()
   const toastId = useRef('')
   const [session] = useSession()
   const { mutate } = useMutation(
     (data: Inputs) =>
-      fetch(`/api/fauna/goals/create-and-participate-in-a-goal`, {
+      fetch(`/api/fauna/goals/update-goal`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: goal.id,
           title: data.title,
           description: data.description,
+          creatorId: goal.creatorId,
         }),
       }).then((res) => {
         if (!res.ok) {
@@ -35,13 +44,14 @@ export default function NewGoal() {
       }),
     {
       onSuccess: () => {
-        toast.success('You have successfully set your goal.', {
+        toast.success('You have successfully updated your goal.', {
           id: toastId.current,
         })
         queryClient.refetchQueries([
           '/api/fauna/goals/all-goals-by-user',
           (session.user as User).id,
         ])
+        onCancelClick()
       },
       onError: () => {
         toast.error('Something went wrong!!!', { id: toastId.current })
@@ -50,7 +60,7 @@ export default function NewGoal() {
   )
 
   const onSubmit = (data: Inputs) => {
-    const id = toast.loading('Setting your goal...')
+    const id = toast.loading('Updating your goal...')
     toastId.current = id
     mutate(data)
   }
@@ -63,6 +73,7 @@ export default function NewGoal() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <Input
                 ref={register({ required: true })}
+                defaultValue={goal.title}
                 name="title"
                 label="Goal Title"
                 type="text"
@@ -72,6 +83,7 @@ export default function NewGoal() {
               />
               <TextArea
                 ref={register}
+                defaultValue={goal.description}
                 name="description"
                 label="Goal description"
                 rows={3}
@@ -86,8 +98,9 @@ export default function NewGoal() {
                 }}
               ></TextArea>
               <div className="mt-6 flex items-center justify-end space-x-4">
+                <Button onClick={() => onCancelClick()}>Cancel</Button>
                 <Button variant="solid" variantColor="brand" type="submit">
-                  Set my goal
+                  Update my goal
                 </Button>
               </div>
             </form>

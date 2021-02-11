@@ -121,6 +121,23 @@ async function main() {
     })
   )
 
+  // Get all the goals that the user is participating in
+  await client.query(
+    q.CreateIndex({
+      name: 'unique_goal_and_participant',
+      source: q.Collection('goal_participants'),
+      unique: true,
+      terms: [
+        {
+          field: ['data', 'goal'],
+        },
+        {
+          field: ['data', 'participant'],
+        },
+      ],
+    })
+  )
+
   // Get all the participants of a goal
   await client.query(
     q.CreateIndex({

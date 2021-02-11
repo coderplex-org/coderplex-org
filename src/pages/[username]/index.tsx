@@ -5,6 +5,7 @@ import { InferGetServerSidePropsType } from 'next'
 import { User } from '../members'
 import { DateTime } from 'luxon'
 import { useQuery } from 'react-query'
+import { useSession } from 'next-auth/client'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -38,6 +39,7 @@ type GoalResponse = {
 export default function UserProfile({
   user,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [session, loading] = useSession()
   const { isLoading, isError, data } = useQuery(
     ['/api/fauna/goals/all-goals-by-user', user.id],
     () =>
@@ -77,6 +79,13 @@ export default function UserProfile({
     )
   }
 
+  const allowToPostUpdate = (goalResponse: GoalResponse) => {
+    const participantIds = goalResponse.participants.data.map(
+      (participant) => participant.id
+    )
+    return session && participantIds.includes((session.user as User).id)
+  }
+
   return (
     <>
       <Title>{user.username}</Title>
@@ -85,8 +94,10 @@ export default function UserProfile({
         <Goal.Feed
           createdBy={goalResponse.createdBy}
           goal={{
+            id: goalResponse.id,
             title: goalResponse.title,
             description: goalResponse.description,
+            creatorId: goalResponse.createdBy.id,
           }}
           participants={goalResponse.participants.data}
           createdAt={DateTime.fromMillis(goalResponse.createdAt)}
@@ -94,21 +105,30 @@ export default function UserProfile({
         >
           <Goal.Updates>
             <Goal.UpdatesList>
-              {goalResponse.updates.data.map((update) => (
+              {goalResponse.updates.data.map((update, index) => (
                 <Goal.Update
                   postedBy={user}
                   key={update.id}
                   postedOn={DateTime.fromMillis(update.createdAt)}
+                  isLastUpdate={
+                    index === goalResponse.updates.data.length - 1 &&
+                    !allowToPostUpdate(goalResponse)
+                  }
                 >
                   {update.description}
                 </Goal.Update>
               ))}
             </Goal.UpdatesList>
-            <Goal.NewUpdate user={user} />
+
+            {allowToPostUpdate(goalResponse) && (
+              <Goal.NewUpdate goalId={goalResponse.id} />
+            )}
           </Goal.Updates>
         </Goal.Feed>
       ))}
-      {goalResponses.length === 0 && <Goal.New />}
+      {goalResponses.length === 0 &&
+        session &&
+        (session.user as User).id === user.id && <Goal.New />}
     </>
   )
 }

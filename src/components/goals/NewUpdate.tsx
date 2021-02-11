@@ -1,33 +1,91 @@
 import { User } from 'src/pages/members'
-import { Avatar, Button } from '@/ui'
+import { Avatar, Button, TextArea } from '@/ui'
+import { useForm } from 'react-hook-form'
+import { useSession } from 'next-auth/client'
+import { useMutation, useQueryClient } from 'react-query'
+import toast, { Toaster } from 'react-hot-toast'
+import { useRef } from 'react'
 
-export default function NewUpdate({ user }: { user: User }) {
+type Inputs = {
+  description: string
+}
+
+export default function NewUpdate({ goalId }: { goalId: string }) {
+  const queryClient = useQueryClient()
+  const [session, loading] = useSession()
+  const { handleSubmit, register, errors, reset } = useForm<Inputs>()
+  const toastId = useRef('')
+  const { mutate } = useMutation(
+    (data: Inputs) =>
+      fetch(`/api/fauna/goals/add-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          goalId,
+          description: data.description,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
+      }),
+    {
+      onSuccess: () => {
+        toast.success('You have successfully updated your goal.', {
+          id: toastId.current,
+        })
+        queryClient.refetchQueries([
+          '/api/fauna/goals/all-goals-by-user',
+          (session.user as User).id,
+        ])
+        reset()
+      },
+      onError: () => {
+        toast.error('Something went wrong!!!', { id: toastId.current })
+      },
+    }
+  )
+  const onSubmit = (data: Inputs) => {
+    const id = toast.loading('Posting your update...')
+    toastId.current = id
+    mutate(data)
+  }
+  if (loading) {
+    return <p>loading...</p>
+  }
   return (
     <>
+      <Toaster />
       <div className="mt-6">
         <div className="flex space-x-3">
           <div className="flex-shrink-0">
             <div className="relative">
-              <Avatar src={user.image} />
+              <Avatar src={(session.user as User).image} />
             </div>
           </div>
           <div className="min-w-0 flex-1">
-            <form>
-              <div>
-                <label htmlFor="comment" className="sr-only">
-                  Comment
-                </label>
-                <textarea
-                  id="comment"
-                  name="comment"
-                  rows={3}
-                  className="shadow-sm block w-full focus:ring-brand-700 focus:border-brand-700 sm:text-sm border-gray-300 rounded-md"
-                  placeholder="Leave a comment"
-                ></textarea>
-              </div>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <TextArea
+                ref={register({ required: true })}
+                label="Update"
+                name="description"
+                hideLabel={true}
+                rows={3}
+                placeholder="What did you do today to move towards your goal?"
+                hasError={Boolean(errors.description)}
+                errorMessage="Update is required!!!"
+                onKeyDown={(e) => {
+                  if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    handleSubmit(onSubmit)()
+                  }
+                }}
+              ></TextArea>
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button variant="solid" variantColor="brand" type="submit">
-                  Comment
+                  Add Update
                 </Button>
               </div>
             </form>
