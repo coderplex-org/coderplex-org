@@ -2,18 +2,16 @@ import { Button, Input, TextArea } from '@/ui'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
-import { Tabs, Markdown } from '@/components'
 
 type Inputs = {
   title: string
+  description: string
 }
 
 export default function NewGoal() {
-  const [isInPreviewMode, setIsInPreviewMode] = useState(false)
-  const [description, setDescription] = useState('')
   const queryClient = useQueryClient()
   const { register, handleSubmit, errors } = useForm<Inputs>()
   const toastId = useRef('')
@@ -27,7 +25,7 @@ export default function NewGoal() {
         },
         body: JSON.stringify({
           title: data.title,
-          description,
+          description: data.description,
         }),
       }).then((res) => {
         if (!res.ok) {
@@ -72,45 +70,21 @@ export default function NewGoal() {
                 hasError={Boolean(errors.title)}
                 errorMessage="Title is required"
               />
-              <Tabs
-                tabs={[
-                  {
-                    name: 'Write',
-                    value: 'write',
-                    isSelected: !isInPreviewMode,
-                    onClick: () => setIsInPreviewMode(false),
-                  },
-                  {
-                    name: 'Preview',
-                    value: 'preview',
-                    isSelected: isInPreviewMode,
-                    onClick: () => setIsInPreviewMode(true),
-                  },
-                ]}
-                className="mt-4 mb-1"
-              />
-              {isInPreviewMode ? (
-                <div className="prose max-w-none mt-2">
-                  <Markdown>{description}</Markdown>
-                </div>
-              ) : (
-                <TextArea
-                  name="description"
-                  label="Goal description"
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="I will code for atleast 2 hours everyday."
-                  helpText="Basic markdown is supported."
-                  onKeyDown={(e) => {
-                    console.log(e.shiftKey, e.ctrlKey)
-                    if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                      handleSubmit(onSubmit)()
-                    }
-                  }}
-                ></TextArea>
-              )}
-
+              <TextArea
+                ref={register}
+                name="description"
+                label="Goal description"
+                rows={3}
+                placeholder="I will code for atleast 2 hours everyday."
+                helpText="Basic markdown is supported."
+                hasError={Boolean(errors.description)}
+                errorMessage="Something went wrong!!!"
+                onKeyDown={(e) => {
+                  if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    handleSubmit(onSubmit)()
+                  }
+                }}
+              ></TextArea>
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button variant="solid" variantColor="brand" type="submit">
                   Set my goal

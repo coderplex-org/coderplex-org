@@ -2,13 +2,14 @@ import { Button, Input, TextArea } from '@/ui'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
-import { GoalType, Tabs, Markdown } from '@/components'
+import { GoalType } from '.'
 
 type Inputs = {
   title: string
+  description: string
 }
 
 export default function EditGoal({
@@ -18,12 +19,6 @@ export default function EditGoal({
   goal: GoalType
   onCancelClick: () => void
 }) {
-  const [isInPreviewMode, setIsInPreviewMode] = useState(false)
-  const [description, setDescription] = useState(goal.description)
-  useEffect(() => {
-    setDescription(goal.description)
-  }, [goal.description])
-
   const queryClient = useQueryClient()
   const { register, handleSubmit, errors } = useForm<Inputs>()
   const toastId = useRef('')
@@ -38,7 +33,7 @@ export default function EditGoal({
         body: JSON.stringify({
           id: goal.id,
           title: data.title,
-          description,
+          description: data.description,
           creatorId: goal.creatorId,
         }),
       }).then((res) => {
@@ -69,7 +64,6 @@ export default function EditGoal({
     toastId.current = id
     mutate(data)
   }
-
   return (
     <>
       <Toaster />
@@ -87,45 +81,22 @@ export default function EditGoal({
                 hasError={Boolean(errors.title)}
                 errorMessage="Title is required"
               />
-              <Tabs
-                tabs={[
-                  {
-                    name: 'Write',
-                    value: 'write',
-                    isSelected: !isInPreviewMode,
-                    onClick: () => setIsInPreviewMode(false),
-                  },
-                  {
-                    name: 'Preview',
-                    value: 'preview',
-                    isSelected: isInPreviewMode,
-                    onClick: () => setIsInPreviewMode(true),
-                  },
-                ]}
-                className="mt-4 mb-1"
-              />
-              {isInPreviewMode ? (
-                <div className="prose max-w-none mt-2">
-                  <Markdown>{description}</Markdown>
-                </div>
-              ) : (
-                <TextArea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  name="description"
-                  label="Goal description"
-                  hideLabel={true}
-                  rows={3}
-                  placeholder="I will code for atleast 2 hours everyday."
-                  helpText="Basic markdown is supported."
-                  onKeyDown={(e) => {
-                    if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                      handleSubmit(onSubmit)()
-                    }
-                  }}
-                ></TextArea>
-              )}
-
+              <TextArea
+                ref={register}
+                defaultValue={goal.description}
+                name="description"
+                label="Goal description"
+                rows={3}
+                placeholder="I will code for atleast 2 hours everyday."
+                helpText="Basic markdown is supported."
+                hasError={Boolean(errors.description)}
+                errorMessage="Something went wrong!!!"
+                onKeyDown={(e) => {
+                  if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    handleSubmit(onSubmit)()
+                  }
+                }}
+              ></TextArea>
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button onClick={() => onCancelClick()}>Cancel</Button>
                 <Button variant="solid" variantColor="brand" type="submit">

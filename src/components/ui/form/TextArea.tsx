@@ -55,7 +55,7 @@ const TextArea = React.forwardRef(
         >
           {label}
         </label>
-        <div className="mt-1 sm:col-span-2">
+        <div className="mt-1 sm:mt-0 sm:col-span-2">
           <textarea
             {...values}
             id={id}
