@@ -3,6 +3,7 @@ import { User } from 'src/pages/members'
 import { Goal } from '@/components'
 import { DateTime } from 'luxon'
 import EditGoal from './EditGoal'
+import { useSession } from 'next-auth/client'
 
 export default function GoalFeed({
   createdBy,
@@ -19,6 +20,7 @@ export default function GoalFeed({
   createdAt: DateTime
   updatesCount: number
 }) {
+  const [session] = useSession()
   const [isEditing, setIsEditing] = useState(false)
   return (
     <>
@@ -38,6 +40,9 @@ export default function GoalFeed({
                   <Goal.Title
                     createdBy={createdBy}
                     onEditClick={() => setIsEditing(true)}
+                    showEditButton={
+                      session && (session.user as User).id === createdBy.id
+                    }
                   >
                     {goal.title}
                   </Goal.Title>
