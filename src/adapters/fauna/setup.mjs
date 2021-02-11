@@ -182,6 +182,24 @@ async function main() {
       ],
     })
   )
+
+  // Get all updates – Latest update at the top
+  await client.query(
+    q.CreateIndex({
+      name: 'all_recent_updates',
+      source: q.Collection('goal_updates'),
+      unique: false,
+      values: [
+        {
+          field: ['data', 'timestamps', 'updatedAt'],
+          reverse: true,
+        },
+        {
+          field: ['ref'],
+        },
+      ],
+    })
+  )
 }
 
 main()

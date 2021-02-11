@@ -14,6 +14,7 @@
     "validate": "npm-run-all --parallel check-types check-format lint build",
     "setup-db": "node ./src/adapters/fauna/setup.mjs",
     "clear-db": "node ./src/adapters/fauna/clear-db.mjs",
+    "seed-db": "node ./src/adapters/fauna/seed.mjs",
     "shell": "node ./src/adapters/fauna/shell.mjs"
   },
   "dependencies": {
