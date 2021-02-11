@@ -61,7 +61,7 @@ export default function SocialMediaSettings() {
   }
 
   const onSubmit = async (data: Inputs) => {
-    const id = toast.loading('updating user details...')
+    const id = toast.loading('Updating user details...')
 
     toastId.current = id
     mutate(data)

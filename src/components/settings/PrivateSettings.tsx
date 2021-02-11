@@ -63,7 +63,7 @@ export default function PrivateSettings() {
   }
 
   const onSubmit = async (data) => {
-    const id = toast.loading('updating user details...')
+    const id = toast.loading('Updating user details...')
 
     toastId.current = id
     mutate(data)
