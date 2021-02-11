@@ -72,9 +72,11 @@ export default function NewGoal() {
                 hasError={Boolean(errors.title)}
                 errorMessage="Title is required"
               />
-              <div className="prose max-w-none mt-2 border rounded p-4">
-                <Markdown>{descriptionStorage}</Markdown>
-              </div>
+              {descriptionStorage && (
+                <div className="prose max-w-none mt-2 border rounded p-4">
+                  <Markdown>{descriptionStorage}</Markdown>
+                </div>
+              )}
               <TextArea
                 ref={register}
                 name="description"
