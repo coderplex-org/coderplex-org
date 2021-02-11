@@ -11,41 +11,41 @@ const navbarItems = [
     value: 'home',
     href: '/',
   },
-  {
-    title: 'Learn',
-    value: 'learn',
-    href: '/learn',
-  },
-  {
-    title: 'Events',
-    value: 'events',
-    href: '/events',
-  },
-  {
-    title: 'Space',
-    value: 'space',
-    href: '/space',
-  },
+  // {
+  //   title: 'Learn',
+  //   value: 'learn',
+  //   href: '/learn',
+  // },
+  // {
+  //   title: 'Events',
+  //   value: 'events',
+  //   href: '/events',
+  // },
+  // {
+  //   title: 'Space',
+  //   value: 'space',
+  //   href: '/space',
+  // },
   {
     title: 'Members',
     value: 'members',
     href: '/members',
   },
-  {
-    title: 'Projects',
-    value: 'projects',
-    href: '/projects',
-  },
-  {
-    title: 'Jobs',
-    value: 'jobs',
-    href: '/jobs',
-  },
-  {
-    title: 'Notifications',
-    value: 'notifications',
-    href: '/notifications',
-  },
+  // {
+  //   title: 'Projects',
+  //   value: 'projects',
+  //   href: '/projects',
+  // },
+  // {
+  //   title: 'Jobs',
+  //   value: 'jobs',
+  //   href: '/jobs',
+  // },
+  // {
+  //   title: 'Notifications',
+  //   value: 'notifications',
+  //   href: '/notifications',
+  // },
 ]
 
 export default function AppNavBar() {
