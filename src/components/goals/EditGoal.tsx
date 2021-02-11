@@ -85,11 +85,6 @@ export default function EditGoal({
                 hasError={Boolean(errors.title)}
                 errorMessage="Title is required"
               />
-              {descriptionStorage && (
-                <div className="prose max-w-none mt-2 border rounded p-4">
-                  <Markdown>{descriptionStorage}</Markdown>
-                </div>
-              )}
 
               <TextArea
                 ref={register}
@@ -111,6 +106,13 @@ export default function EditGoal({
                   setDescriptionStorage(e.target.value)
                 }}
               ></TextArea>
+
+              {descriptionStorage && (
+                <div className="prose max-w-none mt-2 border rounded p-4">
+                  <Markdown>{descriptionStorage}</Markdown>
+                </div>
+              )}
+
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button onClick={() => onCancelClick()}>Cancel</Button>
                 <Button variant="solid" variantColor="brand" type="submit">

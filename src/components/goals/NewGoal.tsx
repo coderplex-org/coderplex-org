@@ -72,11 +72,7 @@ export default function NewGoal() {
                 hasError={Boolean(errors.title)}
                 errorMessage="Title is required"
               />
-              {descriptionStorage && (
-                <div className="prose max-w-none mt-2 border rounded p-4">
-                  <Markdown>{descriptionStorage}</Markdown>
-                </div>
-              )}
+
               <TextArea
                 ref={register}
                 name="description"
@@ -96,6 +92,13 @@ export default function NewGoal() {
                   setDescriptionStorage(e.target.value)
                 }}
               ></TextArea>
+
+              {descriptionStorage && (
+                <div className="prose max-w-none mt-2 border rounded p-4">
+                  <Markdown>{descriptionStorage}</Markdown>
+                </div>
+              )}
+
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button variant="solid" variantColor="brand" type="submit">
                   Set my goal
