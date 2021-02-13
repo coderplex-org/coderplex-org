@@ -55,17 +55,16 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
               </Link>
             </Menu>
           </div>
-          <A href={`${postedBy.username}`}>
-            <h2
-              id="question-title-81614"
-              className="mt-4 text-base font-medium text-gray-900 hover:underline"
-            >
-              {goal.title}
-            </h2>
-          </A>
+          <div className="mt-4 flex">
+            <A href={`${postedBy.username}`}>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
+                🚀 Goal: {goal.title}
+              </span>
+            </A>
+          </div>
         </div>
         <div className="mt-2 text-sm text-gray-700 space-y-4">
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose max-w-none">
             <Markdown>{description}</Markdown>
           </div>
         </div>
