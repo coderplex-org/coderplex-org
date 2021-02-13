@@ -1,5 +1,4 @@
-import { useSession } from 'next-auth/client'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { User } from 'src/pages/members'
 import {
   IconBrandCodepen,
@@ -10,92 +9,17 @@ import {
   IconExternalLink,
 } from 'tabler-icons'
 import { A } from '@/components'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Button } from '@/ui'
+import useFollowUser from './useFollowUser'
 
 export default function Profile({ user }: { user: User }) {
-  const queryClient = useQueryClient()
-  const [session, loading] = useSession()
-  const [currentUser, setCurrentUser] = useState<User>({})
+  const {
+    shouldShowFollowButton,
+    isFollowing,
+    followUser,
+    unFollowUser,
+  } = useFollowUser(user.id)
   const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
-
-  useEffect(() => {
-    if (!loading && session) {
-      setCurrentUser(session.user)
-    }
-  }, [loading, session])
-
-  const { data: isFollowingData } = useQuery(
-    ['/api/isFollowing', currentUser?.id, user.id],
-    () => {
-      if (!session) {
-        return () => {}
-      }
-      return fetch(`/api/fauna/is-following`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error('Something went wrong!!')
-        }
-        return res.json()
-      })
-    }
-  )
-
-  const { mutate: followUser } = useMutation(
-    () =>
-      fetch(`/api/fauna/follow-user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error('Something went wrong!!')
-        }
-        return res.json()
-      }),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries({
-          queryKey: ['/api/isFollowing', currentUser?.id, user.id],
-        })
-      },
-    }
-  )
-  const { mutate: unFollowUser } = useMutation(
-    () =>
-      fetch(`/api/fauna/unfollow-user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error('Something went wrong!!')
-        }
-        return res.json()
-      }),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries({
-          queryKey: ['/api/isFollowing', currentUser?.id, user.id],
-        })
-      },
-    }
-  )
 
   return (
     <div className="rounded-lg bg-white overflow-hidden shadow">
@@ -193,7 +117,7 @@ export default function Profile({ user }: { user: User }) {
             </div>
           </div>
 
-          {currentUser.username === user.username ? (
+          {!shouldShowFollowButton ? (
             <div className="mt-5 flex justify-center sm:mt-0">
               <a
                 href="/profile/settings"
@@ -203,27 +127,25 @@ export default function Profile({ user }: { user: User }) {
               </a>
             </div>
           ) : (
-            session && (
-              <div className="mt-5 flex justify-center sm:mt-0">
-                {isFollowingData?.isFollowing ? (
-                  <>
-                    <Button
-                      onClick={() => unFollowUser()}
-                      variant="solid"
-                      variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
-                      onMouseEnter={() => setIsHoveringFollowButton(true)}
-                      onMouseLeave={() => setIsHoveringFollowButton(false)}
-                    >
-                      {isHoveringFollowButton ? 'Unfollow' : 'Following'}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button onClick={() => followUser()}>Follow</Button>
-                  </>
-                )}
-              </div>
-            )
+            <div className="mt-5 flex justify-center sm:mt-0">
+              {isFollowing ? (
+                <>
+                  <Button
+                    onClick={() => unFollowUser()}
+                    variant="solid"
+                    variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
+                    onMouseEnter={() => setIsHoveringFollowButton(true)}
+                    onMouseLeave={() => setIsHoveringFollowButton(false)}
+                  >
+                    {isHoveringFollowButton ? 'Unfollow' : 'Following'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button onClick={() => followUser()}>Follow</Button>
+                </>
+              )}
+            </div>
           )}
         </div>
       </div>

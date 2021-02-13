@@ -1,4 +1,4 @@
-import { Avatar } from '@/ui'
+import { Avatar, Button } from '@/ui'
 import { User } from 'src/pages/members'
 import {
   IconBrandCodepen,
@@ -6,13 +6,26 @@ import {
   IconBrandGithub,
   IconBrandLinkedin,
   IconBrandTwitter,
+  IconEdit,
   IconExternalLink,
+  IconPlus,
 } from 'tabler-icons'
 import { A } from '@/components'
+import useFollowUser from '../profile/useFollowUser'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 export default function Member({ user }: { user: User }) {
+  const router = useRouter()
   const socials = user.socials
   const account = user.account
+  const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
+  const {
+    shouldShowFollowButton,
+    isFollowing,
+    followUser,
+    unFollowUser,
+  } = useFollowUser(user.id)
   return (
     <li className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200">
       <div className="flex-1 flex flex-col p-8">
@@ -26,7 +39,7 @@ export default function Member({ user }: { user: User }) {
           <dt className="sr-only">Role</dt>
           <dt className="sr-only">Social Media</dt>
           {socials && (
-            <dd className="mt-3">
+            <dd className="mt-4">
               <ul className="flex space-x-5 justify-center items-center">
                 {socials.github && (
                   <li>
@@ -97,6 +110,45 @@ export default function Member({ user }: { user: User }) {
               </ul>
             </dd>
           )}
+          {shouldShowFollowButton && (
+            <>
+              <dt className="sr-only">Follow</dt>
+              <dd className="mt-4">
+                {isFollowing ? (
+                  <>
+                    <Button
+                      onClick={() => unFollowUser()}
+                      variant="solid"
+                      variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
+                      onMouseEnter={() => setIsHoveringFollowButton(true)}
+                      onMouseLeave={() => setIsHoveringFollowButton(false)}
+                    >
+                      {isHoveringFollowButton ? 'Unfollow' : 'Following'}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={() => followUser()} leadingIcon={IconPlus}>
+                      Follow
+                    </Button>
+                  </>
+                )}
+              </dd>
+            </>
+          )}
+          {!shouldShowFollowButton && (
+            <>
+              <dt className="sr-only">Edit Profile</dt>
+              <dd className="mt-3">
+                <Button
+                  onClick={() => router.push('/profile/settings')}
+                  leadingIcon={IconEdit}
+                >
+                  Edit Profile
+                </Button>
+              </dd>
+            </>
+          )}
         </dl>
       </div>
 
@@ -111,9 +163,21 @@ export default function Member({ user }: { user: User }) {
                 className="w-5 h-5text-gray-400"
                 aria-hidden={true}
               />
-              <span className="ml-3">Visit Profile</span>
+              <span className="ml-3">Visit</span>
             </A>
           </div>
+
+          {/* {!shouldShowFollowButton && (
+            <div className="-ml-px w-0 flex-1 flex">
+              <A
+                href={`/profile/settings`}
+                className="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 font-medium border border-transparent rounded-bl-lg hover:text-gray-500"
+              >
+                <IconEdit className="w-5 h-5text-gray-400" aria-hidden={true} />
+                <span className="ml-3">Edit</span>
+              </A>
+            </div>
+          )} */}
         </div>
       </div>
     </li>
