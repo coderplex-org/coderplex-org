@@ -26,7 +26,6 @@ const FaunaCreateHandler: NextApiHandler = async (
 
   try {
     const { updateId } = req.body
-    console.log({ userId, updateId })
     const response = await client.query(
       q.Let(
         {

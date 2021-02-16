@@ -14,11 +14,33 @@ import { User } from 'src/pages/members'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { Markdown, A } from '@/components'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import classNames from 'classnames'
+import { useEffect, useReducer } from 'react'
+
+type LikeData = {
+  count: number
+  hasLiked: boolean
+}
+const initialState: LikeData = { count: 0, hasLiked: false }
+
+function reducer(state: LikeData, action: { type: string; payload?: any }) {
+  switch (action.type) {
+    case 'toggle':
+      return {
+        hasLiked: !state.hasLiked,
+        count: state.hasLiked
+          ? Number(state.count) - 1
+          : Number(state.count) + 1,
+      }
+    case 'set':
+      return { count: action.payload.count, hasLiked: action.payload.hasLiked }
+    default:
+      throw new Error()
+  }
+}
 
 function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
-  const queryClient = useQueryClient()
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
   const createdAt = DateTime.fromMillis(createdAtInMillis)
   const { isLoading, isError, data } = useQuery(
@@ -34,29 +56,36 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
         }),
       }).then((res) => res.json())
   )
-  const { mutate } = useMutation(
-    () =>
-      fetch(`/api/fauna/like-update`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          updateId: update.id,
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error('Something went wrong!!')
-        }
-        return res.json()
-      }),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(['api/fauna/has-liked', update.id])
-        queryClient.refetchQueries('/api/fauna/all-updates')
+  const { mutate } = useMutation(() =>
+    fetch(`/api/fauna/toggle-like`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    }
+      body: JSON.stringify({
+        updateId: update.id,
+      }),
+    }).then((res) => {
+      if (!res.ok) {
+        throw new Error('something went wrong!!!')
+      }
+      return res.json()
+    })
   )
+
+  const [{ count: likesCount, hasLiked }, dispatch] = useReducer(
+    reducer,
+    initialState
+  )
+
+  useEffect(() => {
+    if (!isLoading && !isError) {
+      dispatch({
+        type: 'set',
+        payload: { hasLiked: data.liked, count: update.likes.data },
+      })
+    }
+  }, [data?.liked, isError, isLoading, update.likes.data])
 
   return (
     <li className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
@@ -113,23 +142,20 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
             <span className="inline-flex items-center text-sm">
               <button
                 className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
-                onClick={() => mutate()}
+                onClick={() => {
+                  dispatch({ type: 'toggle' })
+                  mutate()
+                }}
               >
                 <ThumbsUp
                   className={classNames(
                     'h-5 w-5',
-                    data?.liked && 'text-brand-600'
+                    hasLiked && 'text-brand-600'
                   )}
-                  weight={data?.liked ? 'bold' : 'regular'}
+                  weight={hasLiked ? 'bold' : 'regular'}
                 />
-                {!isLoading && !isError && (
-                  <>
-                    <span className="font-medium text-gray-900">
-                      {update.likes.data}
-                    </span>
-                    <span className="sr-only">likes</span>
-                  </>
-                )}
+                <span className="font-medium text-gray-900">{likesCount}</span>
+                <span className="sr-only">likes</span>
               </button>
             </span>
             <span className="inline-flex items-center text-sm">
