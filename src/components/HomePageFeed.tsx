@@ -18,7 +18,13 @@ import { useMutation, useQuery } from 'react-query'
 import classNames from 'classnames'
 import { useEffect, useReducer, useState } from 'react'
 import { useSession } from 'next-auth/client'
-import { UpdateComment } from './goals'
+import {
+  Goal,
+  NewComment,
+  UpdateComment,
+  UpdateComments,
+  UpdateCommentsList,
+} from './goals'
 
 type LikeData = {
   count: number
@@ -177,7 +183,9 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
                 onClick={() => setShowComments(!showComments)}
               >
                 <ChatCenteredDots className="h-5 w-5" />
-                <span className="font-medium text-gray-900">11</span>
+                <span className="font-medium text-gray-900">
+                  {update.comments.data.length}
+                </span>
                 <span className="sr-only">replies</span>
               </button>
             </span>
@@ -193,23 +201,25 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
         </div>
       </article>
 
-      {showComments &&
-        (update.comments.data.length > 0 ? (
-          <ul className="ml-6 mt-8 sm:ml-16 sm:mt-10">
-            {update.comments.data.map((comment, index) => (
-              <UpdateComment
-                key={comment.id}
-                postedBy={comment.postedBy}
-                postedOn={DateTime.fromMillis(comment.createdAt)}
-                isLastComment={index === update.comments.data.length - 1}
-              >
-                {comment.description}
-              </UpdateComment>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-4">No comments yet!!!</p>
-        ))}
+      {showComments && (
+        <>
+          <UpdateComments>
+            <UpdateCommentsList>
+              {update.comments.data.map((comment, index) => (
+                <UpdateComment
+                  key={comment.id}
+                  postedBy={comment.postedBy}
+                  postedOn={DateTime.fromMillis(comment.createdAt)}
+                  isLastComment={index === update.comments.data.length - 1}
+                >
+                  {comment.description}
+                </UpdateComment>
+              ))}
+            </UpdateCommentsList>
+            <NewComment updateId={update.id} />
+          </UpdateComments>
+        </>
+      )}
     </li>
   )
 }
