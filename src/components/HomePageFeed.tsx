@@ -17,6 +17,7 @@ import { Markdown, A } from '@/components'
 import { useMutation, useQuery } from 'react-query'
 import classNames from 'classnames'
 import { useEffect, useReducer } from 'react'
+import { useSession } from 'next-auth/client'
 
 type LikeData = {
   count: number
@@ -41,12 +42,16 @@ function reducer(state: LikeData, action: { type: string; payload?: any }) {
 }
 
 function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
+  const [session, loading] = useSession()
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
   const createdAt = DateTime.fromMillis(createdAtInMillis)
   const { isLoading, isError, data } = useQuery(
     ['api/fauna/has-liked', update.id],
-    () =>
-      fetch(`/api/fauna/has-liked`, {
+    () => {
+      if (!session) {
+        return { liked: false }
+      }
+      return fetch(`/api/fauna/has-liked`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,9 +60,13 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
           updateId: update.id,
         }),
       }).then((res) => res.json())
+    }
   )
-  const { mutate } = useMutation(() =>
-    fetch(`/api/fauna/toggle-like`, {
+  const { mutate } = useMutation(() => {
+    if (!session) {
+      return Promise.resolve()
+    }
+    return fetch(`/api/fauna/toggle-like`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -71,7 +80,7 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
       }
       return res.json()
     })
-  )
+  })
 
   const [{ count: likesCount, hasLiked }, dispatch] = useReducer(
     reducer,
@@ -143,8 +152,10 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
               <button
                 className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
                 onClick={() => {
-                  dispatch({ type: 'toggle' })
-                  mutate()
+                  if (session) {
+                    dispatch({ type: 'toggle' })
+                    mutate()
+                  }
                 }}
               >
                 <ThumbsUp
