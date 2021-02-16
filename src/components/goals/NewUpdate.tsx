@@ -11,7 +11,13 @@ type Inputs = {
   description: string
 }
 
-export default function NewUpdate({ goalId }: { goalId: string }) {
+export default function NewUpdate({
+  goalId,
+  updateFromHomePage = false,
+}: {
+  goalId: string
+  updateFromHomePage?: boolean
+}) {
   const [descriptionStorage, setDescriptionStorage] = useState('')
   const queryClient = useQueryClient()
   const [session, loading] = useSession()
@@ -43,6 +49,9 @@ export default function NewUpdate({ goalId }: { goalId: string }) {
           '/api/fauna/goals/all-goals-by-user',
           (session.user as User).id,
         ])
+        if (updateFromHomePage) {
+          queryClient.refetchQueries('/api/fauna/all-updates')
+        }
         reset()
       },
       onError: () => {

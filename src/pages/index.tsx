@@ -46,8 +46,10 @@ export default function Home() {
 
   return (
     <>
-      <NewUpdate goalId={goalIdData.goalId} />
-      <HomePageFeed updates={updates} />
+      <div className="space-y-3">
+        <NewUpdate goalId={goalIdData.goalId} updateFromHomePage={true} />
+        <HomePageFeed updates={updates} />
+      </div>
     </>
   )
 }
