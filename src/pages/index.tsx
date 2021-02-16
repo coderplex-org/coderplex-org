@@ -1,4 +1,5 @@
 import { GoalType, HomePageFeed, NewUpdate } from '@/components'
+import { useSession } from 'next-auth/client'
 import { useQuery } from 'react-query'
 import { PaddedLayout } from 'src/layouts'
 import { User } from './members'
@@ -15,6 +16,8 @@ export type HomePageFeedUpdateType = {
 }
 
 export default function Home() {
+  const [session, loading] = useSession()
+
   const { isLoading, isError, data } = useQuery('/api/fauna/all-updates', () =>
     fetch(`/api/fauna/all-updates`).then((res) => {
       if (!res.ok) {
@@ -37,11 +40,11 @@ export default function Home() {
     })
   )
 
-  if (isLoading || isGoalLoading) {
+  if (loading || isLoading || isGoalLoading) {
     return <p>loading...</p>
   }
 
-  if (isError || isGoalError) {
+  if (isError) {
     return <p>Something went wrong!!!</p>
   }
 
@@ -50,7 +53,9 @@ export default function Home() {
   return (
     <>
       <div className="space-y-3">
-        <NewUpdate goal={goalData.goal} updateFromHomePage={true} />
+        {session && goalData.goal && (
+          <NewUpdate goal={goalData.goal} updateFromHomePage={true} />
+        )}
         <HomePageFeed updates={updates} />
       </div>
     </>
