@@ -27,9 +27,9 @@ export default function Home() {
   const {
     isLoading: isGoalLoading,
     isError: isGoalError,
-    data: goalIdData,
-  } = useQuery('/api/fauna/goals/get-current-goal-id', () =>
-    fetch('/api/fauna/goals/get-current-goal-id').then((res) => {
+    data: goalData,
+  } = useQuery('/api/fauna/goals/get-current-goal', () =>
+    fetch('/api/fauna/goals/get-current-goal').then((res) => {
       if (!res.ok) {
         throw new Error('Something went wrong!!')
       }
@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <>
       <div className="space-y-3">
-        <NewUpdate goalId={goalIdData.goalId} updateFromHomePage={true} />
+        <NewUpdate goal={goalData.goal} updateFromHomePage={true} />
         <HomePageFeed updates={updates} />
       </div>
     </>

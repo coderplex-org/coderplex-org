@@ -122,7 +122,9 @@ export default function UserProfile({
             </Goal.UpdatesList>
 
             {allowToPostUpdate(goalResponse) && (
-              <Goal.NewUpdate goalId={goalResponse.id} />
+              <Goal.NewUpdate
+                goal={{ id: goalResponse.id, title: goalResponse.title }}
+              />
             )}
           </Goal.Updates>
         </Goal.Feed>

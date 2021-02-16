@@ -36,11 +36,14 @@ const FaunaCreateHandler: NextApiHandler = async (
         (goalParticipantRef) => {
           const goalParticipantDoc = q.Get(goalParticipantRef)
           const goalRef = q.Select(['data', 'goal'], goalParticipantDoc)
-          return q.Select(['id'], goalRef)
+          return {
+            id: q.Select(['id'], goalRef),
+            title: q.Select(['data', 'title'], q.Get(goalRef)),
+          }
         }
       )
     )
-    res.status(200).json({ goalId: response.data[0] })
+    res.status(200).json({ goal: response.data[0] })
   } catch (error) {
     console.error({ msg: error.message })
     res.status(500).json({ message: error.message })
