@@ -4,6 +4,16 @@ import { useQuery } from 'react-query'
 import { PaddedLayout } from 'src/layouts'
 import { User } from './members'
 
+export type UpdateCommentType = {
+  id: string
+  description: string
+  comments: {
+    data: UpdateCommentType[]
+  }
+  createdAt: number
+  postedBy: User
+}
+
 export type HomePageFeedUpdateType = {
   id: string
   goal: GoalType
@@ -12,6 +22,9 @@ export type HomePageFeedUpdateType = {
   postedBy: User
   likes: {
     data: number
+  }
+  comments: {
+    data: UpdateCommentType[]
   }
 }
 
@@ -52,6 +65,7 @@ export default function Home() {
   }
 
   const updates = data.updates.data
+  console.log({ updates })
 
   return (
     <>

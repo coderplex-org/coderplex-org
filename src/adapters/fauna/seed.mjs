@@ -9,7 +9,7 @@ const client = new faunadb.Client({
 })
 
 async function main() {
-  const userId = '290232917468119552'
+  const userId = '290674292629176832'
   // Get all the participants of a goal
   const response = await client.query(
     q.Let(
@@ -78,7 +78,60 @@ following.
       }
     )
   )
-  console.log({ response: JSON.stringify(response) })
+
+  // const userId = '289600688475865602'
+  const updateId = '290684409014649344'
+  const response2 = await client.query(
+    q.Let(
+      {
+        parentCommentDoc: q.Create(q.Collection('update_comments'), {
+          data: {
+            update: q.Ref(q.Collection('goal_updates'), updateId),
+            postedBy: q.Ref(q.Collection('users'), userId),
+            parentComment: null,
+            description: 'This is the first ever parent comment!!',
+            timestamps: {
+              createdAt: q.Now(),
+              updatedAt: q.Now(),
+            },
+          },
+        }),
+        childComment1Doc: q.Create(q.Collection('update_comments'), {
+          data: {
+            update: q.Ref(q.Collection('goal_updates'), updateId),
+            postedBy: q.Ref(q.Collection('users'), userId),
+            parentComment: q.Select(['ref'], q.Var('parentCommentDoc')),
+            description: 'This is the first ever child comment!!',
+            timestamps: {
+              createdAt: q.Now(),
+              updatedAt: q.Now(),
+            },
+          },
+        }),
+        childComment2Doc: q.Create(q.Collection('update_comments'), {
+          data: {
+            update: q.Ref(q.Collection('goal_updates'), updateId),
+            postedBy: q.Ref(q.Collection('users'), userId),
+            parentComment: q.Select(['ref'], q.Var('parentCommentDoc')),
+            description: 'This is the second ever child comment!!',
+            timestamps: {
+              createdAt: q.Now(),
+              updatedAt: q.Now(),
+            },
+          },
+        }),
+      },
+      {
+        parentCommentId: q.Select(['ref', 'id'], q.Var('parentCommentDoc')),
+        childComment1Id: q.Select(['ref', 'id'], q.Var('childComment1Doc')),
+        childComment2Id: q.Select(['ref', 'id'], q.Var('childComment2Doc')),
+      }
+    )
+  )
+  console.log({
+    response: JSON.stringify(response),
+    response2: JSON.stringify(response2),
+  })
 }
 
 main().catch((e) => console.error(e))

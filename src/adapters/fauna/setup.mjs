@@ -18,6 +18,7 @@ async function main() {
   await client.query(q.CreateCollection({ name: 'goal_participants' }))
   await client.query(q.CreateCollection({ name: 'goal_updates' }))
   await client.query(q.CreateCollection({ name: 'update_likes' }))
+  await client.query(q.CreateCollection({ name: 'update_comments' }))
   // **GOAL**
   // createdBy: User
   // title: string
@@ -48,6 +49,16 @@ async function main() {
   // update: GoalUpdate
   // user: User
   // liked: boolean
+  // timestamps {
+  //    createdAt: Time
+  //    updatedAt: Time
+  // }
+
+  // **UPDATE_COMMENTS**
+  // update: GoalUpdate
+  // postedBy: User
+  // description: string
+  // parentComment: UpdateComment
   // timestamps {
   //    createdAt: Time
   //    updatedAt: Time
@@ -236,6 +247,34 @@ async function main() {
       terms: [
         {
           field: ['data', 'update'],
+        },
+      ],
+    })
+  )
+
+  // Get comments by update
+  await client.query(
+    q.CreateIndex({
+      name: 'all_comments_by_update',
+      source: q.Collection('update_comments'),
+      terms: [
+        {
+          field: ['data', 'update'],
+        },
+      ],
+    })
+  )
+
+  await client.query(
+    q.CreateIndex({
+      name: 'all_comments_by_update_and_parent_comment',
+      source: q.Collection('update_comments'),
+      terms: [
+        {
+          field: ['data', 'update'],
+        },
+        {
+          field: ['data', 'parentComment'],
         },
       ],
     })

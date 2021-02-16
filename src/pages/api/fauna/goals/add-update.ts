@@ -23,18 +23,6 @@ const FaunaCreateHandler: NextApiHandler = async (
   }
   const { goalId, description } = req.body
   const userId = (session.user as User).id
-  console.log({ goalId, userId, description })
-
-  console.log(
-    await client.query(
-      q.Exists(
-        q.Match(q.Index('unique_goal_and_participant'), [
-          q.Ref(q.Collection('goals'), goalId),
-          q.Ref(q.Collection('users'), userId),
-        ])
-      )
-    )
-  )
 
   try {
     const response = await client.query(

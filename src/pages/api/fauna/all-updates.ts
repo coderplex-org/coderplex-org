@@ -32,6 +32,99 @@ const FaunaCreateHandler: NextApiHandler = async (
             id: q.Select(['ref', 'id'], goalDoc),
             title: q.Select(['data', 'title'], goalDoc),
           },
+          comments: q.Map(
+            q.Filter(
+              q.Paginate(
+                q.Match(q.Index('all_comments_by_update'), goalUpdateRef)
+              ),
+              (commentRef) => {
+                const commentDoc = q.Get(commentRef)
+                return q.IsNull(
+                  q.Select(['data', 'parentComment'], commentDoc, null)
+                )
+              }
+            ),
+            (commentRef) => {
+              const commentDoc = q.Get(commentRef)
+              const postedByDoc = q.Get(
+                q.Select(['data', 'postedBy'], commentDoc)
+              )
+              return {
+                id: q.Select(['ref', 'id'], commentDoc),
+                description: q.Select(['data', 'description'], commentDoc),
+                createdAt: q.ToMillis(
+                  q.Select(['data', 'timestamps', 'createdAt'], commentDoc)
+                ),
+                postedBy: {
+                  id: q.Select(['ref', 'id'], postedByDoc),
+                  name: q.Select(['data', 'name'], postedByDoc, null),
+                  image: q.Select(['data', 'image'], postedByDoc, null),
+                  username: q.Select(['data', 'username'], postedByDoc, null),
+                  account: {
+                    firstName: q.Select(
+                      ['data', 'account', 'firstName'],
+                      postedByDoc,
+                      null
+                    ),
+                  },
+                },
+
+                comments: q.Map(
+                  q.Paginate(
+                    q.Match(
+                      q.Index('all_comments_by_update_and_parent_comment'),
+                      [goalUpdateRef, commentRef]
+                    )
+                  ),
+                  (subCommentRef) => {
+                    const subCommentDoc = q.Get(subCommentRef)
+                    const subCommentPostedByDoc = q.Get(
+                      q.Select(['data', 'postedBy'], subCommentDoc)
+                    )
+                    return {
+                      id: q.Select(['ref', 'id'], subCommentDoc),
+                      description: q.Select(
+                        ['data', 'description'],
+                        subCommentDoc
+                      ),
+                      comments: [],
+                      createdAt: q.ToMillis(
+                        q.Select(
+                          ['data', 'timestamps', 'createdAt'],
+                          subCommentDoc
+                        )
+                      ),
+                      postedBy: {
+                        id: q.Select(['ref', 'id'], subCommentPostedByDoc),
+                        name: q.Select(
+                          ['data', 'name'],
+                          subCommentPostedByDoc,
+                          null
+                        ),
+                        image: q.Select(
+                          ['data', 'image'],
+                          subCommentPostedByDoc,
+                          null
+                        ),
+                        username: q.Select(
+                          ['data', 'username'],
+                          subCommentPostedByDoc,
+                          null
+                        ),
+                        account: {
+                          firstName: q.Select(
+                            ['data', 'account', 'firstName'],
+                            subCommentPostedByDoc,
+                            null
+                          ),
+                        },
+                      },
+                    }
+                  }
+                ),
+              }
+            }
+          ),
           likes: q.Count(
             q.Filter(
               q.Paginate(

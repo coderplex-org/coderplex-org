@@ -16,8 +16,9 @@ import { DateTime } from 'luxon'
 import { Markdown, A } from '@/components'
 import { useMutation, useQuery } from 'react-query'
 import classNames from 'classnames'
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { useSession } from 'next-auth/client'
+import { UpdateComment } from './goals'
 
 type LikeData = {
   count: number
@@ -43,6 +44,7 @@ function reducer(state: LikeData, action: { type: string; payload?: any }) {
 
 function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
   const [session, loading] = useSession()
+  const [showComments, setShowComments] = useState(false)
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
   const createdAt = DateTime.fromMillis(createdAtInMillis)
   const { isLoading, isError, data } = useQuery(
@@ -170,17 +172,13 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
               </button>
             </span>
             <span className="inline-flex items-center text-sm">
-              <button className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
+              <button
+                className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                onClick={() => setShowComments(!showComments)}
+              >
                 <ChatCenteredDots className="h-5 w-5" />
                 <span className="font-medium text-gray-900">11</span>
                 <span className="sr-only">replies</span>
-              </button>
-            </span>
-            <span className="inline-flex items-center text-sm">
-              <button className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
-                <Eye className="h-5 w-5" />
-                <span className="font-medium text-gray-900">2.7k</span>
-                <span className="sr-only">views</span>
               </button>
             </span>
           </div>
@@ -194,6 +192,21 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
           </div>
         </div>
       </article>
+      {showComments && (
+        <ul className="ml-6 mt-8 sm:ml-16 sm:mt-10">
+          {update.comments.data.map((comment, index) => (
+            <UpdateComment
+              key={comment.id}
+              postedBy={comment.postedBy}
+              postedOn={DateTime.fromMillis(comment.createdAt)}
+              isLastComment={index === update.comments.data.length - 1}
+              comments={comment.comments.data}
+            >
+              {comment.description}
+            </UpdateComment>
+          ))}
+        </ul>
+      )}
     </li>
   )
 }
