@@ -31,20 +31,23 @@ export default function Home() {
     isLoading: isGoalLoading,
     isError: isGoalError,
     data: goalData,
-  } = useQuery('/api/fauna/goals/get-current-goal', () =>
-    fetch('/api/fauna/goals/get-current-goal').then((res) => {
+  } = useQuery('/api/fauna/goals/get-current-goal', () => {
+    if (!session) {
+      return () => {}
+    }
+    return fetch('/api/fauna/goals/get-current-goal').then((res) => {
       if (!res.ok) {
         throw new Error('Something went wrong!!')
       }
       return res.json()
     })
-  )
+  })
 
   if (loading || isLoading || isGoalLoading) {
     return <p>loading...</p>
   }
 
-  if (isError) {
+  if (isError || isGoalError) {
     return <p>Something went wrong!!!</p>
   }
 
@@ -53,7 +56,7 @@ export default function Home() {
   return (
     <>
       <div className="space-y-3">
-        {session && goalData.goal && (
+        {session && goalData?.goal && (
           <NewUpdate goal={goalData.goal} updateFromHomePage={true} />
         )}
         <HomePageFeed updates={updates} />
