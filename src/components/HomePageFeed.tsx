@@ -192,21 +192,24 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
           </div>
         </div>
       </article>
-      {showComments && (
-        <ul className="ml-6 mt-8 sm:ml-16 sm:mt-10">
-          {update.comments.data.map((comment, index) => (
-            <UpdateComment
-              key={comment.id}
-              postedBy={comment.postedBy}
-              postedOn={DateTime.fromMillis(comment.createdAt)}
-              isLastComment={index === update.comments.data.length - 1}
-              comments={comment.comments.data}
-            >
-              {comment.description}
-            </UpdateComment>
-          ))}
-        </ul>
-      )}
+
+      {showComments &&
+        (update.comments.data.length > 0 ? (
+          <ul className="ml-6 mt-8 sm:ml-16 sm:mt-10">
+            {update.comments.data.map((comment, index) => (
+              <UpdateComment
+                key={comment.id}
+                postedBy={comment.postedBy}
+                postedOn={DateTime.fromMillis(comment.createdAt)}
+                isLastComment={index === update.comments.data.length - 1}
+              >
+                {comment.description}
+              </UpdateComment>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-4">No comments yet!!!</p>
+        ))}
     </li>
   )
 }

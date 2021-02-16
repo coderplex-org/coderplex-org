@@ -3,7 +3,6 @@ import React from 'react'
 import { User } from 'src/pages/members'
 import { Markdown } from '@/components'
 import { DateTime } from 'luxon'
-import type { UpdateCommentType } from 'src/pages/index'
 
 export type GoalUpdateType = {
   id: string
@@ -16,15 +15,12 @@ export default function UpdateComment({
   children,
   postedOn,
   isLastComment = false,
-  comments,
 }: {
   postedBy: User
   children: string
   postedOn: DateTime
   isLastComment?: boolean
-  comments: UpdateCommentType[]
 }) {
-  console.log({ arr: comments })
   return (
     <li>
       <div className="relative pb-8">
@@ -61,19 +57,6 @@ export default function UpdateComment({
           </div>
         </div>
       </div>
-      <ul className="ml-6 sm:ml-16">
-        {comments?.map((comment, index) => (
-          <UpdateComment
-            key={comment.id}
-            postedBy={comment.postedBy}
-            postedOn={DateTime.fromMillis(comment.createdAt)}
-            isLastComment={index === comments.length - 1}
-            comments={comment.comments.data}
-          >
-            {comment.description}
-          </UpdateComment>
-        ))}
-      </ul>
     </li>
   )
 }

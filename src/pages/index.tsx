@@ -7,9 +7,6 @@ import { User } from './members'
 export type UpdateCommentType = {
   id: string
   description: string
-  comments: {
-    data: UpdateCommentType[]
-  }
   createdAt: number
   postedBy: User
 }

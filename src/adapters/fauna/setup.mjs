@@ -58,7 +58,6 @@ async function main() {
   // update: GoalUpdate
   // postedBy: User
   // description: string
-  // parentComment: UpdateComment
   // timestamps {
   //    createdAt: Time
   //    updatedAt: Time
@@ -260,21 +259,6 @@ async function main() {
       terms: [
         {
           field: ['data', 'update'],
-        },
-      ],
-    })
-  )
-
-  await client.query(
-    q.CreateIndex({
-      name: 'all_comments_by_update_and_parent_comment',
-      source: q.Collection('update_comments'),
-      terms: [
-        {
-          field: ['data', 'update'],
-        },
-        {
-          field: ['data', 'parentComment'],
         },
       ],
     })
