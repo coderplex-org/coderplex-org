@@ -1,4 +1,4 @@
-import { GoalType, HomePageFeed } from '@/components'
+import { GoalType, HomePageFeed, NewUpdate } from '@/components'
 import { useQuery } from 'react-query'
 import { PaddedLayout } from 'src/layouts'
 import { User } from './members'
@@ -21,11 +21,24 @@ export default function Home() {
     })
   )
 
-  if (isLoading) {
+  const {
+    isLoading: isGoalLoading,
+    isError: isGoalError,
+    data: goalIdData,
+  } = useQuery('/api/fauna/goals/get-current-goal-id', () =>
+    fetch('/api/fauna/goals/get-current-goal-id').then((res) => {
+      if (!res.ok) {
+        throw new Error('Something went wrong!!')
+      }
+      return res.json()
+    })
+  )
+
+  if (isLoading || isGoalLoading) {
     return <p>loading...</p>
   }
 
-  if (isError) {
+  if (isError || isGoalError) {
     return <p>Something went wrong!!!</p>
   }
 
@@ -33,6 +46,7 @@ export default function Home() {
 
   return (
     <>
+      <NewUpdate goalId={goalIdData.goalId} />
       <HomePageFeed updates={updates} />
     </>
   )

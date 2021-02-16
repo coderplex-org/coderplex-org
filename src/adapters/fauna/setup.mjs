@@ -121,7 +121,7 @@ async function main() {
     })
   )
 
-  // Get all the goals that the user is participating in
+  // there should be only 1 record for every combination of goal and participant
   await client.query(
     q.CreateIndex({
       name: 'unique_goal_and_participant',

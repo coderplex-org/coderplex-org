@@ -1,5 +1,4 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/client'
 
 import faunadb from 'faunadb'
 const q = faunadb.query
