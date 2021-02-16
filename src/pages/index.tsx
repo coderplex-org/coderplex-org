@@ -9,6 +9,9 @@ export type HomePageFeedUpdateType = {
   description: string
   createdAt: number
   postedBy: User
+  likes: {
+    data: number
+  }
 }
 
 export default function Home() {

@@ -32,6 +32,16 @@ const FaunaCreateHandler: NextApiHandler = async (
             id: q.Select(['ref', 'id'], goalDoc),
             title: q.Select(['data', 'title'], goalDoc),
           },
+          likes: q.Count(
+            q.Filter(
+              q.Paginate(
+                q.Match(q.Index('all_likes_by_update'), goalUpdateRef)
+              ),
+              (updateLikeRef) => {
+                return q.Select(['data', 'liked'], q.Get(updateLikeRef))
+              }
+            )
+          ),
           description,
           createdAt,
           postedBy: {

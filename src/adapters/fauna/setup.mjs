@@ -17,21 +17,22 @@ async function main() {
   await client.query(q.CreateCollection({ name: 'goals' }))
   await client.query(q.CreateCollection({ name: 'goal_participants' }))
   await client.query(q.CreateCollection({ name: 'goal_updates' }))
+  await client.query(q.CreateCollection({ name: 'update_likes' }))
   // **GOAL**
   // createdBy: User
   // title: string
   // description: string(markdown)
   // timestamps {
-  // createdAt: Time
-  // updatedAt: Time
+  //    createdAt: Time
+  //    updatedAt: Time
   // }
 
   // **GOAL_PARTICIPANTS**
   // goal: Goal
   // participant: User
   // timestamps {
-  // createdAt: Time
-  // updatedAt: Time
+  //    createdAt: Time
+  //    updatedAt: Time
   // }
 
   // **GOAL_UPDATES**
@@ -39,8 +40,17 @@ async function main() {
   // postedBy: User
   // description: string(markdown)
   // timestamps {
-  // createdAt: Time
-  // updatedAt: Time
+  //    createdAt: Time
+  //    updatedAt: Time
+  // }
+
+  // **UPDATE_LIKES**
+  // update: GoalUpdate
+  // user: User
+  // liked: boolean
+  // timestamps {
+  //    createdAt: Time
+  //    updatedAt: Time
   // }
 
   await client.query(
@@ -196,6 +206,36 @@ async function main() {
         },
         {
           field: ['ref'],
+        },
+      ],
+    })
+  )
+
+  // there should be only 1 record for every combination of update and user
+  await client.query(
+    q.CreateIndex({
+      name: 'unique_update_user_like',
+      source: q.Collection('update_likes'),
+      unique: true,
+      terms: [
+        {
+          field: ['data', 'update'],
+        },
+        {
+          field: ['data', 'user'],
+        },
+      ],
+    })
+  )
+
+  // there should be only 1 record for every combination of update and user
+  await client.query(
+    q.CreateIndex({
+      name: 'all_likes_by_update',
+      source: q.Collection('update_likes'),
+      terms: [
+        {
+          field: ['data', 'update'],
         },
       ],
     })

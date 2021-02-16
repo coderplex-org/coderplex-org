@@ -9,23 +9,20 @@ const client = new faunadb.Client({
 })
 
 async function main() {
+  const userId = '290660451092529664'
+  const updateId = '290663250781012480'
   const response = await client.query(
     q.CreateIndex({
-      name: 'all_recent_updates',
-      source: q.Collection('goal_updates'),
-      unique: false,
-      values: [
+      name: 'all_likes_by_update',
+      source: q.Collection('update_likes'),
+      terms: [
         {
-          field: ['data', 'timestamps', 'updatedAt'],
-          reverse: true,
-        },
-        {
-          field: ['ref'],
+          field: ['data', 'update'],
         },
       ],
     })
   )
-  console.log({ response: JSON.stringify(response) })
+  console.log({ response: JSON.stringify({ response }) })
 }
 
 main().catch((e) => console.error(e))

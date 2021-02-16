@@ -14,10 +14,50 @@ import { User } from 'src/pages/members'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { Markdown, A } from '@/components'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import classNames from 'classnames'
 
 function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
+  const queryClient = useQueryClient()
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
   const createdAt = DateTime.fromMillis(createdAtInMillis)
+  const { isLoading, isError, data } = useQuery(
+    ['api/fauna/has-liked', update.id],
+    () =>
+      fetch(`/api/fauna/has-liked`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          updateId: update.id,
+        }),
+      }).then((res) => res.json())
+  )
+  const { mutate } = useMutation(
+    () =>
+      fetch(`/api/fauna/like-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          updateId: update.id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
+      }),
+    {
+      onSuccess: () => {
+        queryClient.refetchQueries(['api/fauna/has-liked', update.id])
+        queryClient.refetchQueries('/api/fauna/all-updates')
+      },
+    }
+  )
+
   return (
     <li className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
       <article aria-labelledby="question-title-81614">
@@ -71,10 +111,25 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
         <div className="mt-6 flex justify-between space-x-8">
           <div className="flex space-x-6">
             <span className="inline-flex items-center text-sm">
-              <button className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
-                <ThumbsUp className="h-5 w-5" />
-                <span className="font-medium text-gray-900">29</span>
-                <span className="sr-only">likes</span>
+              <button
+                className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                onClick={() => mutate()}
+              >
+                <ThumbsUp
+                  className={classNames(
+                    'h-5 w-5',
+                    data?.liked && 'text-brand-600'
+                  )}
+                  weight={data?.liked ? 'bold' : 'regular'}
+                />
+                {!isLoading && !isError && (
+                  <>
+                    <span className="font-medium text-gray-900">
+                      {update.likes.data}
+                    </span>
+                    <span className="sr-only">likes</span>
+                  </>
+                )}
               </button>
             </span>
             <span className="inline-flex items-center text-sm">
