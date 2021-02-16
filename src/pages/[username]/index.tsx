@@ -92,6 +92,7 @@ export default function UserProfile({
       <Profile user={user} />
       {goalResponses.map((goalResponse: GoalResponse) => (
         <Goal.Feed
+          key={goalResponse.id}
           createdBy={goalResponse.createdBy}
           goal={{
             id: goalResponse.id,

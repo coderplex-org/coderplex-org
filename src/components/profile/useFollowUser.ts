@@ -1,10 +1,9 @@
 import { useSession } from 'next-auth/client'
 import { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { User } from 'src/pages/members'
 
 export default function useFollowUser(userId: string) {
-  const queryClient = useQueryClient()
   const [session, loading] = useSession()
   const [currentUser, setCurrentUser] = useState<User>({})
   useEffect(() => {
@@ -12,7 +11,7 @@ export default function useFollowUser(userId: string) {
       setCurrentUser(session.user)
     }
   }, [loading, session])
-  const { data: isFollowingData } = useQuery(
+  const { isLoading, data: isFollowingData } = useQuery(
     ['/api/isFollowing', currentUser?.id, userId],
     () => {
       if (!session) {
@@ -35,59 +34,27 @@ export default function useFollowUser(userId: string) {
     }
   )
 
-  const { mutate: followUser } = useMutation(
-    () =>
-      fetch(`/api/fauna/follow-user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error('Something went wrong!!')
-        }
-        return res.json()
-      }),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries({
-          queryKey: ['/api/isFollowing', currentUser?.id, userId],
-        })
+  const { mutate: toggleFollow } = useMutation(() =>
+    fetch(`/api/fauna/toggle-follow`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    }
-  )
-  const { mutate: unFollowUser } = useMutation(
-    () =>
-      fetch(`/api/fauna/unfollow-user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error('Something went wrong!!')
-        }
-        return res.json()
+      body: JSON.stringify({
+        userId,
       }),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries({
-          queryKey: ['/api/isFollowing', currentUser?.id, userId],
-        })
-      },
-    }
+    }).then((res) => {
+      if (!res.ok) {
+        throw new Error('Something went wrong!!')
+      }
+      return res.json()
+    })
   )
 
   return {
+    isLoading,
     shouldShowFollowButton: currentUser.id !== userId,
     isFollowing: isFollowingData?.isFollowing ?? false,
-    followUser,
-    unFollowUser,
+    toggleFollow,
   }
 }

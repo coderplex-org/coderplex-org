@@ -12,7 +12,7 @@ import {
 } from 'tabler-icons'
 import { A } from '@/components'
 import useFollowUser from '../profile/useFollowUser'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 export default function Member({ user }: { user: User }) {
@@ -22,10 +22,23 @@ export default function Member({ user }: { user: User }) {
   const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
   const {
     shouldShowFollowButton,
-    isFollowing,
-    followUser,
-    unFollowUser,
+    isFollowing: isFollowingData,
+    toggleFollow,
+    isLoading,
   } = useFollowUser(user.id)
+
+  const [isFollowing, setIsFollowing] = useState(false)
+  useEffect(() => {
+    if (!isLoading) {
+      setIsFollowing(isFollowingData)
+    }
+  }, [isFollowingData, isLoading])
+
+  const toggle = () => {
+    setIsFollowing(!isFollowing)
+    toggleFollow()
+  }
+
   return (
     <li className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200">
       <div className="flex-1 flex flex-col p-8">
@@ -113,27 +126,31 @@ export default function Member({ user }: { user: User }) {
           {shouldShowFollowButton && (
             <>
               <dt className="sr-only">Follow</dt>
-              <dd className="mt-4">
-                {isFollowing ? (
-                  <>
-                    <Button
-                      onClick={() => unFollowUser()}
-                      variant="solid"
-                      variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
-                      onMouseEnter={() => setIsHoveringFollowButton(true)}
-                      onMouseLeave={() => setIsHoveringFollowButton(false)}
-                    >
-                      {isHoveringFollowButton ? 'Unfollow' : 'Following'}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button onClick={() => followUser()} leadingIcon={IconPlus}>
-                      Follow
-                    </Button>
-                  </>
-                )}
-              </dd>
+              {!isLoading && (
+                <dd className="mt-4">
+                  {isFollowing ? (
+                    <>
+                      <Button
+                        onClick={() => toggle()}
+                        variant="solid"
+                        variantColor={
+                          isHoveringFollowButton ? 'danger' : 'brand'
+                        }
+                        onMouseEnter={() => setIsHoveringFollowButton(true)}
+                        onMouseLeave={() => setIsHoveringFollowButton(false)}
+                      >
+                        {isHoveringFollowButton ? 'Unfollow' : 'Following'}
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button onClick={() => toggle()} leadingIcon={IconPlus}>
+                        Follow
+                      </Button>
+                    </>
+                  )}
+                </dd>
+              )}
             </>
           )}
           {!shouldShowFollowButton && (

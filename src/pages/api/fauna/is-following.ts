@@ -22,21 +22,27 @@ const FaunaCreateHandler: NextApiHandler = async (
     res.status(401).json({ message: 'Unauthorized' })
   }
 
+  const followerId = (session.user as User).id
+
   try {
     const { userId } = req.body
-    const recordExists = await client.query(
+    const response: any = await client.query(
       q.Let(
         {
-          ref: q.Match(q.Index('user_follower_by_user_and_follower'), [
+          ref: q.Match(q.Index('unique_user_and_follower'), [
             q.Ref(q.Collection('users'), userId),
-            q.Ref(q.Collection('users'), (session.user as User).id),
+            q.Ref(q.Collection('users'), followerId),
           ]),
         },
-        q.If(q.Exists(q.Var('ref')), q.Get(q.Var('ref')), null)
+        q.If(
+          q.Exists(q.Var('ref')),
+          q.Select(['data', 'isFollowing'], q.Get(q.Var('ref'))),
+          false
+        )
       )
     )
 
-    res.status(200).json({ isFollowing: !!recordExists })
+    res.status(200).json({ isFollowing: response })
   } catch (error) {
     console.error({ msg: error.message })
     res.status(500).json({ message: error.message })

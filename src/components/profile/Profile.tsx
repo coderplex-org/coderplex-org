@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { User } from 'src/pages/members'
 import {
   IconBrandCodepen,
@@ -15,11 +15,23 @@ import useFollowUser from './useFollowUser'
 export default function Profile({ user }: { user: User }) {
   const {
     shouldShowFollowButton,
-    isFollowing,
-    followUser,
-    unFollowUser,
+    isFollowing: isFollowingData,
+    toggleFollow,
+    isLoading,
   } = useFollowUser(user.id)
   const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
+
+  const [isFollowing, setIsFollowing] = useState(false)
+  useEffect(() => {
+    if (!isLoading) {
+      setIsFollowing(isFollowingData)
+    }
+  }, [isFollowingData, isLoading])
+
+  const toggle = () => {
+    setIsFollowing(!isFollowing)
+    toggleFollow()
+  }
 
   return (
     <div className="rounded-lg bg-white overflow-hidden shadow">
@@ -128,23 +140,24 @@ export default function Profile({ user }: { user: User }) {
             </div>
           ) : (
             <div className="mt-5 flex justify-center sm:mt-0">
-              {isFollowing ? (
-                <>
-                  <Button
-                    onClick={() => unFollowUser()}
-                    variant="solid"
-                    variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
-                    onMouseEnter={() => setIsHoveringFollowButton(true)}
-                    onMouseLeave={() => setIsHoveringFollowButton(false)}
-                  >
-                    {isHoveringFollowButton ? 'Unfollow' : 'Following'}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button onClick={() => followUser()}>Follow</Button>
-                </>
-              )}
+              {!isLoading &&
+                (isFollowing ? (
+                  <>
+                    <Button
+                      onClick={() => toggle()}
+                      variant="solid"
+                      variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
+                      onMouseEnter={() => setIsHoveringFollowButton(true)}
+                      onMouseLeave={() => setIsHoveringFollowButton(false)}
+                    >
+                      {isHoveringFollowButton ? 'Unfollow' : 'Following'}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={() => toggle()}>Follow</Button>
+                  </>
+                ))}
             </div>
           )}
         </div>

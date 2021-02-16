@@ -9,17 +9,9 @@ const client = new faunadb.Client({
 })
 
 async function main() {
-  const userId = '290660451092529664'
-  const updateId = '290663250781012480'
-  const response = await client.query(
-    q.CreateIndex({
-      name: 'all_likes_by_update',
-      source: q.Collection('update_likes'),
-      terms: [
-        {
-          field: ['data', 'update'],
-        },
-      ],
+  const response = client.query(
+    q.Update(q.Index('user_follower_by_user_and_follower'), {
+      name: 'unique_user_and_follower',
     })
   )
   console.log({ response: JSON.stringify({ response }) })

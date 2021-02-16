@@ -1,3 +1,4 @@
+import { delay } from './../../../utils/index'
 import { User } from 'src/pages/members'
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
@@ -23,28 +24,52 @@ const FaunaCreateHandler: NextApiHandler = async (
   }
 
   const followerId = (session.user as User).id
-
   try {
     const { userId } = req.body
 
-    const response: any = await client.query(
+    const response = await client.query(
       q.Let(
         {
-          userFollowerDoc: q.Create(q.Collection('user_followers'), {
+          ref: q.Match(q.Index('unique_user_and_follower'), [
+            q.Ref(q.Collection('users'), userId),
+            q.Ref(q.Collection('users'), followerId),
+          ]),
+        },
+        q.If(
+          q.Exists(q.Var('ref')),
+          q.Update(
+            q.Ref(
+              q.Collection('user_followers'),
+              q.Select(['ref', 'id'], q.Get(q.Var('ref')))
+            ),
+            {
+              data: {
+                isFollowing: q.Not(
+                  q.Select(['data', 'isFollowing'], q.Get(q.Var('ref')))
+                ),
+                timestamps: {
+                  updatedAt: q.Now(),
+                },
+              },
+            }
+          ),
+          q.Create(q.Collection('user_followers'), {
             data: {
               user: q.Ref(q.Collection('users'), userId),
               follower: q.Ref(q.Collection('users'), followerId),
+              isFollowing: true,
+              timestamps: {
+                createdAt: q.Now(),
+                updatedAt: q.Now(),
+              },
             },
-          }),
-        },
-        {
-          id: q.Select(['ref', 'id'], q.Var('userFollowerDoc')),
-        }
+          })
+        )
       )
     )
-    res.status(200).json(response)
+    res.status(200).json({ response })
   } catch (error) {
-    console.error({ msg: error.message })
+    console.error({ msg1: error.message })
     res.status(500).json({ message: error.message })
   }
 }
