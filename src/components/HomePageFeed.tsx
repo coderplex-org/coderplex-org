@@ -184,7 +184,7 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
                 </UpdateComment>
               ))}
             </UpdateCommentsList>
-            <NewComment updateId={update.id} />
+            {session && <NewComment updateId={update.id} />}
           </UpdateComments>
         </>
       )}
