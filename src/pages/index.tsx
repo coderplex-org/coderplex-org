@@ -42,9 +42,6 @@ export default function Home() {
     isError: isGoalError,
     data: goalData,
   } = useQuery('/api/fauna/goals/get-current-goal', () => {
-    if (!session) {
-      return () => {}
-    }
     return fetch('/api/fauna/goals/get-current-goal').then((res) => {
       if (!res.ok) {
         throw new Error('Something went wrong!!')

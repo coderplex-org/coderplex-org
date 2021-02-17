@@ -14,9 +14,6 @@ export default function useFollowUser(userId: string) {
   const { isLoading, data: isFollowingData } = useQuery(
     ['/api/isFollowing', currentUser?.id, userId],
     () => {
-      if (!session) {
-        return () => {}
-      }
       return fetch(`/api/fauna/is-following`, {
         method: 'POST',
         headers: {

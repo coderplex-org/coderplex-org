@@ -44,9 +44,6 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
   const { isLoading, isError, data } = useQuery(
     ['api/fauna/has-liked', update.id],
     () => {
-      if (!session) {
-        return { liked: false }
-      }
       return fetch(`/api/fauna/has-liked`, {
         method: 'POST',
         headers: {
@@ -59,9 +56,6 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
     }
   )
   const { mutate } = useMutation(() => {
-    if (!session) {
-      return Promise.resolve()
-    }
     return fetch(`/api/fauna/toggle-like`, {
       method: 'POST',
       headers: {
