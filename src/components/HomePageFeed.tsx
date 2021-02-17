@@ -1,16 +1,5 @@
-import { Avatar, Menu } from '@/ui'
-import {
-  ChatCenteredDots,
-  Code,
-  DotsThreeOutlineVertical,
-  Eye,
-  Flag,
-  ShareNetwork,
-  Star,
-  ThumbsUp,
-} from 'phosphor-react'
-import Link from 'next/link'
-import { User } from 'src/pages/members'
+import { Avatar } from '@/ui'
+import { ChatCenteredDots, ShareNetwork, ThumbsUp } from 'phosphor-react'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { Markdown, A } from '@/components'
@@ -19,7 +8,6 @@ import classNames from 'classnames'
 import { useEffect, useReducer, useState } from 'react'
 import { useSession } from 'next-auth/client'
 import {
-  Goal,
   NewComment,
   UpdateComment,
   UpdateComments,
@@ -126,20 +114,6 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
                 </time>
               </p>
             </div>
-            <Menu
-              trigger={<DotsThreeOutlineVertical className="cursor-pointer" />}
-              className="z-10 ml-3"
-            >
-              <Link href={'/'} passHref={true}>
-                <Menu.Item icon={Star}>Add to favourites</Menu.Item>
-              </Link>
-              <Link href={'/'} passHref={true}>
-                <Menu.Item icon={Code}>Embed</Menu.Item>
-              </Link>
-              <Link href={'/'} passHref={true}>
-                <Menu.Item icon={Flag}>Report Content</Menu.Item>
-              </Link>
-            </Menu>
           </div>
           <div className="mt-4 flex">
             <A href={`${postedBy.username}`}>
@@ -225,10 +199,8 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
 }
 
 export default function HomePageFeed({
-  user = {},
   updates,
 }: {
-  user?: User
   updates: HomePageFeedUpdateType[]
 }) {
   return (
