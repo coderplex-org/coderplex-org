@@ -1,5 +1,5 @@
 import { Button } from '@/ui'
-import { IconBrandGithub, IconBrandLinkedin } from 'tabler-icons'
+import { IconBrandGithub } from 'tabler-icons'
 import { signIn, useSession } from 'next-auth/client'
 import { GetServerSideProps } from 'next'
 import { useEffect } from 'react'
@@ -42,18 +42,6 @@ export default function Login({ callbackUrl }) {
                   onClick={() => signIn('github')}
                 >
                   GitHub
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 mt-6">
-                <Button
-                  className="flex justify-center w-full"
-                  leadingIcon={IconBrandLinkedin}
-                  variant="solid"
-                  variantColor="brand"
-                  onClick={() => signIn('linkedin')}
-                >
-                  LinkedIn
                 </Button>
               </div>
             </div>
