@@ -26,24 +26,28 @@ const FaunaCreateHandler: NextApiHandler = async (
 
   try {
     const response: any = await client.query(
-      q.Map(
-        q.Paginate(
-          q.Match(
-            q.Index('all_goals_by_participant'),
-            q.Ref(q.Collection('users'), userId)
-          )
-        ),
-        (goalParticipantRef) => {
-          const goalParticipantDoc = q.Get(goalParticipantRef)
-          const goalRef = q.Select(['data', 'goal'], goalParticipantDoc)
-          return {
-            id: q.Select(['id'], goalRef),
-            title: q.Select(['data', 'title'], q.Get(goalRef)),
-          }
+      q.Let(
+        {
+          goalParticipantRef: q.Select(
+            0,
+            q.Paginate(
+              q.Match(
+                q.Index('all_goals_by_participant'),
+                q.Ref(q.Collection('users'), userId)
+              )
+            )
+          ),
+          goalParticipantDoc: q.Get(q.Var('goalParticipantRef')),
+          goalRef: q.Select(['data', 'goal'], q.Var('goalParticipantDoc')),
+        },
+        {
+          id: q.Select(['id'], q.Var('goalRef')),
+          title: q.Select(['data', 'title'], q.Get(q.Var('goalRef'))),
         }
       )
     )
-    res.status(200).json({ goal: response.data?.[0] ?? null })
+
+    res.status(200).json({ goal: response })
   } catch (error) {
     console.error({ msg: error.message })
     res.status(500).json({ message: error.message })
