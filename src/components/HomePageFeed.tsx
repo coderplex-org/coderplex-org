@@ -13,6 +13,7 @@ import {
   UpdateComments,
   UpdateCommentsList,
 } from './goals'
+import Aside from './Aside'
 
 type LikeData = {
   count: number
@@ -199,13 +200,18 @@ export default function HomePageFeed({
 }) {
   return (
     <>
-      <div className="mt-4">
-        <h1 className="sr-only">Recent updates</h1>
-        <ul className="space-y-4">
-          {updates.map((update) => (
-            <HomePageFeedUpdate update={update} key={update.id} />
-          ))}
-        </ul>
+      <div className="grid grid-cols-5 gap-10">
+        <div className="col-span-5 md:col-span-3">
+          <h1 className="sr-only">Recent updates</h1>
+          <ul className="space-y-4">
+            {updates.map((update) => (
+              <HomePageFeedUpdate update={update} key={update.id} />
+            ))}
+          </ul>
+        </div>
+        <div className="text-center hidden md:block col-span-2 fixed top-24 bottom-24 right-12 lg:right-24 w-1/3">
+          <Aside />
+        </div>
       </div>
     </>
   )
