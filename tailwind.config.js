@@ -11,6 +11,9 @@ module.exports = {
       sans: ['Inter', ...fontFamily.sans],
     },
     extend: {
+      spacing: {
+        13: '3.25rem',
+      },
       colors: {
         blueGray: colors.blueGray,
         coolGray: colors.coolGray,

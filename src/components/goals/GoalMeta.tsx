@@ -97,10 +97,7 @@ export default function GoalMeta({
           <h2 className="text-sm font-medium text-gray-500">Tags</h2>
           <ul className="mt-2 leading-8">
             <li className="inline">
-              <a
-                href="/"
-                className="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5"
-              >
+              <a className="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5">
                 <div className="absolute flex-shrink-0 flex items-center justify-center">
                   <span
                     className="h-1.5 w-1.5 rounded-full bg-indigo-500"

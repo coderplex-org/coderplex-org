@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/client'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
-import { Markdown, A } from '@/components'
+import { Markdown } from '@/components'
 
 type Inputs = {
   description: string
@@ -103,14 +103,6 @@ export default function NewUpdate({
                   <Markdown>{descriptionStorage}</Markdown>
                 </div>
               )}
-
-              <div className="mt-2 flex">
-                <A href={`${(session.user as User).username}`}>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
-                    🚀 Goal: {goal.title}
-                  </span>
-                </A>
-              </div>
 
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button variant="solid" variantColor="brand" type="submit">

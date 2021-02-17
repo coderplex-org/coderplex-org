@@ -1,4 +1,4 @@
-import { GoalType, HomePageFeed, NewUpdate } from '@/components'
+import { A, GoalType, HomePageFeed, NewUpdate } from '@/components'
 import { useSession } from 'next-auth/client'
 import { useQuery } from 'react-query'
 import { PaddedLayout } from 'src/layouts'
@@ -62,13 +62,21 @@ export default function Home() {
   }
 
   const updates = data.updates.data
-  console.log({ updates })
 
   return (
     <>
       <div className="space-y-3">
         {session && goalData?.goal && (
-          <NewUpdate goal={goalData.goal} updateFromHomePage={true} />
+          <>
+            <div className="mt-2 flex ml-13">
+              <A href={`${(session.user as User).username}`}>
+                <span className="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase">
+                  🚀 Goal: {goalData.goal.title}
+                </span>
+              </A>
+            </div>
+            <NewUpdate goal={goalData.goal} updateFromHomePage={true} />
+          </>
         )}
         <HomePageFeed updates={updates} />
       </div>
