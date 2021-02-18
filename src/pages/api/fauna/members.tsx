@@ -25,9 +25,9 @@ const FaunaCreateHandler: NextApiHandler = async (
           username: q.Select(['data', 'username'], user, null),
           image: q.Select(['data', 'image'], user, null),
           account: {
-            firstName: q.Select(['data', 'account', 'firstName'], user, ''),
+            firstName: q.Select(['data', 'account', 'firstName'], user, null),
           },
-          socials: q.Select(['data', 'socials'], user, {}),
+          socials: q.Select(['data', 'socials'], user, null),
         }
       })
     )
