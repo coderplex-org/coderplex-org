@@ -93,8 +93,8 @@ export default function ProfileSettings() {
             </div>
 
             <div className="grid grid-cols-4 gap-6">
-              <div className="col-span-4 grid grid-cols-4">
-                <div className="flex col-span-3 flex-col gap-6 max-w-lg">
+              <div className="col-span-4 flex flex-col-reverse md:grid md:grid-cols-4">
+                <div className="flex md:col-span-3 flex-col gap-6 max-w-lg">
                   <Input
                     label="Username"
                     type="text"
@@ -136,7 +136,7 @@ export default function ProfileSettings() {
                     errorMessage="This field is required"
                   />
                 </div>
-                <div className="col-span-1 grid place-items-center">
+                <div className="md:col-span-1 grid place-items-center">
                   {image && <Avatar src={image} className="w-32 h-32" />}
                 </div>
               </div>
