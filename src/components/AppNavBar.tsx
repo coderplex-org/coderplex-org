@@ -101,7 +101,7 @@ export default function AppNavBar() {
                 <Button
                   variant="solid"
                   variantColor="brand"
-                  onClick={() => signIn()}
+                  onClick={() => signIn('github')}
                 >
                   Join
                 </Button>

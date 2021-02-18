@@ -41,7 +41,28 @@ const FaunaCreateHandler: NextApiHandler = async (
   const session = await getSession({ req })
 
   if (!session) {
-    return res.status(200).json({ users: [] })
+    const response: any = await client.query(
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('users')), { size: 3 }),
+        (userRef) => {
+          const userDoc = q.Get(userRef)
+          return {
+            id: q.Select(['ref', 'id'], userDoc),
+            name: q.Select(['data', 'name'], userDoc, null),
+            image: q.Select(['data', 'image'], userDoc, null),
+            username: q.Select(['data', 'username'], userDoc, null),
+            account: {
+              firstName: q.Select(
+                ['data', 'account', 'firstName'],
+                userDoc,
+                null
+              ),
+            },
+          }
+        }
+      )
+    )
+    return res.status(200).json({ users: response.data })
   }
 
   const userId = (session.user as User).id

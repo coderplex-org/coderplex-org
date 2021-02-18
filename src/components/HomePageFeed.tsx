@@ -14,7 +14,7 @@ import { Markdown, A } from '@/components'
 import { useMutation, useQuery } from 'react-query'
 import classNames from 'classnames'
 import { useEffect, useReducer, useState } from 'react'
-import { useSession } from 'next-auth/client'
+import { signIn, useSession } from 'next-auth/client'
 import {
   NewComment,
   NewUpdate,
@@ -311,14 +311,14 @@ function HomePageSideNavBar() {
           )}
           {!session && (
             <>
-              <A
-                href="/join"
+              <button
+                onClick={() => signIn('github')}
                 className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
                 aria-current="false"
               >
                 <RocketLaunch className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                 <span className="truncate">Get Started</span>
-              </A>
+              </button>
               <A
                 href="/members"
                 className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
@@ -336,6 +336,7 @@ function HomePageSideNavBar() {
 }
 
 function FollowButton({ user }: { user: User }) {
+  const [session] = useSession()
   const { toggleFollow } = useFollowUser(user.id)
   const [isFollowing, setIsFollowing] = useState(false)
   return (
@@ -358,6 +359,10 @@ function FollowButton({ user }: { user: User }) {
           type="button"
           className="inline-flex items-center px-3 py-0.5 rounded-full bg-brand-50 text-sm font-medium text-brand-700 hover:bg-brand-100"
           onClick={() => {
+            if (!session) {
+              signIn('github')
+              return
+            }
             setIsFollowing(true)
             toggleFollow()
           }}
@@ -453,12 +458,12 @@ function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
                   </div>
                 ) : (
                   <div className="mt-6">
-                    <A
-                      href="/join"
+                    <button
+                      onClick={() => signIn('github')}
                       className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                     >
                       Join
-                    </A>
+                    </button>
                   </div>
                 )}
               </div>
@@ -484,12 +489,21 @@ function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
                   </ul>
                 </div>
                 <div className="mt-6">
-                  <A
-                    href="/members"
-                    className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    View all
-                  </A>
+                  {session ? (
+                    <A
+                      href="/members"
+                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      View all
+                    </A>
+                  ) : (
+                    <button
+                      onClick={() => signIn('github')}
+                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Join
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
