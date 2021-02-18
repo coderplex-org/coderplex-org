@@ -5,6 +5,7 @@ import Fauna from '@/adapters'
 
 import faunadb from 'faunadb'
 import { User } from 'src/pages/members'
+import slugify from 'slugify'
 const isProduction = process.env.NODE_ENV === 'production'
 const faunaClient = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET ?? 'secret',
@@ -33,6 +34,45 @@ const options: InitOptions = {
         }
       },
     }),
+    ...(isProduction
+      ? []
+      : [
+          Providers.LinkedIn({
+            clientId: process.env.LINKEDIN_ID,
+            clientSecret: process.env.LINKEDIN_SECRET,
+            scope: 'r_liteprofile',
+            // @ts-ignore
+            profileUrl:
+              'https://api.linkedin.com/v2/me?projection=(id,localizedFirstName,localizedLastName,profilePicture(displayImage~digitalmediaAsset:playableStreams))',
+            // @ts-ignore
+            profile: (profileData) => {
+              const profileImage =
+                profileData?.profilePicture?.['displayImage~']?.elements?.[3]
+                  ?.identifiers?.[0]?.identifier ??
+                profileData?.profilePicture?.['displayImage~']?.elements?.[2]
+                  ?.identifiers?.[0]?.identifier ??
+                profileData?.profilePicture?.['displayImage~']?.elements?.[1]
+                  ?.identifiers?.[0]?.identifier ??
+                profileData?.profilePicture?.['displayImage~']?.elements?.[0]
+                  ?.identifiers?.[0]?.identifier ??
+                ''
+              const name =
+                profileData.localizedFirstName +
+                ' ' +
+                profileData.localizedLastName
+              const username = slugify(name + ' ' + profileData.id, {
+                lower: true,
+              })
+              return {
+                id: profileData.id,
+                name,
+                email: null,
+                image: profileImage,
+                username,
+              }
+            },
+          }),
+        ]),
   ],
   adapter: Fauna.Adapter({ faunaClient }),
 

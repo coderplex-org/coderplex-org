@@ -1,5 +1,5 @@
 import { Button } from '@/ui'
-import { IconBrandGithub } from 'tabler-icons'
+import { IconBrandGithub, IconBrandLinkedin } from 'tabler-icons'
 import { signIn, useSession } from 'next-auth/client'
 import { GetServerSideProps } from 'next'
 import { useEffect } from 'react'
@@ -8,6 +8,7 @@ import { Logo } from '@/components'
 
 export default function Login({ callbackUrl }) {
   const router = useRouter()
+  const isProduction = process.env.NODE_ENV === 'production'
   const [session, loading] = useSession()
 
   useEffect(() => {
@@ -44,6 +45,19 @@ export default function Login({ callbackUrl }) {
                   GitHub
                 </Button>
               </div>
+              {!isProduction && (
+                <div className="grid grid-cols-1 gap-3 mt-6">
+                  <Button
+                    className="flex justify-center w-full"
+                    leadingIcon={IconBrandLinkedin}
+                    variant="solid"
+                    variantColor="brand"
+                    onClick={() => signIn('linkedin')}
+                  >
+                    LinkedIn
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
