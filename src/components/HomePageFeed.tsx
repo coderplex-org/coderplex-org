@@ -2,7 +2,6 @@ import { Avatar } from '@/ui'
 import {
   ChatCenteredDots,
   Gear,
-  Plus,
   RocketLaunch,
   ShareNetwork,
   ThumbsUp,
@@ -26,8 +25,8 @@ import {
 import { User } from 'src/pages/members'
 import AppNavBar from './AppNavBar'
 import AppFooter from './AppFooter'
-import { IconPlus } from 'tabler-icons'
 import { useRouter } from 'next/router'
+import useFollowUser from './profile/useFollowUser'
 
 type LikeData = {
   count: number
@@ -336,6 +335,56 @@ function HomePageSideNavBar() {
   )
 }
 
+function FollowButton({ user }: { user: User }) {
+  const { toggleFollow } = useFollowUser(user.id)
+  const [isFollowing, setIsFollowing] = useState(false)
+  return (
+    <li className="flex items-center py-4 space-x-3">
+      <div className="flex-shrink-0">
+        <img className="h-8 w-8 rounded-full" src={user.image} alt="" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium text-gray-900">
+          <A href={`/${user.username}`}>
+            {user.account?.firstName ?? user.name}
+          </A>
+        </p>
+        <p className="text-sm text-gray-500">
+          <A href={`/${user.username}`}>@{user.username}</A>
+        </p>
+      </div>
+      <div className="flex-shrink-0">
+        <button
+          type="button"
+          className="inline-flex items-center px-3 py-0.5 rounded-full bg-brand-50 text-sm font-medium text-brand-700 hover:bg-brand-100"
+          onClick={() => {
+            setIsFollowing(true)
+            toggleFollow()
+          }}
+        >
+          {!isFollowing && (
+            <svg
+              className="-ml-1 mr-0.5 h-5 w-5 text-brand-400"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+
+          <span>{isFollowing ? 'Following' : 'Follow'}</span>
+        </button>
+      </div>
+    </li>
+  )
+}
+
 function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
   const router = useRouter()
   const [session, loading] = useSession()
@@ -430,50 +479,7 @@ function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
                     {!isLoading &&
                       !isError &&
                       response.users.map((user: User) => (
-                        <li
-                          className="flex items-center py-4 space-x-3"
-                          key={user.id}
-                        >
-                          <div className="flex-shrink-0">
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={user.image}
-                              alt=""
-                            />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                              <A href={`/${user.username}`}>
-                                {user.account?.firstName ?? user.name}
-                              </A>
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              <A href={`/${user.username}`}>@{user.username}</A>
-                            </p>
-                          </div>
-                          <div className="flex-shrink-0">
-                            <button
-                              type="button"
-                              className="inline-flex items-center px-3 py-0.5 rounded-full bg-brand-50 text-sm font-medium text-brand-700 hover:bg-brand-100"
-                              onClick={() => router.push(`/${user.username}`)}
-                            >
-                              <svg
-                                className="-ml-1 mr-0.5 h-5 w-5 text-brand-400"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                              <span>Follow</span>
-                            </button>
-                          </div>
-                        </li>
+                        <FollowButton user={user} key={user.id} />
                       ))}
                   </ul>
                 </div>
