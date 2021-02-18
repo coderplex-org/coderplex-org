@@ -17,6 +17,7 @@ import { useEffect, useReducer, useState } from 'react'
 import { signIn, useSession } from 'next-auth/client'
 import {
   NewComment,
+  NewGoal,
   NewUpdate,
   UpdateComment,
   UpdateComments,
@@ -232,9 +233,9 @@ export default function HomePageFeed({
           <div className="hidden lg:block lg:col-span-3 xl:col-span-2">
             <HomePageSideNavBar />
           </div>
-          <main className="lg:col-span-9 xl:col-span-6">
+          <main className="lg:col-span-9 xl:col-span-6 px-2">
             <div className="space-y-3">
-              {showGoal && (
+              {showGoal ? (
                 <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
                   <div className="flex">
                     <A href={`${(session.user as User).username}`}>
@@ -248,6 +249,19 @@ export default function HomePageFeed({
                   </div>
                   <NewUpdate goal={goal} updateFromHomePage={true} />
                 </div>
+              ) : (
+                session && (
+                  <>
+                    <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
+                      <div className="flex">
+                        <span className="block text-lg text-center text-indigo-600 font-semibold tracking-wide">
+                          🚀 Set Your Goal:
+                        </span>
+                      </div>
+                      <NewGoal />
+                    </div>
+                  </>
+                )
               )}
               <div>
                 <h1 className="sr-only">Recent questions</h1>
