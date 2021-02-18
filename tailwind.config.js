@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     nightwind: {
       typography: true,
-      colorClasses: ['placeholder'],
+      colorClasses: ['placeholder', 'divide'],
     },
     fontFamily: {
       sans: ['Inter', ...fontFamily.sans],
