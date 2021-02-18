@@ -26,39 +26,22 @@ const FaunaCreateHandler: NextApiHandler = async (
 
   try {
     const response: any = await client.query(
-      q.Map(
-        q.Paginate(
-          q.Difference(
-            q.Documents(q.Collection('users')),
-            q.Union(
-              q.Match(
-                q.Index('followers_by_user'),
-                q.Ref(q.Collection('users'), userId)
-              ),
-              q.Match(
-                q.Index('user_by_username'),
-                (session.user as User).username
-              )
-            )
-          )
-        ),
-        (userRef) => {
-          const userDoc = q.Get(userRef)
-          return {
-            id: q.Select(['ref', 'id'], userDoc),
-            name: q.Select(['data', 'name'], userDoc, null),
-            image: q.Select(['data', 'image'], userDoc, null),
-            username: q.Select(['data', 'username'], userDoc, null),
-            account: {
-              firstName: q.Select(
-                ['data', 'account', 'firstName'],
-                userDoc,
-                null
-              ),
-            },
-          }
+      q.Map(q.Paginate(q.Documents(q.Collection('users'))), (userRef) => {
+        const userDoc = q.Get(userRef)
+        return {
+          id: q.Select(['ref', 'id'], userDoc),
+          name: q.Select(['data', 'name'], userDoc, null),
+          image: q.Select(['data', 'image'], userDoc, null),
+          username: q.Select(['data', 'username'], userDoc, null),
+          account: {
+            firstName: q.Select(
+              ['data', 'account', 'firstName'],
+              userDoc,
+              null
+            ),
+          },
         }
-      )
+      })
     )
 
     res.status(200).json({ users: response.data })
