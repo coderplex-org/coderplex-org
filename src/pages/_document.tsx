@@ -55,7 +55,7 @@ class MyDocument extends Document {
           ></script>
           <script src="https://unpkg.com/phosphor-icons" defer></script>
         </Head>
-        <body className="overflow-auto bg-gray-50">
+        <body className="bg-gray-50">
           <Main />
           <NextScript />
         </body>

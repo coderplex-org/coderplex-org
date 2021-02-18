@@ -22,7 +22,10 @@ const NavBar = ({
 }: NavBarProps) => {
   const [isNavBarOpen, setIsNavBarOpen] = useState(false)
   return (
-    <nav className={classNames('bg-white shadow', className)} {...rest}>
+    <nav
+      className={classNames('bg-white shadow sticky top-0 z-10', className)}
+      {...rest}
+    >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">

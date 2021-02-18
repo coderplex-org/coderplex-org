@@ -224,7 +224,7 @@ export default function HomePageFeed({
   const [session] = useSession()
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <header className="bg-white shadow-sm lg:static lg:overflow-y-visible">
+      <header className="bg-white shadow-sm sticky top-0 z-10">
         <AppNavBar />
       </header>
       <div className="py-10 flex-1">
