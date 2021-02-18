@@ -15,7 +15,7 @@ export default function GoalTitle({
   showEditButton: boolean
 }) {
   return (
-    <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:pb-6">
+    <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:border-gray-200 xl:pb-6">
       <div>
         <h1>
           <span className="block text-sm text-indigo-600 font-semibold tracking-wide uppercase">
