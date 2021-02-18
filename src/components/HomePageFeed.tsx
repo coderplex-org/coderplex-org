@@ -25,7 +25,6 @@ import {
 import { User } from 'src/pages/members'
 import AppNavBar from './AppNavBar'
 import AppFooter from './AppFooter'
-import { useRouter } from 'next/router'
 import useFollowUser from './profile/useFollowUser'
 
 type LikeData = {
@@ -267,10 +266,7 @@ export default function HomePageFeed({
 }
 
 function HomePageSideNavBar() {
-  const [session, loading] = useSession()
-  if (loading) {
-    return <p>loading...</p>
-  }
+  const [session] = useSession()
   return (
     <>
       <nav
@@ -391,18 +387,13 @@ function FollowButton({ user }: { user: User }) {
 }
 
 function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
-  const router = useRouter()
-  const [session, loading] = useSession()
+  const [session] = useSession()
   const { isLoading, isError, data: response } = useQuery(
     'api/fauna/who-to-follow',
     () => {
       return fetch(`/api/fauna/who-to-follow`).then((res) => res.json())
     }
   )
-  if (loading) {
-    return <p>loading...</p>
-  }
-  console.log({ response })
 
   return (
     <>

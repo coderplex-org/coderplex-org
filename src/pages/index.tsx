@@ -25,7 +25,7 @@ export type HomePageFeedUpdateType = {
 }
 
 export default function Home() {
-  const [session, loading] = useSession()
+  const [session] = useSession()
 
   const { isLoading, isError, data } = useQuery('/api/fauna/all-updates', () =>
     fetch(`/api/fauna/all-updates`).then((res) => {
@@ -49,22 +49,18 @@ export default function Home() {
     })
   })
 
-  if (loading || isLoading || isGoalLoading) {
-    return <p>loading...</p>
-  }
-
   if (isError || isGoalError) {
     return <p>Something went wrong!!!</p>
   }
 
-  const updates = data.updates.data
-
   return (
     <>
       <HomePageFeed
-        updates={updates}
-        showGoal={Boolean(session && goalData?.goal)}
-        goal={goalData.goal}
+        updates={isLoading ? [] : data.updates.data}
+        showGoal={Boolean(
+          !isGoalLoading && !isGoalError && session && goalData?.goal
+        )}
+        goal={goalData?.goal}
       />
     </>
   )
