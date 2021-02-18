@@ -238,8 +238,11 @@ export default function HomePageFeed({
                 <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
                   <div className="flex">
                     <A href={`${(session.user as User).username}`}>
-                      <span className="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase">
-                        🚀 Goal: {goal.title}
+                      <span className="block text-base text-center text-indigo-600 font-semibold tracking-wide">
+                        🚀 Your Goal:
+                        <span className="rounded-md bg-brand-100 text-brand-800 hover:text-brand-600 px-2.5 py-1.5 ml-2">
+                          {goal.title}
+                        </span>
                       </span>
                     </A>
                   </div>
@@ -292,7 +295,7 @@ function HomePageSideNavBar() {
               >
                 <RocketLaunch className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
 
-                <span className="truncate">Your Updates</span>
+                <span className="truncate">Your Goal</span>
               </A>
 
               <A
