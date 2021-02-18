@@ -44,6 +44,7 @@ export default function NewGoal() {
           '/api/fauna/goals/all-goals-by-user',
           (session.user as User).id,
         ])
+        queryClient.refetchQueries('/api/fauna/goals/get-current-goal')
       },
       onError: () => {
         toast.error('Something went wrong!!!', { id: toastId.current })
