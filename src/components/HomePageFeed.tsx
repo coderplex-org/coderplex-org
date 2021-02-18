@@ -10,23 +10,25 @@ import {
 } from 'phosphor-react'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
-import { Markdown, A } from '@/components'
 import { useMutation, useQuery } from 'react-query'
 import classNames from 'classnames'
 import { useEffect, useReducer, useState } from 'react'
 import { signIn, useSession } from 'next-auth/client'
+import { User } from 'src/pages/members'
+import useFollowUser from './profile/useFollowUser'
 import {
+  Markdown,
+  A,
+  Hero,
+  AppNavBar,
+  AppFooter,
   NewComment,
   NewGoal,
   NewUpdate,
   UpdateComment,
   UpdateComments,
   UpdateCommentsList,
-} from './goals'
-import { User } from 'src/pages/members'
-import AppNavBar from './AppNavBar'
-import AppFooter from './AppFooter'
-import useFollowUser from './profile/useFollowUser'
+} from '@/components'
 
 type LikeData = {
   count: number
@@ -228,6 +230,7 @@ export default function HomePageFeed({
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <AppNavBar />
       </header>
+      {!session && <Hero />}
       <div className="py-10 flex-1">
         <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="hidden lg:block lg:col-span-3 xl:col-span-2">
