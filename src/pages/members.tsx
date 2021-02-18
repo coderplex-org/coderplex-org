@@ -3,6 +3,7 @@ import { PaddedLayout } from 'src/layouts'
 import { InferGetServerSidePropsType } from 'next'
 
 import faunadb from 'faunadb'
+import { useQuery } from 'react-query'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -12,12 +13,24 @@ const client = new faunadb.Client({
   ...(isProduction ? {} : { port: 8443 }),
 })
 
-export default function MembersPage({
-  users,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function MembersPage() {
+  const { isLoading, isError, data } = useQuery('/api/fauna/members', () =>
+    fetch(`/api/fauna/members`).then((res) => {
+      if (!res.ok) {
+        throw new Error('Something went wrong!!')
+      }
+      return res.json()
+    })
+  )
+  if (isLoading) {
+    return <p>loading...</p>
+  }
+  if (isError) {
+    return <p>Something went wrong!!!</p>
+  }
   return (
     <>
-      <Members users={users} />
+      <Members users={data.users} />
     </>
   )
 }
