@@ -224,13 +224,13 @@ export default function HomePageFeed({
   }
   showGoal: boolean
 }) {
-  const [session] = useSession()
+  const [session, loading] = useSession()
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <AppNavBar />
       </header>
-      {!session && <Hero />}
+      {!loading && !session && <Hero />}
       <div className="py-10 flex-1">
         <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="hidden lg:block lg:col-span-3 xl:col-span-2">
