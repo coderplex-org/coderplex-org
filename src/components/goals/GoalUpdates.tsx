@@ -11,12 +11,12 @@ export function GoalUpdatesList({ children }: { children: ReactNode }) {
 export default function GoalUpdates({ children }: { children: ReactNode }) {
   return (
     <>
-      <section aria-labelledby="activity-title" className="mt-8 xl:mt-10">
+      <section aria-labelledby="profile-updates" className="mt-8 xl:mt-10">
         <div>
           <div className="divide-y divide-gray-200">
             <div className="pb-4">
               <h2
-                id="activity-title"
+                id="profile-updates"
                 className="text-lg font-medium text-gray-900"
               >
                 Updates

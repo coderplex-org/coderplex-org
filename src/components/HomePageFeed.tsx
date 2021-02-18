@@ -1,5 +1,14 @@
 import { Avatar } from '@/ui'
-import { ChatCenteredDots, ShareNetwork, ThumbsUp } from 'phosphor-react'
+import {
+  ChatCenteredDots,
+  Gear,
+  Plus,
+  RocketLaunch,
+  ShareNetwork,
+  ThumbsUp,
+  UserCircle,
+  Users,
+} from 'phosphor-react'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { Markdown, A } from '@/components'
@@ -9,11 +18,16 @@ import { useEffect, useReducer, useState } from 'react'
 import { useSession } from 'next-auth/client'
 import {
   NewComment,
+  NewUpdate,
   UpdateComment,
   UpdateComments,
   UpdateCommentsList,
 } from './goals'
-import Aside from './Aside'
+import { User } from 'src/pages/members'
+import AppNavBar from './AppNavBar'
+import AppFooter from './AppFooter'
+import { IconPlus } from 'tabler-icons'
+import { useRouter } from 'next/router'
 
 type LikeData = {
   count: number
@@ -37,7 +51,11 @@ function reducer(state: LikeData, action: { type: string; payload?: any }) {
   }
 }
 
-function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
+export function HomePageFeedUpdate({
+  update,
+}: {
+  update: HomePageFeedUpdateType
+}) {
   const [session, loading] = useSession()
   const [showComments, setShowComments] = useState(false)
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
@@ -119,7 +137,7 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
           </div>
         </div>
         <div className="mt-2 text-sm text-gray-700 space-y-4">
-          <div className="prose prose max-w-none">
+          <div className="pbrand pbrand max-w-none">
             <Markdown>{description}</Markdown>
           </div>
         </div>
@@ -195,24 +213,284 @@ function HomePageFeedUpdate({ update }: { update: HomePageFeedUpdateType }) {
 
 export default function HomePageFeed({
   updates,
+  goal,
+  showGoal,
 }: {
   updates: HomePageFeedUpdateType[]
+  goal?: {
+    id: string
+    title: string
+  }
+  showGoal: boolean
 }) {
+  const [session] = useSession()
   return (
-    <>
-      <div className="grid grid-cols-5 gap-10">
-        <div className="col-span-5 md:col-span-3">
-          <h1 className="sr-only">Recent updates</h1>
-          <ul className="space-y-4">
-            {updates.map((update) => (
-              <HomePageFeedUpdate update={update} key={update.id} />
-            ))}
-          </ul>
-        </div>
-        <div className="text-center hidden md:block col-span-2 fixed top-24 bottom-24 right-12 lg:right-24 w-1/3">
-          <Aside />
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-white shadow-sm lg:static lg:overflow-y-visible">
+        <AppNavBar />
+      </header>
+
+      <div className="py-10">
+        <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
+          <div className="hidden lg:block lg:col-span-3 xl:col-span-2">
+            <HomePageSideNavBar />
+          </div>
+          <main className="lg:col-span-9 xl:col-span-6">
+            <div className="space-y-3">
+              {showGoal && (
+                <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
+                  <div className="flex">
+                    <A href={`${(session.user as User).username}`}>
+                      <span className="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase">
+                        🚀 Goal: {goal.title}
+                      </span>
+                    </A>
+                  </div>
+                  <NewUpdate goal={goal} updateFromHomePage={true} />
+                </div>
+              )}
+              <div>
+                <h1 className="sr-only">Recent questions</h1>
+                <ul className="space-y-4">
+                  {updates.map((update: HomePageFeedUpdateType) => (
+                    <HomePageFeedUpdate update={update} key={update.id} />
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </main>
+          <HomePageAside updates={updates.slice(0, 3)} />
         </div>
       </div>
+
+      <AppFooter />
+    </div>
+  )
+}
+
+function HomePageSideNavBar() {
+  const [session, loading] = useSession()
+  if (loading) {
+    return <p>loading...</p>
+  }
+  return (
+    <>
+      <nav
+        aria-label="Sidebar"
+        className="sticky top-4 divide-y divide-gray-300"
+      >
+        <div className="pb-8 space-y-1">
+          {session && (
+            <>
+              <A
+                href={`/${(session.user as User).username}`}
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="page"
+              >
+                <UserCircle className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+                <span className="truncate">Your Profile</span>
+              </A>
+
+              <A
+                href={`/${(session.user as User).username}`}
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="page"
+              >
+                <RocketLaunch className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+
+                <span className="truncate">Your Updates</span>
+              </A>
+
+              <A
+                href="/profile/settings"
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="false"
+              >
+                <Gear className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+                <span className="truncate">Settings</span>
+              </A>
+            </>
+          )}
+          {!session && (
+            <>
+              <A
+                href="/join"
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="false"
+              >
+                <RocketLaunch className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+                <span className="truncate">Get Started</span>
+              </A>
+              <A
+                href="/members"
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="false"
+              >
+                <Users className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+                <span className="truncate">Members</span>
+              </A>
+            </>
+          )}
+        </div>
+      </nav>
+    </>
+  )
+}
+
+function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
+  const router = useRouter()
+  const [session, loading] = useSession()
+  const { isLoading, isError, data: response } = useQuery(
+    'api/fauna/who-to-follow',
+    () => {
+      return fetch(`/api/fauna/who-to-follow`).then((res) => res.json())
+    }
+  )
+  if (loading) {
+    return <p>loading...</p>
+  }
+  console.log({ response })
+
+  return (
+    <>
+      <aside className="hidden xl:block xl:col-span-4">
+        <div className="sticky top-4 space-y-4">
+          <section aria-labelledby="trending-heading">
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6">
+                <h2
+                  id="trending-heading"
+                  className="text-base font-medium text-gray-900"
+                >
+                  Recent Updates
+                </h2>
+                <div className="mt-6 flow-root">
+                  <ul className="-my-4 divide-y divide-gray-200">
+                    {updates.map((update) => (
+                      <li className="flex py-4 space-x-3" key={update.id}>
+                        <div className="flex-shrink-0">
+                          <img
+                            className="h-8 w-8 rounded-full"
+                            src={update.postedBy.image}
+                            alt=""
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-gray-800">
+                            {update.description}
+                          </p>
+                          <div className="mt-2 flex">
+                            <span className="inline-flex items-center text-sm">
+                              <button className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
+                                <ChatCenteredDots className="h-5 w-5" />
+                                <span className="font-medium text-gray-900">
+                                  {update.comments.data.length}
+                                </span>
+                              </button>
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {session ? (
+                  <div className="mt-6">
+                    <A
+                      href={`/${(session.user as User).username}`}
+                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      View all
+                    </A>
+                  </div>
+                ) : (
+                  <div className="mt-6">
+                    <A
+                      href="/join"
+                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Join
+                    </A>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby="who-to-follow-heading">
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6">
+                <h2
+                  id="who-to-follow-heading"
+                  className="text-base font-medium text-gray-900"
+                >
+                  Who to follow
+                </h2>
+                <div className="mt-6 flow-root">
+                  <ul className="-my-4 divide-y divide-gray-200">
+                    {!isLoading &&
+                      !isError &&
+                      response.users.slice(0, 3).map((user: User) => (
+                        <li
+                          className="flex items-center py-4 space-x-3"
+                          key={user.id}
+                        >
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-8 w-8 rounded-full"
+                              src={user.image}
+                              alt=""
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-gray-900">
+                              <A href={`/${user.username}`}>
+                                {user.account?.firstName ?? user.name}
+                              </A>
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              <A href={`/${user.username}`}>@{user.username}</A>
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <button
+                              type="button"
+                              className="inline-flex items-center px-3 py-0.5 rounded-full bg-brand-50 text-sm font-medium text-brand-700 hover:bg-brand-100"
+                              onClick={() => router.push(`/${user.username}`)}
+                            >
+                              <svg
+                                className="-ml-1 mr-0.5 h-5 w-5 text-brand-400"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <span>Follow</span>
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+                <div className="mt-6">
+                  <A
+                    href="/members"
+                    className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  >
+                    View all
+                  </A>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </aside>
     </>
   )
 }

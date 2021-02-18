@@ -113,6 +113,19 @@ async function main() {
 
   await client.query(
     q.CreateIndex({
+      name: 'followers_by_user',
+      source: q.Collection('user_followers'),
+      unique: false,
+      terms: [
+        {
+          field: ['data', 'user'],
+        },
+      ],
+    })
+  )
+
+  await client.query(
+    q.CreateIndex({
       name: 'unique_user_and_follower',
       source: q.Collection('user_followers'),
       unique: true,

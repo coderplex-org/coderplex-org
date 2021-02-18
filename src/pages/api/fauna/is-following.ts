@@ -19,7 +19,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   const session = await getSession({ req })
 
   if (!session) {
-    res.status(200).json({ isFollowing: false })
+    return res.status(200).json({ isFollowing: false })
   }
 
   const followerId = (session.user as User).id

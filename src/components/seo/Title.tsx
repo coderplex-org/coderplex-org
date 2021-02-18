@@ -7,7 +7,7 @@ export default function Title({
   suffix?: string
   children: string
 }) {
-  let title = children + (suffix ? ` - ${suffix}` : '')
+  let title = children ? `${children} - ` + suffix : suffix
 
   return (
     <Head>

@@ -18,7 +18,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   const session = await getSession({ req })
 
   if (!session) {
-    res.status(401).json({ message: 'Unauthorized' })
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
   try {
