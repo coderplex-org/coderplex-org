@@ -429,7 +429,7 @@ function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
                   <ul className="-my-4 divide-y divide-gray-200">
                     {!isLoading &&
                       !isError &&
-                      response.users.slice(0, 3).map((user: User) => (
+                      response.users.map((user: User) => (
                         <li
                           className="flex items-center py-4 space-x-3"
                           key={user.id}

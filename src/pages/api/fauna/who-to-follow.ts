@@ -12,6 +12,28 @@ const client = new faunadb.Client({
   ...(isProduction ? {} : { port: 8443 }),
 })
 
+const isFollowing = ({
+  followerId,
+  followingId,
+}: {
+  followerId: string
+  followingId: string
+}) => {
+  return q.Let(
+    {
+      ref: q.Match(q.Index('unique_user_and_follower'), [
+        q.Ref(q.Collection('users'), followingId),
+        q.Ref(q.Collection('users'), followerId),
+      ]),
+    },
+    q.If(
+      q.Exists(q.Var('ref')),
+      q.Select(['data', 'isFollowing'], q.Get(q.Var('ref'))),
+      false
+    )
+  )
+}
+
 const FaunaCreateHandler: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -25,8 +47,17 @@ const FaunaCreateHandler: NextApiHandler = async (
   const userId = (session.user as User).id
 
   try {
+    const allUsers = q.Filter(q.Documents(q.Collection('users')), (ref) =>
+      q.Not(q.Equals(q.Select(['ref', 'id'], q.Get(ref)), userId))
+    )
+    const whoToFollow = q.Filter(allUsers, (ref) => {
+      const followerId = userId
+      const followingId = q.Select(['ref', 'id'], q.Get(ref)) as string
+      return q.Not(isFollowing({ followerId, followingId }))
+    })
+
     const response: any = await client.query(
-      q.Map(q.Paginate(q.Documents(q.Collection('users'))), (userRef) => {
+      q.Map(q.Paginate(whoToFollow, { size: 3 }), (userRef) => {
         const userDoc = q.Get(userRef)
         return {
           id: q.Select(['ref', 'id'], userDoc),
