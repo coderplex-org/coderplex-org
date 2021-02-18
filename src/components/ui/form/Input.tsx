@@ -141,7 +141,7 @@ const Input = React.forwardRef(
               type={type}
               id={id}
               className={classNames(
-                'block w-full sm:text-sm',
+                'block w-full sm:text-sm bg-white',
                 hasError
                   ? `border-red-300 text-red-900 placeholder-red-900 
                       focus:ring-red-500 focus-within:border-red-500`

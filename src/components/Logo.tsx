@@ -12,7 +12,12 @@ export default function Logo({
   return (
     <A href="/" className="flex items-center cursor-pointer">
       <Image src="/logo.svg" width={size} height={size} alt="Coderplex Logo" />
-      <span className={classNames('ml-2 text-base font-medium', className)}>
+      <span
+        className={classNames(
+          'ml-2 text-base font-medium text-black',
+          className
+        )}
+      >
         Coderplex Community
       </span>
     </A>

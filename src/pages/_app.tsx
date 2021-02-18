@@ -8,6 +8,7 @@ import { Title, Description, Meta } from '@/components'
 import React from 'react'
 import ProgressBar from '@badrap/bar-of-progress'
 import { Router } from 'next/router'
+import { ThemeProvider } from 'next-themes'
 
 const progress = new ProgressBar({
   size: 2,
@@ -44,17 +45,23 @@ function MyApp({ Component, pageProps }: AppProps) {
     "We're a non-profit startup on a mission to improve the state of tech across India"
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Provider session={pageProps.session}>
-        <Title suffix="Coderplex">{meta.metaTitle || meta.title}</Title>
-        <Description>{description}</Description>
-        <Meta />
-        <Layout {...layoutProps}>
-          <Component {...pageProps} />
-        </Layout>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </Provider>
-    </QueryClientProvider>
+    <ThemeProvider
+      attribute="class"
+      storageKey="nightwind-mode"
+      defaultTheme="system" // default "light"
+    >
+      <QueryClientProvider client={queryClient}>
+        <Provider session={pageProps.session}>
+          <Title suffix="Coderplex">{meta.metaTitle || meta.title}</Title>
+          <Description>{description}</Description>
+          <Meta />
+          <Layout {...layoutProps}>
+            <Component {...pageProps} />
+          </Layout>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Provider>
+      </QueryClientProvider>
+    </ThemeProvider>
   )
 }
 

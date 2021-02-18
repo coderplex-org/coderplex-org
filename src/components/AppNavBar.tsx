@@ -4,6 +4,7 @@ import { Logo } from '@/components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { User } from 'src/pages/members'
+import { Toggle } from '@/ui'
 
 const navbarItems = [
   {
@@ -11,49 +12,20 @@ const navbarItems = [
     value: 'home',
     href: '/',
   },
-  // {
-  //   title: 'Learn',
-  //   value: 'learn',
-  //   href: '/learn',
-  // },
-  // {
-  //   title: 'Events',
-  //   value: 'events',
-  //   href: '/events',
-  // },
-  // {
-  //   title: 'Space',
-  //   value: 'space',
-  //   href: '/space',
-  // },
   {
     title: 'Members',
     value: 'members',
     href: '/members',
   },
-  // {
-  //   title: 'Projects',
-  //   value: 'projects',
-  //   href: '/projects',
-  // },
-  // {
-  //   title: 'Jobs',
-  //   value: 'jobs',
-  //   href: '/jobs',
-  // },
-  // {
-  //   title: 'Notifications',
-  //   value: 'notifications',
-  //   href: '/notifications',
-  // },
 ]
 
 export default function AppNavBar() {
   const [session, loading] = useSession()
   const router = useRouter()
+
   return (
     <NavBar
-      className="border-b shadow-none"
+      className="border-b border-gray-200 shadow-none"
       logo={<Logo className="hidden lg:block" />}
       leftDesktopItems={
         <>
@@ -74,6 +46,8 @@ export default function AppNavBar() {
           {!loading &&
             (session ? (
               <>
+                <Toggle />
+
                 <Menu
                   trigger={
                     <Avatar
@@ -98,6 +72,7 @@ export default function AppNavBar() {
               </>
             ) : (
               <>
+                <Toggle />
                 <Button
                   variant="solid"
                   variantColor="brand"

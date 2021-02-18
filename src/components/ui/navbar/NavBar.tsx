@@ -61,7 +61,7 @@ const NavBar = ({
             </div>
           </div>
           <div className="flex items-center">
-            <div className="flex flex-shrink-0 space-x-4">
+            <div className="flex flex-shrink-0 space-x-4 items-center">
               {rightDesktopItems}
             </div>
             <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">

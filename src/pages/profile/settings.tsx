@@ -11,6 +11,7 @@ import {
   SocialMediaSettings,
 } from '@/components'
 import { PaddedLayout } from 'src/layouts'
+import { Select } from '@/ui'
 
 const tabValues = ['profile', 'private', 'social', 'other'] as const
 
@@ -51,25 +52,22 @@ export default function Settings() {
   return (
     <>
       <div className="py-4 lg:grid lg:grid-cols-12 lg:gap-x-5">
-        <div className="px-2 py-6 lg:hidden sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
-          <label htmlFor="selectedTab" className="sr-only">
-            Select a tab
-          </label>
-          <select
-            id="selectedTab"
-            className="block w-full py-2 pl-3 pr-10 mt-1 text-base border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
-            onChange={(e) =>
-              setSelectedTab(e.target.value as typeof tabValues[number])
-            }
-            value={selectedTab}
-          >
-            {tabs.map((tab) => (
-              <option key={tab.value} value={tab.value}>
-                {tab.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Select a tab"
+          id="selectedTab"
+          onChange={(e) =>
+            setSelectedTab(e.target.value as typeof tabValues[number])
+          }
+          hideLabel={true}
+          value={selectedTab}
+          className="px-2 py-6 lg:hidden sm:px-6 lg:py-0 lg:px-0 lg:col-span-3"
+        >
+          {tabs.map((tab) => (
+            <option key={tab.value} value={tab.value}>
+              {tab.name}
+            </option>
+          ))}
+        </Select>
 
         <aside className="hidden px-2 py-6 lg:block sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
           <nav className="space-y-1">

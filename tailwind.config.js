@@ -5,8 +5,12 @@ module.exports = {
   purge: {
     content: ['./src/**/*.{js,ts,jsx,tsx}'],
   },
-  darkMode: false,
+  darkMode: 'class',
   theme: {
+    nightwind: {
+      typography: true,
+      colorClasses: ['placeholder'],
+    },
     fontFamily: {
       sans: ['Inter', ...fontFamily.sans],
     },
@@ -32,6 +36,7 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/aspect-ratio'),
+    require('nightwind'),
   ],
 }
 
