@@ -1,11 +1,12 @@
 import { NavBar, Button, Menu, Avatar } from '@/ui'
 import { signIn, signOut, useSession } from 'next-auth/client'
-import { Logo } from '@/components'
+import { Logo, DonateModal } from '@/components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { User } from 'src/pages/members'
 import { Toggle } from '@/ui'
 import { Gear, RocketLaunch, SignOut, UserCircle } from 'phosphor-react'
+import { useState } from 'react'
 
 const navbarItems = [
   {
@@ -23,6 +24,7 @@ const navbarItems = [
 export default function AppNavBar() {
   const [session, loading] = useSession()
   const router = useRouter()
+  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false)
 
   return (
     <NavBar
@@ -43,6 +45,19 @@ export default function AppNavBar() {
       }
       rightDesktopItems={
         <>
+          <Button
+            variant="solid"
+            variantColor="brand"
+            onClick={() => setIsDonateModalOpen(true)}
+          >
+            Donate
+          </Button>
+
+          <DonateModal
+            isOpen={isDonateModalOpen}
+            setIsOpen={setIsDonateModalOpen}
+          />
+
           {loading && <p>loading....</p>}
           {!loading &&
             (session ? (
