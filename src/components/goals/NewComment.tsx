@@ -77,6 +77,7 @@ export default function NewComment({ updateId }: { updateId: string }) {
                 placeholder="Give suggestions or ask questions related to the update."
                 hasError={Boolean(errors.description)}
                 errorMessage="Comment is required!!!"
+                helpText="Basic markdown is supported."
                 onKeyDown={(e) => {
                   if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
                     handleSubmit(onSubmit)()

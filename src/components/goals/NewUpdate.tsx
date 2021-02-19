@@ -90,6 +90,7 @@ export default function NewUpdate({
                 placeholder="What did you do today to move towards your goal?"
                 hasError={Boolean(errors.description)}
                 errorMessage="Update is required!!!"
+                helpText="Basic markdown is supported."
                 onKeyDown={(e) => {
                   if (e.code === 'Enter' && (e.metaKey || e.ctrlKey)) {
                     handleSubmit(onSubmit)()
