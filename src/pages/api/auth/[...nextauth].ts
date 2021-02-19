@@ -31,6 +31,11 @@ const options: InitOptions = {
           email: profileData.email,
           image: profileData.avatar_url,
           username: profileData.login,
+          bio: profileData.bio,
+          github: profileData.login,
+          twitter: profileData.twitter_username,
+          blog: profileData.blog,
+          company: profileData.company,
         }
       },
     }),
@@ -69,6 +74,11 @@ const options: InitOptions = {
                 email: null,
                 image: profileImage,
                 username,
+                bio: null,
+                github: null,
+                twitter: null,
+                blog: null,
+                company: null,
               }
             },
           }),

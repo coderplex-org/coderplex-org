@@ -38,17 +38,16 @@ async function main() {
       q.Map(
         q.Paginate(q.Documents(q.Collection('goal_updates'))),
         (goalUpdate) => q.Delete(goalUpdate)
-      )
-      q.Map(
-        q.Paginate(q.Documents(q.Collection('goal_likes'))),
-        (goalUpdate) => q.Delete(goalUpdate)
-      )
+      ),
+      q.Map(q.Paginate(q.Documents(q.Collection('goal_likes'))), (goalLike) =>
+        q.Delete(goalLike)
+      ),
       q.Map(
         q.Paginate(q.Documents(q.Collection('update_comments'))),
-        (goalUpdate) => q.Delete(goalUpdate)
+        (goalComment) => q.Delete(goalComment)
       )
     )
   )
 }
 
-main()
+main().catch((e) => console.error(e))
