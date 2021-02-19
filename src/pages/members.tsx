@@ -52,7 +52,6 @@ export type User = Partial<{
     firstName: string
     lastName: string
     bio: string
-    careerGoal: string
   }>
   socials: Partial<{
     github: string
