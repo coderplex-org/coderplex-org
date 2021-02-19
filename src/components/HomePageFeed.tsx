@@ -54,8 +54,10 @@ function reducer(state: LikeData, action: { type: string; payload?: any }) {
 
 export function HomePageFeedUpdate({
   update,
+  setGoalId,
 }: {
   update: HomePageFeedUpdateType
+  setGoalId: () => void
 }) {
   const [session, loading] = useSession()
   const [showComments, setShowComments] = useState(false)
@@ -130,11 +132,11 @@ export function HomePageFeedUpdate({
             </div>
           </div>
           <div className="mt-4 flex">
-            <A href={`${postedBy.username}`}>
+            <button onClick={() => setGoalId()}>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
                 🚀 Goal: {goal.title}
               </span>
-            </A>
+            </button>
           </div>
         </div>
         <div className="mt-2 text-sm text-gray-700 space-y-4">
@@ -225,6 +227,7 @@ export default function HomePageFeed({
   showGoal: boolean
 }) {
   const [session, loading] = useSession()
+  const [goalId, setgoalId] = useState('')
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -233,10 +236,10 @@ export default function HomePageFeed({
       {!loading && !session && <Hero />}
       <div className="py-10 flex-1">
         <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="hidden lg:block lg:col-span-3 xl:col-span-2">
+          <div className="hidden xl:block xl:col-span-2">
             <HomePageSideNavBar />
           </div>
-          <main className="lg:col-span-9 xl:col-span-6 px-2">
+          <main className="lg:col-span-7 xl:col-span-6 px-2">
             <div className="space-y-3">
               {showGoal ? (
                 <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
@@ -270,13 +273,19 @@ export default function HomePageFeed({
                 <h1 className="sr-only">Recent questions</h1>
                 <ul className="space-y-4">
                   {updates.map((update: HomePageFeedUpdateType) => (
-                    <HomePageFeedUpdate update={update} key={update.id} />
+                    <HomePageFeedUpdate
+                      update={update}
+                      key={update.id}
+                      setGoalId={() => setgoalId(update.goal.id)}
+                    />
                   ))}
                 </ul>
               </div>
             </div>
           </main>
-          <HomePageAside updates={updates.slice(0, 3)} />
+          <aside className="hidden lg:block lg:col-span-5 xl:col-span-4">
+            <HomePageAside goalId={goalId} />
+          </aside>
         </div>
       </div>
 
@@ -406,19 +415,40 @@ function FollowButton({ user }: { user: User }) {
   )
 }
 
-function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
+function HomePageAside({ goalId }: { goalId: string }) {
   const [session] = useSession()
   const { isLoading, isError, data: response } = useQuery(
-    'api/fauna/who-to-follow',
-    () => {
-      return fetch(`/api/fauna/who-to-follow`).then((res) => res.json())
-    }
+    ['/api/fauna/recent-updates', goalId],
+    () =>
+      fetch(`/api/fauna/recent-updates`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          goalId,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Something went wrong!!')
+        }
+        return res.json()
+      })
   )
+  const {
+    isLoading: isWhoToFollowLoading,
+    isError: isWhoToFollowError,
+    data: whoToFollowResponse,
+  } = useQuery('api/fauna/who-to-follow', () => {
+    return fetch(`/api/fauna/who-to-follow`).then((res) => res.json())
+  })
+
+  const shouldShowRecentUpdates = Boolean(goalId) && goalId !== ''
 
   return (
     <>
-      <aside className="hidden xl:block xl:col-span-4">
-        <div className="sticky top-4 space-y-4">
+      <div className="sticky top-4 space-y-4">
+        {shouldShowRecentUpdates && (
           <section aria-labelledby="trending-heading">
             <div className="bg-white rounded-lg shadow">
               <div className="p-6">
@@ -426,42 +456,34 @@ function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
                   id="trending-heading"
                   className="text-base font-medium text-gray-900"
                 >
-                  Recent Updates
+                  All Updates
                 </h2>
                 <div className="mt-6 flow-root">
                   <ul className="-my-4 divide-y divide-gray-200">
-                    {updates.map((update) => (
-                      <li className="flex py-4 space-x-3" key={update.id}>
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            src={update.postedBy.image}
-                            alt=""
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="prose prose-sm max-w-none">
-                            <Markdown>{update.description}</Markdown>
+                    {!isLoading &&
+                      !isError &&
+                      response.updates.map((update) => (
+                        <li className="flex py-4 space-x-3" key={update.id}>
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-8 w-8 rounded-full"
+                              src={update.postedBy.image}
+                              alt=""
+                            />
                           </div>
-                          <div className="mt-2 flex">
-                            <span className="inline-flex items-center text-sm">
-                              <button className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
-                                <ChatCenteredDots className="h-5 w-5" />
-                                <span className="font-medium text-gray-900">
-                                  {update.comments.data.length}
-                                </span>
-                              </button>
-                            </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="prose prose-sm max-w-none">
+                              <Markdown>{update.description}</Markdown>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      ))}
                   </ul>
                 </div>
                 {session ? (
                   <div className="mt-6">
                     <A
-                      href={`/${(session.user as User).username}`}
+                      href={`/${response?.updates?.[0].postedBy.username}`}
                       className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                     >
                       View all
@@ -480,47 +502,47 @@ function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
               </div>
             </div>
           </section>
+        )}
 
-          <section aria-labelledby="who-to-follow-heading">
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-6">
-                <h2
-                  id="who-to-follow-heading"
-                  className="text-base font-medium text-gray-900"
-                >
-                  Who to follow
-                </h2>
-                <div className="mt-6 flow-root">
-                  <ul className="-my-4 divide-y divide-gray-200">
-                    {!isLoading &&
-                      !isError &&
-                      response.users.map((user: User) => (
-                        <FollowButton user={user} key={user.id} />
-                      ))}
-                  </ul>
-                </div>
-                <div className="mt-6">
-                  {session ? (
-                    <A
-                      href="/members"
-                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      View all
-                    </A>
-                  ) : (
-                    <button
-                      onClick={() => signIn('github')}
-                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      Join
-                    </button>
-                  )}
-                </div>
+        <section aria-labelledby="who-to-follow-heading">
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6">
+              <h2
+                id="who-to-follow-heading"
+                className="text-base font-medium text-gray-900"
+              >
+                Who to follow
+              </h2>
+              <div className="mt-6 flow-root">
+                <ul className="-my-4 divide-y divide-gray-200">
+                  {!isWhoToFollowLoading &&
+                    !isWhoToFollowError &&
+                    whoToFollowResponse.users.map((user: User) => (
+                      <FollowButton user={user} key={user.id} />
+                    ))}
+                </ul>
+              </div>
+              <div className="mt-6">
+                {session ? (
+                  <A
+                    href="/members"
+                    className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  >
+                    View all
+                  </A>
+                ) : (
+                  <button
+                    onClick={() => signIn('github')}
+                    className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  >
+                    Join
+                  </button>
+                )}
               </div>
             </div>
-          </section>
-        </div>
-      </aside>
+          </div>
+        </section>
+      </div>
     </>
   )
 }

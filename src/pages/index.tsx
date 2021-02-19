@@ -56,7 +56,7 @@ export default function Home() {
   return (
     <>
       <HomePageFeed
-        updates={isLoading ? [] : data.updates.data}
+        updates={isLoading ? [] : data.updates}
         showGoal={Boolean(
           !isGoalLoading && !isGoalError && session && goalData?.goal
         )}

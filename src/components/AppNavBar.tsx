@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { User } from 'src/pages/members'
 import { Toggle } from '@/ui'
+import { Gear, RocketLaunch, SignOut, UserCircle } from 'phosphor-react'
 
 const navbarItems = [
   {
@@ -62,12 +63,20 @@ export default function AppNavBar() {
                     href={`/${(session.user as User).username}`}
                     passHref={true}
                   >
-                    <Menu.Item>Your Profile</Menu.Item>
+                    <Menu.Item icon={UserCircle}>Your Profile</Menu.Item>
+                  </Link>
+                  <Link
+                    href={`/${(session.user as User).username}`}
+                    passHref={true}
+                  >
+                    <Menu.Item icon={RocketLaunch}>Your Goal</Menu.Item>
                   </Link>
                   <Link href="/profile/settings" passHref={true}>
-                    <Menu.Item>Settings</Menu.Item>
+                    <Menu.Item icon={Gear}>Settings</Menu.Item>
                   </Link>
-                  <Menu.Item onClick={() => signOut()}>Sign Out</Menu.Item>
+                  <Menu.Item onClick={() => signOut()} icon={SignOut}>
+                    Sign Out
+                  </Menu.Item>
                 </Menu>
               </>
             ) : (

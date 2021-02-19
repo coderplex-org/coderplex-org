@@ -15,7 +15,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   res: NextApiResponse
 ) => {
   try {
-    const updates = await client.query(
+    const response: any = await client.query(
       q.Map(q.Paginate(q.Match(q.Index('all_recent_updates'))), (result) => {
         const goalUpdateRef = q.Select(1, result)
         const goalUpdateDoc = q.Get(goalUpdateRef)
@@ -92,7 +92,7 @@ const FaunaCreateHandler: NextApiHandler = async (
       })
     )
 
-    res.status(200).json({ updates })
+    res.status(200).json({ updates: response.data })
   } catch (error) {
     console.error({ msg: error.message })
     res.status(500).json({ message: error.message })
