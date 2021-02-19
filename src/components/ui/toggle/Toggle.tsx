@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 export default function Toggle() {
   const { theme, setTheme } = useTheme()
   const [enabled, setEnabled] = useState(theme === 'light' ? false : true)
-  console.log(theme)
 
   useEffect(() => {
     if (enabled) {

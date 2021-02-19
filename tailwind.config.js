@@ -30,6 +30,18 @@ module.exports = {
         normal: colors.gray,
         lightSurface: 'hsl(210, 20%, 98%)',
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            code: {
+              // For inline codes
+              // Ex: `Coderplex`
+              padding: '3px 5px',
+              borderRadius: 5,
+            },
+          },
+        },
+      }),
     },
   },
   variants: {},

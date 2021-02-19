@@ -23,3 +23,30 @@
 p {
   @apply text-black;
 }
+
+/* Removes ` and ` for inline codes */
+code::before {
+  content: none !important;
+}
+
+code::after {
+  content: none !important;
+}
+
+/* For inline code */
+code {
+  font-size: 80% !important;
+}
+
+code {
+  @apply bg-gray-100 text-black;
+}
+
+/* For code blocks */
+pre > code {
+  font-size: 90% !important;
+}
+
+.prose > a {
+  @apply text-brand-600;
+}
