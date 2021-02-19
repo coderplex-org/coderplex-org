@@ -1,6 +1,4 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/client'
-
 import faunadb from 'faunadb'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
@@ -15,12 +13,6 @@ const FaunaCreateHandler: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const session = await getSession({ req })
-
-  if (!session) {
-    return res.status(401).json({ message: 'Unauthorized' })
-  }
-
   try {
     const { goalId } = req.body
     const goalRef = q.Ref(q.Collection('goals'), goalId)

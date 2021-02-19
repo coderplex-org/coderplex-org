@@ -111,8 +111,11 @@ export function HomePageFeedUpdate({
   }, [data?.liked, isError, isLoading, update.likes.data])
 
   return (
-    <li className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
-      <article aria-labelledby="question-title-81614">
+    <li
+      className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg"
+      id={`homepage-update-${update.id}`}
+    >
+      <article>
         <div>
           <div className="flex space-x-3">
             <div className="flex-shrink-0">
@@ -134,11 +137,16 @@ export function HomePageFeedUpdate({
             </div>
           </div>
           <div className="mt-4 flex">
-            <button onClick={() => setGoalId()}>
+            <button onClick={() => setGoalId()} className="hidden lg:block">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
                 🚀 Goal: {goal.title}
               </span>
             </button>
+            <A href={`/${postedBy.username}`} className="lg:hidden">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
+                🚀 Goal: {goal.title}
+              </span>
+            </A>
           </div>
         </div>
         <div className="mt-2 text-sm text-gray-700 space-y-4">
@@ -248,9 +256,8 @@ export default function HomePageFeed({
                   <div className="flex">
                     <A href={`${(session.user as User).username}`}>
                       <span className="block text-base text-center text-brand-600 font-semibold tracking-wide">
-                        🚀 Your Goal:
                         <span className="rounded-md bg-brand-100 text-brand-800 hover:text-brand-600 px-2.5 py-1.5 ml-2">
-                          {goal.title}
+                          🚀 Your Goal: {'  '} {goal.title}
                         </span>
                       </span>
                     </A>
@@ -263,7 +270,7 @@ export default function HomePageFeed({
                     <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
                       <div className="flex">
                         <span className="block text-lg text-center text-brand-600 font-semibold tracking-wide">
-                          🚀 Set Your Goal:
+                          🚀 Set Goal:
                         </span>
                       </div>
                       <NewGoal />
@@ -272,7 +279,7 @@ export default function HomePageFeed({
                 )
               )}
               <div>
-                <h1 className="sr-only">Recent questions</h1>
+                <h1 className="sr-only">Recent updates</h1>
                 <ul className="space-y-4">
                   {updates.map((update: HomePageFeedUpdateType) => (
                     <HomePageFeedUpdate
@@ -302,7 +309,7 @@ function HomePageSideNavBar() {
     <>
       <nav
         aria-label="Sidebar"
-        className="sticky top-4 divide-y divide-gray-300"
+        className="sticky top-24 divide-y divide-gray-300"
       >
         <div className="pb-8 space-y-1">
           {session && (
@@ -421,8 +428,11 @@ function HomePageAside({ goalId }: { goalId: string }) {
   const [session] = useSession()
   const { isLoading, isError, data } = useQuery(
     ['/api/fauna/recent-updates', goalId],
-    () =>
-      fetch(`/api/fauna/recent-updates`, {
+    () => {
+      if (!goalId) {
+        return
+      }
+      return fetch(`/api/fauna/recent-updates`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -436,6 +446,7 @@ function HomePageAside({ goalId }: { goalId: string }) {
         }
         return res.json()
       })
+    }
   )
   const {
     isLoading: isWhoToFollowLoading,
@@ -451,32 +462,51 @@ function HomePageAside({ goalId }: { goalId: string }) {
 
   return (
     <>
-      <div className="sticky top-4 space-y-4">
-        {shouldShowRecentUpdates && (
+      <div className="sticky top-24 space-y-4">
+        {Boolean(goalId) && (
           <section
             aria-labelledby="trending-heading"
             className="h-100 overflow-y-auto"
           >
             <div className="bg-white rounded-lg shadow">
               <div className="p-6">
-                <Goal.Title createdBy={goal.createdBy} showEditButton={false}>
-                  {goal.title}
-                </Goal.Title>
-                <Goal.Description>{goal.description}</Goal.Description>
-                <Goal.Updates>
-                  <Goal.UpdatesList>
-                    {goal.updates.data.map((update, index) => (
-                      <Goal.Update
-                        postedBy={update.postedBy}
-                        key={update.id}
-                        postedOn={DateTime.fromMillis(update.createdAt)}
-                        isLastUpdate={index === goal.updates.data.length - 1}
+                {isLoading && <p>loading...</p>}
+                {isError && <p>Something went wrong!!!</p>}
+                {shouldShowRecentUpdates && (
+                  <>
+                    <Goal.Title
+                      createdBy={goal.createdBy}
+                      showEditButton={false}
+                    >
+                      {goal.title}
+                    </Goal.Title>
+                    <Goal.Description>{goal.description}</Goal.Description>
+                    <Goal.Updates>
+                      <Goal.UpdatesList>
+                        {goal.updates.data.map((update, index) => (
+                          <Goal.Update
+                            postedBy={update.postedBy}
+                            key={update.id}
+                            postedOn={DateTime.fromMillis(update.createdAt)}
+                            isLastUpdate={
+                              index === goal.updates.data.length - 1
+                            }
+                          >
+                            {update.description}
+                          </Goal.Update>
+                        ))}
+                      </Goal.UpdatesList>
+                    </Goal.Updates>
+                    <div className="mt-6">
+                      <A
+                        href={`/${goal.createdBy.username}`}
+                        className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                       >
-                        {update.description}
-                      </Goal.Update>
-                    ))}
-                  </Goal.UpdatesList>
-                </Goal.Updates>
+                        View more details
+                      </A>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </section>
