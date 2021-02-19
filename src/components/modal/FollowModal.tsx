@@ -16,7 +16,7 @@ export default function FollowModal({
       user={user}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      headerText={`Follow ${user.account?.firstName ?? user.name} to see their
+      headerText={`Follow ${user.account?.firstName} to see their
     updates.`}
       subHeaderText="Join our community to never miss their updates."
       icon={UserPlus}

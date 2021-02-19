@@ -47,7 +47,7 @@ export default function Member({ user }: { user: User }) {
       <div className="flex-1 flex flex-col p-8">
         <Avatar src={user.image} className="w-32 h-32 mx-auto" />
         <h3 className="mt-6 text-gray-900 text-sm font-medium">
-          {user.account?.firstName ?? user.name}
+          {user.account?.firstName}
         </h3>
         <dl className="mt-1 flex-grow flex flex-col justify-between">
           <dt className="sr-only">Bio</dt>

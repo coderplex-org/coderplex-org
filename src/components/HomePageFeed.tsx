@@ -384,9 +384,7 @@ function FollowButton({ user }: { user: User }) {
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-gray-900">
-          <A href={`/${user.username}`}>
-            {user.account?.firstName ?? user.name}
-          </A>
+          <A href={`/${user.username}`}>{user.account?.firstName}</A>
         </p>
         <p className="text-sm text-gray-500">
           <A href={`/${user.username}`}>@{user.username}</A>

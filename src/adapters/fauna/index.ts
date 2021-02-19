@@ -38,6 +38,7 @@ const Adapter = (config, options = {}) => {
 
       const FQL = q.Create(q.Collection(collections.User), {
         data: {
+          name: profile.name,
           email: profile.email,
           image: profile.image,
           account: {
@@ -160,6 +161,7 @@ const Adapter = (config, options = {}) => {
 
       const FQL = q.Update(q.Ref(q.Collection(collections.User), user.id), {
         data: {
+          name: user.name,
           email: user.email,
           image: user.image,
           account: {

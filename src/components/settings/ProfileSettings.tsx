@@ -159,7 +159,7 @@ export default function ProfileSettings() {
                 type="text"
                 name="firstName"
                 className="col-span-4 sm:col-span-2"
-                defaultValue={user.account?.firstName ?? user.name}
+                defaultValue={user.account?.firstName}
                 ref={register({ required: true })}
                 hasError={Boolean(errors.firstName)}
                 errorMessage="This field is required"

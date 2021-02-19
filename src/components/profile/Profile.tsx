@@ -53,7 +53,7 @@ export default function Profile({ user }: { user: User }) {
             </div>
             <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
               <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-                {user.account?.firstName ?? user.name}
+                {user.account?.firstName}
               </p>
               <p className="text-sm font-medium text-gray-600">
                 {user.account?.bio}

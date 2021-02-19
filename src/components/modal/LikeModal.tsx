@@ -17,9 +17,7 @@ export default function LikeModal({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       headerText="Like the updates shared by the community members"
-      subHeaderText={`Join our community now to let ${
-        user.account?.firstName ?? user.name
-      } know you like their update.`}
+      subHeaderText={`Join our community now to let ${user.account?.firstName} know you like their update.`}
       icon={ThumbsUp}
     />
   )
