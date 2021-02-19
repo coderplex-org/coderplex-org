@@ -2,16 +2,25 @@ import { Transition } from '@headlessui/react'
 import { UserPlus } from 'phosphor-react'
 import { User } from 'src/pages/members'
 import { signIn } from 'next-auth/client'
+import type { TablerIcon } from 'tabler-icons'
+import type { Icon as PhosphorIcon } from 'phosphor-react'
 
-export default function FollowModal({
+export default function Modal({
   user,
   isOpen,
   setIsOpen,
+  headerText,
+  subHeaderText,
+  icon,
 }: {
   user: User
   isOpen: boolean
   setIsOpen: (open: boolean) => void
+  headerText: string
+  subHeaderText: string
+  icon: TablerIcon | PhosphorIcon
 }) {
+  const Icon = icon
   if (!isOpen) {
     return <></>
   }
@@ -38,16 +47,6 @@ export default function FollowModal({
         >
           &#8203;
         </span>
-        {/*
-          Modal panel, show/hide based on modal state.
-    
-          Entering: "ease-out duration-300"
-            From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            To: "opacity-100 translate-y-0 sm:scale-100"
-          Leaving: "ease-in duration-200"
-            From: "opacity-100 translate-y-0 sm:scale-100"
-            To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        */}
         <Transition
           show={isOpen}
           enter="ease-out duration-300"
@@ -87,20 +86,17 @@ export default function FollowModal({
           </div>
           <div>
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-brand-100">
-              <UserPlus className="h-6 w-6 text-brand-600" />
+              <Icon className="h-6 w-6 text-brand-600" />
             </div>
             <div className="mt-3 text-center sm:mt-5">
               <h3
                 className="text-lg leading-6 font-medium text-gray-900"
                 id="modal-headline"
               >
-                Follow {user.account?.firstName ?? user.name} to see their
-                updates.
+                {headerText}
               </h3>
               <div className="mt-2">
-                <p className="text-sm text-gray-500">
-                  Join our community to never miss their updates.
-                </p>
+                <p className="text-sm text-gray-500">{subHeaderText}</p>
               </div>
             </div>
           </div>

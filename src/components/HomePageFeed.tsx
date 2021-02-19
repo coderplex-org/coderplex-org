@@ -30,6 +30,7 @@ import {
   UpdateComments,
   UpdateCommentsList,
   FollowModal,
+  LikeModal,
 } from '@/components'
 import { Goal } from './goals'
 import type { GoalResponse } from 'src/pages/[username]'
@@ -63,6 +64,7 @@ export function HomePageFeedUpdate({
   update: HomePageFeedUpdateType
   setGoalId: () => void
 }) {
+  const [isLikeModalOpen, setIsLikeModalOpen] = useState(false)
   const [session] = useSession()
   const [showComments, setShowComments] = useState(false)
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
@@ -162,10 +164,12 @@ export function HomePageFeedUpdate({
               <button
                 className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
                 onClick={() => {
-                  if (session) {
-                    dispatch({ type: 'toggle' })
-                    mutate()
+                  if (!session) {
+                    setIsLikeModalOpen(true)
+                    return
                   }
+                  dispatch({ type: 'toggle' })
+                  mutate()
                 }}
               >
                 <ThumbsUp
@@ -178,6 +182,11 @@ export function HomePageFeedUpdate({
                 <span className="font-medium text-gray-900">{likesCount}</span>
                 <span className="sr-only">likes</span>
               </button>
+              <LikeModal
+                user={postedBy}
+                isOpen={isLikeModalOpen}
+                setIsOpen={setIsLikeModalOpen}
+              />
             </span>
             <span className="inline-flex items-center text-sm">
               <button
@@ -367,7 +376,7 @@ function FollowButton({ user }: { user: User }) {
   const [session] = useSession()
   const { toggleFollow } = useFollowUser(user.id)
   const [isFollowing, setIsFollowing] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFollowModalOpen, setIsFollowModalOpen] = useState(false)
   return (
     <li className="flex items-center py-4 space-x-3">
       <div className="flex-shrink-0">
@@ -389,7 +398,7 @@ function FollowButton({ user }: { user: User }) {
           className="inline-flex items-center px-3 py-0.5 rounded-full bg-brand-50 text-sm font-medium text-brand-700 hover:bg-brand-100"
           onClick={() => {
             if (!session) {
-              setIsModalOpen(true)
+              setIsFollowModalOpen(true)
               return
             }
             setIsFollowing(true)
@@ -418,8 +427,8 @@ function FollowButton({ user }: { user: User }) {
       {!session && (
         <FollowModal
           user={user}
-          isOpen={isModalOpen}
-          setIsOpen={setIsModalOpen}
+          isOpen={isFollowModalOpen}
+          setIsOpen={setIsFollowModalOpen}
         />
       )}
     </li>

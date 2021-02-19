@@ -10,11 +10,10 @@ import {
   IconExternalLink,
   IconPlus,
 } from 'tabler-icons'
-import { A } from '@/components'
+import { A, FollowModal } from '@/components'
 import useFollowUser from '../profile/useFollowUser'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import FollowModal from '../FollowModal'
 import { useSession } from 'next-auth/client'
 
 export default function Member({ user }: { user: User }) {
