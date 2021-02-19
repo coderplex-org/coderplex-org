@@ -29,7 +29,7 @@ export default function Hero() {
                 href="https://chat.coderplex.org"
                 className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-brand-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
               >
-                Join Discord
+                Join Chatroom
               </A>
             </div>
           </div>

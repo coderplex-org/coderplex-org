@@ -14,8 +14,11 @@ import { A } from '@/components'
 import useFollowUser from '../profile/useFollowUser'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import FollowModal from '../FollowModal'
+import { useSession } from 'next-auth/client'
 
 export default function Member({ user }: { user: User }) {
+  const [session] = useSession()
   const router = useRouter()
   const socials = user.socials
   const account = user.account
@@ -26,6 +29,7 @@ export default function Member({ user }: { user: User }) {
     toggleFollow,
     isLoading,
   } = useFollowUser(user.id)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [isFollowing, setIsFollowing] = useState(false)
   useEffect(() => {
@@ -146,9 +150,25 @@ export default function Member({ user }: { user: User }) {
                     </>
                   ) : (
                     <>
-                      <Button onClick={() => toggle()} leadingIcon={IconPlus}>
+                      <Button
+                        onClick={() => {
+                          if (!session) {
+                            setIsModalOpen(true)
+                            return
+                          }
+                          toggle()
+                        }}
+                        leadingIcon={IconPlus}
+                      >
                         Follow
                       </Button>
+                      {!session && (
+                        <FollowModal
+                          user={user}
+                          isOpen={isModalOpen}
+                          setIsOpen={setIsModalOpen}
+                        />
+                      )}
                     </>
                   )}
                 </dd>
@@ -185,18 +205,6 @@ export default function Member({ user }: { user: User }) {
               <span className="ml-3">Visit</span>
             </A>
           </div>
-
-          {/* {!shouldShowFollowButton && (
-            <div className="-ml-px w-0 flex-1 flex">
-              <A
-                href={`/profile/settings`}
-                className="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 font-medium border border-transparent rounded-bl-lg hover:text-gray-500"
-              >
-                <IconEdit className="w-5 h-5text-gray-400" aria-hidden={true} />
-                <span className="ml-3">Edit</span>
-              </A>
-            </div>
-          )} */}
         </div>
       </div>
     </li>

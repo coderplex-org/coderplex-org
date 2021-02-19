@@ -8,6 +8,7 @@ import {
   UserCircle,
   Users,
 } from 'phosphor-react'
+import * as React from 'react'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { useMutation, useQuery } from 'react-query'
@@ -28,6 +29,7 @@ import {
   UpdateComment,
   UpdateComments,
   UpdateCommentsList,
+  FollowModal,
 } from '@/components'
 import { Goal } from './goals'
 import type { GoalResponse } from 'src/pages/[username]'
@@ -345,14 +347,6 @@ function HomePageSideNavBar() {
           )}
           {!session && (
             <>
-              <button
-                onClick={() => signIn('github')}
-                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
-                aria-current="false"
-              >
-                <RocketLaunch className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
-                <span className="truncate">Get Started</span>
-              </button>
               <A
                 href="/members"
                 className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
@@ -373,6 +367,7 @@ function FollowButton({ user }: { user: User }) {
   const [session] = useSession()
   const { toggleFollow } = useFollowUser(user.id)
   const [isFollowing, setIsFollowing] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   return (
     <li className="flex items-center py-4 space-x-3">
       <div className="flex-shrink-0">
@@ -394,7 +389,7 @@ function FollowButton({ user }: { user: User }) {
           className="inline-flex items-center px-3 py-0.5 rounded-full bg-brand-50 text-sm font-medium text-brand-700 hover:bg-brand-100"
           onClick={() => {
             if (!session) {
-              signIn('github')
+              setIsModalOpen(true)
               return
             }
             setIsFollowing(true)
@@ -420,6 +415,13 @@ function FollowButton({ user }: { user: User }) {
           <span>{isFollowing ? 'Following' : 'Follow'}</span>
         </button>
       </div>
+      {!session && (
+        <FollowModal
+          user={user}
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+        />
+      )}
     </li>
   )
 }
@@ -511,45 +513,48 @@ function HomePageAside({ goalId }: { goalId: string }) {
             </div>
           </section>
         )}
-
-        <section aria-labelledby="who-to-follow-heading">
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-6">
-              <h2
-                id="who-to-follow-heading"
-                className="text-base font-medium text-gray-900"
-              >
-                Who to follow
-              </h2>
-              <div className="mt-6 flow-root">
-                <ul className="-my-4 divide-y divide-gray-200">
-                  {!isWhoToFollowLoading &&
-                    !isWhoToFollowError &&
-                    whoToFollowResponse.users.map((user: User) => (
-                      <FollowButton user={user} key={user.id} />
-                    ))}
-                </ul>
-              </div>
-              <div className="mt-6">
-                {session ? (
-                  <A
-                    href="/members"
-                    className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+        {!isWhoToFollowLoading &&
+          !isWhoToFollowError &&
+          whoToFollowResponse.users.length > 0 && (
+            <section aria-labelledby="who-to-follow-heading">
+              <div className="bg-white rounded-lg shadow">
+                <div className="p-6">
+                  <h2
+                    id="who-to-follow-heading"
+                    className="text-base font-medium text-gray-900"
                   >
-                    View all
-                  </A>
-                ) : (
-                  <button
-                    onClick={() => signIn('github')}
-                    className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    Join
-                  </button>
-                )}
+                    Who to follow
+                  </h2>
+                  <div className="mt-6 flow-root">
+                    <ul className="-my-4 divide-y divide-gray-200">
+                      {whoToFollowResponse.users.map((user: User) => (
+                        <React.Fragment key={user.id}>
+                          <FollowButton user={user} />
+                        </React.Fragment>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="mt-6">
+                    {session ? (
+                      <A
+                        href="/members"
+                        className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        View all
+                      </A>
+                    ) : (
+                      <button
+                        onClick={() => signIn('github')}
+                        className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        Join
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
+            </section>
+          )}
       </div>
     </>
   )

@@ -72,27 +72,3 @@ export type User = Partial<{
     technologiesFamiliarWith: string[]
   }>
 }>
-
-export const getServerSideProps = async () => {
-  const response: any = await client.query(
-    q.Map(q.Paginate(q.Documents(q.Collection('users'))), (userRef) => {
-      const user = q.Get(userRef)
-      return {
-        id: q.Select(['ref', 'id'], user),
-        name: q.Select(['data', 'name'], user, null),
-        username: q.Select(['data', 'username'], user, null),
-        email: q.Select(['data', 'email'], user, null),
-        image: q.Select(['data', 'image'], user, null),
-        account: q.Select(['data', 'account'], user, {}),
-        socials: q.Select(['data', 'socials'], user, {}),
-        otherDetails: q.Select(['data', 'otherDetails'], user, {}),
-      }
-    })
-  )
-  const users: User[] = response.data
-  return {
-    props: {
-      users,
-    },
-  }
-}

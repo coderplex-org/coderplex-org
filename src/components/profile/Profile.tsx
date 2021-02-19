@@ -8,11 +8,13 @@ import {
   IconBrandTwitter,
   IconExternalLink,
 } from 'tabler-icons'
-import { A } from '@/components'
+import { A, FollowModal } from '@/components'
 import { Button } from '@/ui'
 import useFollowUser from './useFollowUser'
+import { useSession } from 'next-auth/client'
 
 export default function Profile({ user }: { user: User }) {
+  const [session] = useSession()
   const {
     shouldShowFollowButton,
     isFollowing: isFollowingData,
@@ -20,6 +22,7 @@ export default function Profile({ user }: { user: User }) {
     isLoading,
   } = useFollowUser(user.id)
   const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [isFollowing, setIsFollowing] = useState(false)
   useEffect(() => {
@@ -155,7 +158,22 @@ export default function Profile({ user }: { user: User }) {
                   </>
                 ) : (
                   <>
-                    <Button onClick={() => toggle()}>Follow</Button>
+                    <Button
+                      onClick={() => {
+                        if (!session) {
+                          setIsModalOpen(true)
+                          return
+                        }
+                        toggle()
+                      }}
+                    >
+                      Follow
+                    </Button>
+                    <FollowModal
+                      user={user}
+                      isOpen={isModalOpen}
+                      setIsOpen={setIsModalOpen}
+                    />
                   </>
                 ))}
             </div>

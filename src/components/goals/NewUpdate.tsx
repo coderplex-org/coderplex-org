@@ -107,7 +107,7 @@ export default function NewUpdate({
 
               <div className="mt-6 flex items-center justify-end space-x-4">
                 <Button variant="solid" variantColor="brand" type="submit">
-                  Add Update
+                  Post Update
                 </Button>
               </div>
             </form>
