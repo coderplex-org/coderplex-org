@@ -45,14 +45,6 @@ export default function AppNavBar() {
       }
       rightDesktopItems={
         <>
-          <Button
-            variant="solid"
-            variantColor="brand"
-            onClick={() => setIsDonateModalOpen(true)}
-          >
-            Donate
-          </Button>
-
           <DonateModal
             isOpen={isDonateModalOpen}
             setIsOpen={setIsDonateModalOpen}
@@ -63,6 +55,14 @@ export default function AppNavBar() {
             (session ? (
               <>
                 <Toggle />
+
+                <Button
+                  variant="solid"
+                  variantColor="success"
+                  onClick={() => setIsDonateModalOpen(true)}
+                >
+                  Donate
+                </Button>
 
                 <Menu
                   trigger={
@@ -97,6 +97,14 @@ export default function AppNavBar() {
             ) : (
               <>
                 <Toggle />
+
+                <Button
+                  variant="solid"
+                  variantColor="success"
+                  onClick={() => setIsDonateModalOpen(true)}
+                >
+                  Donate
+                </Button>
                 <Button
                   variant="solid"
                   variantColor="brand"
