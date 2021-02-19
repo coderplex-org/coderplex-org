@@ -50,6 +50,7 @@ const FaunaCreateHandler: NextApiHandler = async (
 
     res.status(200).json({ response })
   } catch (error) {
+    console.error(error)
     console.error({ msg: error.message })
     res.status(500).json({ message: error.message })
   }
