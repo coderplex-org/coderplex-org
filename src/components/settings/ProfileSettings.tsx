@@ -30,7 +30,7 @@ export default function ProfileSettings() {
         },
         body: JSON.stringify({
           user: {
-            username: data.username,
+            // username: data.username,
             image: data.image,
             account: {
               firstName: data.firstName,
@@ -96,6 +96,10 @@ export default function ProfileSettings() {
               <div className="col-span-4 flex flex-col-reverse md:grid md:grid-cols-4">
                 <div className="flex md:col-span-3 flex-col gap-6 max-w-lg">
                   <Input
+                    disabled={true}
+                    readOnly={true}
+                    aria-readonly={true}
+                    aria-disabled={true}
                     label="Username"
                     type="text"
                     leadingAddon="coderplex.org/"
@@ -125,7 +129,6 @@ export default function ProfileSettings() {
                         : 'This field is required'
                     }
                   />
-
                   <Input
                     label="Profile Picture"
                     type="url"
