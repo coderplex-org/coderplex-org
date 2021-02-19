@@ -309,7 +309,7 @@ function HomePageSideNavBar() {
     <>
       <nav
         aria-label="Sidebar"
-        className="sticky top-24 divide-y divide-gray-300"
+        className="sticky top-20 divide-y divide-gray-300"
       >
         <div className="pb-8 space-y-1">
           {session && (
@@ -462,7 +462,7 @@ function HomePageAside({ goalId }: { goalId: string }) {
 
   return (
     <>
-      <div className="sticky top-24 space-y-4">
+      <div className="sticky top-20 space-y-4">
         {Boolean(goalId) && (
           <section
             aria-labelledby="trending-heading"
