@@ -6,12 +6,12 @@ import { Button } from '@/ui'
 export default function GoalTitle({
   children,
   createdBy,
-  onEditClick,
+  onEditClick = () => {},
   showEditButton,
 }: {
   children: string
   createdBy: User
-  onEditClick: () => void
+  onEditClick?: () => void
   showEditButton: boolean
 }) {
   return (

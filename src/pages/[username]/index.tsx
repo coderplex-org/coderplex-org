@@ -22,7 +22,7 @@ type Update = {
   postedBy: User
 }
 
-type GoalResponse = {
+export type GoalResponse = {
   id: string
   title: string
   description: string
@@ -108,7 +108,7 @@ export default function UserProfile({
             <Goal.UpdatesList>
               {goalResponse.updates.data.map((update, index) => (
                 <Goal.Update
-                  postedBy={user}
+                  postedBy={update.postedBy}
                   key={update.id}
                   postedOn={DateTime.fromMillis(update.createdAt)}
                   isLastUpdate={

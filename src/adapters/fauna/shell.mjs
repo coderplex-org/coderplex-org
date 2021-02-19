@@ -9,12 +9,7 @@ const client = new faunadb.Client({
 })
 
 async function main() {
-  const goalId = '290932327237812736'
-  const response = await client.query(
-    q.Map(q.Paginate(q.Documents(q.Collection('goals'))), (goalRef) =>
-      q.Select(['ref', 'id'], q.Get(goalRef))
-    )
-  )
+  const response = client.query(q.Do())
   console.log(JSON.stringify(response, null, 2))
 }
 

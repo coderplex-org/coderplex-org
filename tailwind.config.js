@@ -17,6 +17,7 @@ module.exports = {
     extend: {
       spacing: {
         13: '3.25rem',
+        100: '25rem',
       },
       colors: {
         blueGray: colors.blueGray,
@@ -39,41 +40,3 @@ module.exports = {
     require('nightwind'),
   ],
 }
-
-/**
- * === Already Included Colors ===
- * gray: coolGray
- * red: red
- * yellow: amber
- * green: emerald
- * blue: blue
- * indigo: indigo
- * purple: violet
- * pink: pink
- */
-
-/**
- * === All Colors ===
- * blueGray
- * coolGray
- * gray
- * trueGray
- * warnGray
- * red
- * orange
- * amber
- * yellow
- * lime
- * green
- * emerald
- * teal
- * cyan
- * lightBlue
- * blue
- * indigo
- * violet
- * purple
- * fuchsia
- * pink
- * rose
- */

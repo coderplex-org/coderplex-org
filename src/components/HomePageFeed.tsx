@@ -29,6 +29,8 @@ import {
   UpdateComments,
   UpdateCommentsList,
 } from '@/components'
+import { Goal } from './goals'
+import type { GoalResponse } from 'src/pages/[username]'
 
 type LikeData = {
   count: number
@@ -59,7 +61,7 @@ export function HomePageFeedUpdate({
   update: HomePageFeedUpdateType
   setGoalId: () => void
 }) {
-  const [session, loading] = useSession()
+  const [session] = useSession()
   const [showComments, setShowComments] = useState(false)
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
   const createdAt = DateTime.fromMillis(createdAtInMillis)
@@ -417,7 +419,7 @@ function FollowButton({ user }: { user: User }) {
 
 function HomePageAside({ goalId }: { goalId: string }) {
   const [session] = useSession()
-  const { isLoading, isError, data: response } = useQuery(
+  const { isLoading, isError, data } = useQuery(
     ['/api/fauna/recent-updates', goalId],
     () =>
       fetch(`/api/fauna/recent-updates`, {
@@ -443,62 +445,38 @@ function HomePageAside({ goalId }: { goalId: string }) {
     return fetch(`/api/fauna/who-to-follow`).then((res) => res.json())
   })
 
-  const shouldShowRecentUpdates = Boolean(goalId) && goalId !== ''
+  const shouldShowRecentUpdates =
+    Boolean(goalId) && goalId !== '' && !isLoading && !isError
+  const goal: GoalResponse = data?.response ?? {}
 
   return (
     <>
       <div className="sticky top-4 space-y-4">
         {shouldShowRecentUpdates && (
-          <section aria-labelledby="trending-heading">
+          <section
+            aria-labelledby="trending-heading"
+            className="h-100 overflow-y-auto"
+          >
             <div className="bg-white rounded-lg shadow">
               <div className="p-6">
-                <h2
-                  id="trending-heading"
-                  className="text-base font-medium text-gray-900"
-                >
-                  All Updates
-                </h2>
-                <div className="mt-6 flow-root">
-                  <ul className="-my-4 divide-y divide-gray-200">
-                    {!isLoading &&
-                      !isError &&
-                      response.updates.map((update) => (
-                        <li className="flex py-4 space-x-3" key={update.id}>
-                          <div className="flex-shrink-0">
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={update.postedBy.image}
-                              alt=""
-                            />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="prose prose-sm max-w-none">
-                              <Markdown>{update.description}</Markdown>
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-                {session ? (
-                  <div className="mt-6">
-                    <A
-                      href={`/${response?.updates?.[0].postedBy.username}`}
-                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      View all
-                    </A>
-                  </div>
-                ) : (
-                  <div className="mt-6">
-                    <button
-                      onClick={() => signIn('github')}
-                      className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      Join
-                    </button>
-                  </div>
-                )}
+                <Goal.Title createdBy={goal.createdBy} showEditButton={false}>
+                  {goal.title}
+                </Goal.Title>
+                <Goal.Description>{goal.description}</Goal.Description>
+                <Goal.Updates>
+                  <Goal.UpdatesList>
+                    {goal.updates.data.map((update, index) => (
+                      <Goal.Update
+                        postedBy={update.postedBy}
+                        key={update.id}
+                        postedOn={DateTime.fromMillis(update.createdAt)}
+                        isLastUpdate={index === goal.updates.data.length - 1}
+                      >
+                        {update.description}
+                      </Goal.Update>
+                    ))}
+                  </Goal.UpdatesList>
+                </Goal.Updates>
               </div>
             </div>
           </section>

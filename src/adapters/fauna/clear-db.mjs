@@ -39,6 +39,14 @@ async function main() {
         q.Paginate(q.Documents(q.Collection('goal_updates'))),
         (goalUpdate) => q.Delete(goalUpdate)
       )
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('goal_likes'))),
+        (goalUpdate) => q.Delete(goalUpdate)
+      )
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('update_comments'))),
+        (goalUpdate) => q.Delete(goalUpdate)
+      )
     )
   )
 }

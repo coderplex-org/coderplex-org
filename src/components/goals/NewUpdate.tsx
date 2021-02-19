@@ -51,6 +51,7 @@ export default function NewUpdate({
         ])
         if (updateFromHomePage) {
           queryClient.refetchQueries('/api/fauna/all-updates')
+          queryClient.refetchQueries(['/api/fauna/recent-updates', goal.id])
         }
         reset()
       },

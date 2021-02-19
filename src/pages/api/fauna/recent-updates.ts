@@ -23,85 +23,43 @@ const FaunaCreateHandler: NextApiHandler = async (
 
   try {
     const { goalId } = req.body
-    console.log({ goalId })
-    const response: any = await client.query(
-      q.Map(
-        q.Paginate(
-          q.Match(
-            q.Index('all_updates_by_goal'),
-            q.Ref(q.Collection('goals'), goalId)
+    const goalRef = q.Ref(q.Collection('goals'), goalId)
+    const goalDoc = q.Get(goalRef)
+    const goalCreatedByDoc = q.Get(q.Select(['data', 'createdBy'], goalDoc))
+    const response: any = await client.query({
+      id: q.Select(['ref', 'id'], goalDoc),
+      title: q.Select(['data', 'title'], goalDoc),
+      description: q.Select(['data', 'description'], goalDoc),
+      createdAt: q.ToMillis(
+        q.Select(['data', 'timestamps', 'createdAt'], goalDoc, 0)
+      ),
+      createdBy: {
+        id: q.Select(['ref', 'id'], goalCreatedByDoc),
+        name: q.Select(['data', 'name'], goalCreatedByDoc, null),
+        username: q.Select(['data', 'username'], goalCreatedByDoc, null),
+        account: {
+          firstName: q.Select(
+            ['data', 'account', 'firstName'],
+            goalCreatedByDoc,
+            null
           ),
-          {
-            size: 3,
-          }
-        ),
-        (goalUpdateRef) => {
-          const goalUpdateDoc = q.Get(goalUpdateRef)
-          const goalDoc = q.Get(q.Select(['data', 'goal'], goalUpdateDoc))
-          const postedByDoc = q.Get(
-            q.Select(['data', 'postedBy'], goalUpdateDoc)
-          )
-          const description = q.Select(['data', 'description'], goalUpdateDoc)
-
-          const createdAt = q.ToMillis(
-            q.Select(['data', 'timestamps', 'createdAt'], goalUpdateDoc)
-          )
+        },
+      },
+      updates: q.Map(
+        q.Paginate(q.Match(q.Index('all_updates_by_goal'), goalRef)),
+        (updateRef) => {
+          const updateDoc = q.Get(updateRef)
+          const postedByDoc = q.Get(q.Select(['data', 'postedBy'], updateDoc))
           return {
-            id: q.Select(['ref', 'id'], goalUpdateDoc),
-            goal: {
-              id: q.Select(['ref', 'id'], goalDoc),
-              title: q.Select(['data', 'title'], goalDoc),
-            },
-            commentsCount: q.Count(
-              q.Match(q.Index('all_comments_by_update'), goalUpdateRef)
+            id: q.Select(['ref', 'id'], updateDoc),
+            description: q.Select(['data', 'description'], updateDoc),
+            createdAt: q.ToMillis(
+              q.Select(['data', 'timestamps', 'createdAt'], updateDoc, 0)
             ),
-            comments: q.Map(
-              q.Paginate(
-                q.Match(q.Index('all_comments_by_update'), goalUpdateRef)
-              ),
-              (commentRef) => {
-                const commentDoc = q.Get(commentRef)
-                const postedByDoc = q.Get(
-                  q.Select(['data', 'postedBy'], commentDoc)
-                )
-                return {
-                  id: q.Select(['ref', 'id'], commentDoc),
-                  description: q.Select(['data', 'description'], commentDoc),
-                  createdAt: q.ToMillis(
-                    q.Select(['data', 'timestamps', 'createdAt'], commentDoc)
-                  ),
-                  postedBy: {
-                    id: q.Select(['ref', 'id'], postedByDoc),
-                    name: q.Select(['data', 'name'], postedByDoc, null),
-                    image: q.Select(['data', 'image'], postedByDoc, null),
-                    username: q.Select(['data', 'username'], postedByDoc, null),
-                    account: {
-                      firstName: q.Select(
-                        ['data', 'account', 'firstName'],
-                        postedByDoc,
-                        null
-                      ),
-                    },
-                  },
-                }
-              }
-            ),
-            likes: q.Count(
-              q.Filter(
-                q.Paginate(
-                  q.Match(q.Index('all_likes_by_update'), goalUpdateRef)
-                ),
-                (updateLikeRef) => {
-                  return q.Select(['data', 'liked'], q.Get(updateLikeRef))
-                }
-              )
-            ),
-            description,
-            createdAt,
             postedBy: {
               id: q.Select(['ref', 'id'], postedByDoc),
-              name: q.Select(['data', 'name'], postedByDoc, null),
               image: q.Select(['data', 'image'], postedByDoc, null),
+              name: q.Select(['data', 'name'], postedByDoc, null),
               username: q.Select(['data', 'username'], postedByDoc, null),
               account: {
                 firstName: q.Select(
@@ -113,10 +71,9 @@ const FaunaCreateHandler: NextApiHandler = async (
             },
           }
         }
-      )
-    )
-
-    res.status(200).json({ updates: response.data })
+      ),
+    })
+    res.status(200).json({ response })
   } catch (error) {
     console.error({ msg: error.message })
     res.status(500).json({ message: error.message })
