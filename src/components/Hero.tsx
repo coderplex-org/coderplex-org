@@ -7,7 +7,7 @@ export default function Hero() {
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center">
           <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span className="block text-indigo-600 xl:inline">
+            <span className="block text-brand-600 xl:inline">
               Learn. Code. Collaborate.
             </span>
           </h1>
@@ -19,7 +19,7 @@ export default function Hero() {
             <div className="rounded-md shadow">
               <button
                 onClick={() => signIn('github')}
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-600 hover:bg-brand-700 md:py-4 md:text-lg md:px-10"
               >
                 Join Community
               </button>
@@ -27,7 +27,7 @@ export default function Hero() {
             <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
               <A
                 href="https://chat.coderplex.org"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-brand-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
               >
                 Join Discord
               </A>

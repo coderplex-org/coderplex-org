@@ -41,7 +41,7 @@ const SOLID_COLOR_VARIANT_MAPS: Record<ButtonVariantColor, string> = {
   warning: `border border-transparent text-white bg-warning-600 hover:bg-warning-700 
     focus:ring-2 focus:ring-offset-2 focus:ring-warning-500`,
   info: `border border-transparent text-white bg-info-600 hover:bg-info-700 
-    focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+    focus:ring-2 focus:ring-offset-2 focus:ring-brand-500`,
 }
 
 const OUTLINED_COLOR_VARIANT_MAPS: Record<ButtonVariantColor, string> = {

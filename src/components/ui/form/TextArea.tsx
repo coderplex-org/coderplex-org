@@ -65,7 +65,7 @@ const TextArea = React.forwardRef(
               hasError
                 ? `border-red-300 text-red-900 placeholder-red-900 
                       focus:ring-red-500 focus-within:border-red-500`
-                : 'border-gray-300 text-black focus:ring-indigo-500 focus:border-indigo-500',
+                : 'border-gray-300 text-black focus:ring-brand-500 focus:border-brand-500',
               textAreaClassName
             )}
             {...rest}

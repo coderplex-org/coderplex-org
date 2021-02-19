@@ -18,7 +18,7 @@ export default function GoalTitle({
     <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:border-gray-200 xl:pb-6">
       <div>
         <h1>
-          <span className="block text-sm text-indigo-600 font-semibold tracking-wide uppercase">
+          <span className="block text-sm text-brand-600 font-semibold tracking-wide uppercase">
             Goal
           </span>
           <span className="text-2xl font-bold text-gray-900">{children}</span>

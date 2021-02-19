@@ -135,7 +135,7 @@ export default function UserProfile({
           <>
             <div className="bg-white px-4 py-6 mt-4 shadow sm:p-6 sm:rounded-lg">
               <div className="flex">
-                <span className="block text-lg text-indigo-600 font-semibold tracking-wide">
+                <span className="block text-lg text-brand-600 font-semibold tracking-wide">
                   🚀 Set Your Goal:
                 </span>
               </div>

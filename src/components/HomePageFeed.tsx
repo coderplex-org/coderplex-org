@@ -138,7 +138,7 @@ export function HomePageFeedUpdate({
           </div>
         </div>
         <div className="mt-2 text-sm text-gray-700 space-y-4">
-          <div className="pbrand pbrand max-w-none">
+          <div className="prose max-w-none">
             <Markdown>{description}</Markdown>
           </div>
         </div>
@@ -242,7 +242,7 @@ export default function HomePageFeed({
                 <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
                   <div className="flex">
                     <A href={`${(session.user as User).username}`}>
-                      <span className="block text-base text-center text-indigo-600 font-semibold tracking-wide">
+                      <span className="block text-base text-center text-brand-600 font-semibold tracking-wide">
                         🚀 Your Goal:
                         <span className="rounded-md bg-brand-100 text-brand-800 hover:text-brand-600 px-2.5 py-1.5 ml-2">
                           {goal.title}
@@ -257,7 +257,7 @@ export default function HomePageFeed({
                   <>
                     <div className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg">
                       <div className="flex">
-                        <span className="block text-lg text-center text-indigo-600 font-semibold tracking-wide">
+                        <span className="block text-lg text-center text-brand-600 font-semibold tracking-wide">
                           🚀 Set Your Goal:
                         </span>
                       </div>
@@ -440,9 +440,9 @@ function HomePageAside({ updates }: { updates: HomePageFeedUpdateType[] }) {
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm text-gray-800">
-                            {update.description}
-                          </p>
+                          <div className="prose prose-sm max-w-none">
+                            <Markdown>{update.description}</Markdown>
+                          </div>
                           <div className="mt-2 flex">
                             <span className="inline-flex items-center text-sm">
                               <button className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">

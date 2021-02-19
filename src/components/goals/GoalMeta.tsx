@@ -100,7 +100,7 @@ export default function GoalMeta({
               <a className="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5">
                 <div className="absolute flex-shrink-0 flex items-center justify-center">
                   <span
-                    className="h-1.5 w-1.5 rounded-full bg-indigo-500"
+                    className="h-1.5 w-1.5 rounded-full bg-brand-500"
                     aria-hidden="true"
                   ></span>
                 </div>

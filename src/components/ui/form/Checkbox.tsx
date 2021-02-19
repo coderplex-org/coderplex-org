@@ -46,7 +46,7 @@ const Checkbox = React.forwardRef(
             id={id}
             type="checkbox"
             className={classNames(
-              'focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded',
+              'focus:ring-brand-500 h-4 w-4 text-brand-600 border-gray-300 rounded',
               inputClassName
             )}
             {...values}

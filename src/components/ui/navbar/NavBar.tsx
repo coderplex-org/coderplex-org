@@ -33,7 +33,7 @@ const NavBar = ({
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsNavBarOpen(!isNavBarOpen)}
-                className="inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                className="inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
                 aria-expanded={isNavBarOpen}
               >
                 <span className="sr-only">Open main menu</span>
@@ -98,7 +98,7 @@ const NavBarMobileLeftItem = React.forwardRef(
           `block py-2 pl-3 pr-4 text-base font-medium border-l-4 sm:pl-5 sm:pr-6
           cursor-pointer`,
           isSelected
-            ? 'text-indigo-700 border-indigo-500 bg-indigo-50'
+            ? 'text-brand-700 border-brand-500 bg-brand-50'
             : `text-gray-600 border-transparent hover:text-gray-800
            hover:bg-gray-50 hover:border-gray-300`,
           className
@@ -123,7 +123,7 @@ const NavBarDesktopLeftItem = React.forwardRef(
           `inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 
             border-b-2 cursor-pointer`,
           isSelected
-            ? 'border-indigo-500'
+            ? 'border-brand-500'
             : 'border-transparent hover:text-gray-700 hover:border-gray-300',
           className
         )}
