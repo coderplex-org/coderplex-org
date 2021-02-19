@@ -17,6 +17,19 @@ const faunaClient = new faunadb.Client({
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options)
 export default authHandler
 
+function getFirstAndLastNames(name: string) {
+  const nameArray = name.split(' ')
+  let firstName = ''
+  let lastName = ''
+  if (nameArray.length === 1) {
+    firstName = name
+  } else if (nameArray.length > 1) {
+    firstName = nameArray.slice(0, -1).join(' ')
+    lastName = nameArray.slice(-1).join(' ')
+  }
+  return { firstName, lastName }
+}
+
 const options: InitOptions = {
   providers: [
     Providers.GitHub({
@@ -25,9 +38,13 @@ const options: InitOptions = {
       scope: 'user:email',
       // @ts-ignore
       profile: (profileData) => {
+        const name = profileData.name || profileData.login
+        const { firstName, lastName } = getFirstAndLastNames(name)
         return {
           id: profileData.id,
-          name: profileData.name || profileData.login,
+          name,
+          firstName,
+          lastName,
           email: profileData.email,
           image: profileData.avatar_url,
           username: profileData.login,
@@ -72,6 +89,8 @@ const options: InitOptions = {
                 id: profileData.id,
                 name,
                 email: null,
+                firstName: profileData.localizedFirstName,
+                lastName: profileData.localizedLastName,
                 image: profileImage,
                 username,
                 bio: null,

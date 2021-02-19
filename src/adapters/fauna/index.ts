@@ -42,7 +42,8 @@ const Adapter = (config, options = {}) => {
           email: profile.email,
           image: profile.image,
           account: {
-            firstName: profile.name,
+            firstName: profile.firstName,
+            lastName: profile.lastName,
             bio: profile.bio,
           },
           socials: {
@@ -165,7 +166,8 @@ const Adapter = (config, options = {}) => {
           email: user.email,
           image: user.image,
           account: {
-            firstName: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             bio: user.bio,
           },
           socials: {
