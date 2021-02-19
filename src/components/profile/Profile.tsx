@@ -56,7 +56,7 @@ export default function Profile({ user }: { user: User }) {
                 {user.account?.firstName ?? user.name}
               </p>
               <p className="text-sm font-medium text-gray-600">
-                {user.account?.bio ?? 'Coderplex User'}
+                {user.account?.bio}
               </p>
 
               <div>
