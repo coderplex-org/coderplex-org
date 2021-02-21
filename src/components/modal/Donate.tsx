@@ -8,7 +8,7 @@ export default function Donate() {
       'src',
       'https://cdn.razorpay.com/static/widget/subscription-button.js'
     )
-    script.setAttribute('data-subscription_button_id', 'pl_GdSwtlH5wuoiJS')
+    script.setAttribute('data-subscription_button_id', 'pl_GeHbmown0obyb6')
     script.setAttribute('data-button_theme', 'brand-color')
     form.appendChild(script)
   }, [])
