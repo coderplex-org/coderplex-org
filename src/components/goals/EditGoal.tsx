@@ -97,7 +97,7 @@ export default function EditGoal({
                 label="Goal description"
                 rows={5}
                 placeholder="I will code for atleast 2 hours everyday."
-                helpText="Basic markdown is supported."
+                helpText="[Basic Markdown](/markdown) is supported."
                 hasError={Boolean(errors.description)}
                 errorMessage="Something went wrong!!!"
                 onKeyDown={async (e) => {

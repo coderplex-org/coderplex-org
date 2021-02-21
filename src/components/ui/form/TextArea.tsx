@@ -1,5 +1,6 @@
 import * as React from 'react'
 import classNames from 'classnames'
+import Markdown from 'src/components/Markdown'
 
 export type TextAreaProps = {
   label?: string
@@ -74,12 +75,12 @@ const TextArea = React.forwardRef(
           {help && (
             <p
               className={classNames(
-                'mt-2 text-sm',
+                'mt-2 text-sm prose prose-sm',
                 hasError ? ' text-red-600' : ' text-gray-500'
               )}
               id={`${id}-${hasError ? 'error' : 'description'}`}
             >
-              {help}
+              <Markdown>{help}</Markdown>
             </p>
           )}
         </div>
