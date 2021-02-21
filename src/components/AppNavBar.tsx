@@ -25,6 +25,28 @@ export default function AppNavBar() {
   const [session, loading] = useSession()
   const router = useRouter()
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false)
+  const mobileItems = [
+    ...navbarItems,
+    ...(session
+      ? [
+          {
+            title: 'Your Profile',
+            value: 'your-profile',
+            href: session && (session.user as User).username,
+          },
+          {
+            title: 'Your Goal',
+            value: 'your-goal',
+            href: session && (session.user as User).username,
+          },
+          {
+            title: 'Settings',
+            value: 'settings',
+            href: '/profile/settings',
+          },
+        ]
+      : []),
+  ]
 
   return (
     <NavBar
@@ -118,7 +140,7 @@ export default function AppNavBar() {
       }
       mobileItems={
         <>
-          {navbarItems.map((item) => (
+          {mobileItems.map((item) => (
             <Link href={item.href} passHref={true} key={item.value}>
               <NavBar.Item.Mobile.Left isSelected={router.asPath === item.href}>
                 {item.title}
