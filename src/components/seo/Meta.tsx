@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 export default function Meta() {
-  const baseUrl = 'https://beta.coderplex.org'
+  const baseUrl = 'https://coderplex.org'
   const router = useRouter()
   return (
     <Head>

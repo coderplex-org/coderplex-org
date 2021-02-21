@@ -42,7 +42,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const description =
     meta.metaDescription ||
     meta.description ||
-    "We're a non-profit startup on a mission to improve the state of tech across India"
+    'Achieve your goals with a community of passionate self-learners by joining the Coderplex Community'
 
   return (
     <ThemeProvider
@@ -52,7 +52,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     >
       <QueryClientProvider client={queryClient}>
         <Provider session={pageProps.session}>
-          <Title suffix="Coderplex">{meta.metaTitle || meta.title}</Title>
+          <Title>{meta.metaTitle || meta.title}</Title>
           <Description>{description}</Description>
           <Meta />
           <Layout {...layoutProps}>

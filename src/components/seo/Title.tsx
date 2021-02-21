@@ -1,13 +1,13 @@
 import Head from 'next/head'
 
 export default function Title({
-  suffix = 'Coderplex',
+  suffix = 'Coderplex Community',
   children,
 }: {
   suffix?: string
   children: string
 }) {
-  let title = children ? `${children} - ` + suffix : suffix
+  let title = children ? `${children} | ` + suffix : suffix
 
   return (
     <Head>

@@ -1,4 +1,4 @@
-import { GoalType, HomePageFeed } from '@/components'
+import { GoalType, HomePageFeed, Title } from '@/components'
 import { useSession } from 'next-auth/client'
 import { useQuery } from 'react-query'
 import { User } from './members'
@@ -55,6 +55,7 @@ export default function Home() {
 
   return (
     <>
+      <Title>Learn. Code. Collaborate.</Title>
       <HomePageFeed
         updates={isLoading ? [] : data.updates}
         showGoal={Boolean(
