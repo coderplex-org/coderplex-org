@@ -34,6 +34,7 @@ import {
 } from '@/components'
 import { Goal } from './goals'
 import type { GoalResponse } from 'src/pages/[username]'
+import { scrollToContentWithId } from 'src/utils'
 
 type LikeData = {
   count: number
@@ -141,7 +142,13 @@ export function HomePageFeedUpdate({
             </div>
           </div>
           <div className="mt-4 flex">
-            <button onClick={() => setGoalId()} className="hidden lg:block">
+            <button
+              onClick={() => {
+                setGoalId()
+                scrollToContentWithId(`homepage-update-${update.id}`)
+              }}
+              className="hidden lg:block"
+            >
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
                 🚀 Goal: {goal.title}
               </span>
