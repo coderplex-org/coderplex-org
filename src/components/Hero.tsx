@@ -12,8 +12,8 @@ export default function Hero() {
             </span>
           </h1>
           <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Our mission is to help each other to learn more, create awesome
-            things, and become better developers.
+            Achieve your goals with a community of passionate self-learners by
+            joining the Coderplex Community
           </p>
           <div className="mt-5 max-w-xl mx-auto sm:flex sm:justify-center md:mt-8">
             <div className="rounded-md shadow">

@@ -35,6 +35,7 @@ import {
 import { Goal } from './goals'
 import type { GoalResponse } from 'src/pages/[username]'
 import { scrollToContentWithId } from 'src/utils'
+import { IconBrandDiscord } from 'tabler-icons'
 
 type LikeData = {
   count: number
@@ -351,6 +352,15 @@ function HomePageSideNavBar() {
                 <Gear className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                 <span className="truncate">Settings</span>
               </A>
+
+              <A
+                href="/chat"
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="false"
+              >
+                <IconBrandDiscord className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+                <span className="truncate">Our Chatroom</span>
+              </A>
             </>
           )}
           {!session && (
@@ -362,6 +372,15 @@ function HomePageSideNavBar() {
               >
                 <Users className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                 <span className="truncate">Members</span>
+              </A>
+              <A
+                href="/chat"
+                target="_blank"
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="false"
+              >
+                <IconBrandDiscord className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+                <span className="truncate">Our Chatroom</span>
               </A>
             </>
           )}

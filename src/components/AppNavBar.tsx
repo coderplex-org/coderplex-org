@@ -19,6 +19,11 @@ const navbarItems = [
     value: 'members',
     href: '/members',
   },
+  {
+    title: 'Our Chatroom',
+    value: 'our-chatroom',
+    href: '/chat',
+  },
 ]
 
 export default function AppNavBar() {
