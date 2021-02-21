@@ -31,7 +31,7 @@ export default function ProfileSettings() {
         body: JSON.stringify({
           user: {
             // username: data.username,
-            image: data.image,
+            // image: data.image,
             account: {
               firstName: data.firstName,
               lastName: data.lastName,
@@ -133,6 +133,10 @@ export default function ProfileSettings() {
                     }
                   />
                   <Input
+                    disabled={true}
+                    readOnly={true}
+                    aria-readonly={true}
+                    aria-disabled={true}
                     label="Profile Picture"
                     type="url"
                     name="image"
