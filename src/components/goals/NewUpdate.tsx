@@ -42,7 +42,7 @@ export default function NewUpdate({
       }),
     {
       onSuccess: () => {
-        toast.success('You have successfully updated your goal.', {
+        toast.success('You have successfully added an update.', {
           id: toastId.current,
         })
         queryClient.refetchQueries([
