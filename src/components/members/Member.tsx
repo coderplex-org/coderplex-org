@@ -21,7 +21,6 @@ export default function Member({ user }: { user: User }) {
   const router = useRouter()
   const socials = user.socials
   const account = user.account
-  const bioExists = Boolean(account.bio)
   const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
   const {
     shouldShowFollowButton,
@@ -42,7 +41,7 @@ export default function Member({ user }: { user: User }) {
     setIsFollowing(!isFollowing)
     toggleFollow()
   }
-  console.log({ user })
+
   return (
     <li>
       <div className="flex items-center space-x-4 lg:space-x-6">
@@ -62,9 +61,7 @@ export default function Member({ user }: { user: User }) {
           </A>
           <dl className="mt-1 flex-grow flex flex-col justify-between">
             <dt className="sr-only">Bio</dt>
-            <dd className="text-gray-500 text-xs">
-              {bioExists ? account.bio : 'Coderplex User'}
-            </dd>
+            <dd className="text-gray-500 text-xs">{account.bio}</dd>
             <dt className="sr-only">Role</dt>
             <dt className="sr-only">Social Media</dt>
             {socials && (
