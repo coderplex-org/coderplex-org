@@ -48,7 +48,7 @@ export default function Member({ user }: { user: User }) {
         <A href={`/${user.username}`}>
           <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden">
             <img
-              className="w-full h-full inline-block text-white focus:ring object-cover"
+              className="w-full h-full inline-block text-black focus:ring object-cover"
               src={user.image}
               alt={user.name}
               tabIndex={0}
