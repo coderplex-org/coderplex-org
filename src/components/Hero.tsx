@@ -15,13 +15,13 @@ export default function Hero() {
             Our mission is to help each other to learn more, create awesome
             things, and become better developers.
           </p>
-          <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+          <div className="mt-5 max-w-xl mx-auto sm:flex sm:justify-center md:mt-8">
             <div className="rounded-md shadow">
               <button
                 onClick={() => signIn('github')}
                 className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-600 hover:bg-brand-700 md:py-4 md:text-lg md:px-10"
               >
-                Join Community
+                Join Our Community
               </button>
             </div>
             <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
@@ -29,7 +29,7 @@ export default function Hero() {
                 href="https://chat.coderplex.org"
                 className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-brand-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
               >
-                Join Chatroom
+                Join Our Chatroom
               </A>
             </div>
           </div>
