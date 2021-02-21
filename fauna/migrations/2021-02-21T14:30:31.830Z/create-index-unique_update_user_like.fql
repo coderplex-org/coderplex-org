@@ -1,0 +1,10 @@
+CreateIndex({
+  name: "unique_update_user_like",
+  source: Collection("update_likes"),
+  unique: true,
+  terms: [{
+    field: ["data", "update"]
+  }, {
+    field: ["data", "user"]
+  }]
+})

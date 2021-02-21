@@ -58,8 +58,10 @@ const Adapter = (config, options = {}) => {
             ? q.Time(profile.emailVerified.toISOString())
             : null,
           username: profile.username,
-          createdAt: q.Now(),
-          updatedAt: q.Now(),
+          timestamps: {
+            createdAt: q.Now(),
+            updatedAt: q.Now(),
+          },
         },
       })
 
@@ -182,7 +184,10 @@ const Adapter = (config, options = {}) => {
             ? q.Time(user.emailVerified.toISOString())
             : null,
           username: user.username,
-          updatedAt: q.Now(),
+          timestamps: {
+            createdAt: q.Now(),
+            updatedAt: q.Now(),
+          },
         },
       })
 

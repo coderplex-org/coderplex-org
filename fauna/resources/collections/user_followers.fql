@@ -1,0 +1,15 @@
+CreateCollection({ 
+  name: 'user_followers' 
+})
+
+/**
+# "data": {
+#   "user": User,
+#   "follower": User,
+#   "isFollowing": Boolean,
+#   "timestamps": 
+#     "createdAt": Time,
+#     "updatedAt": Time)
+#   }
+# }
+**/

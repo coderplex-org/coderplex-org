@@ -1,0 +1,14 @@
+CreateIndex({
+  name: 'all_recent_updates',
+  source: Collection('goal_updates'),
+  unique: false,
+  values: [
+    {
+      field: ['data', 'timestamps', 'updatedAt'],
+      reverse: true,
+    },
+    {
+      field: ['ref'],
+    },
+  ],
+})

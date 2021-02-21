@@ -1,0 +1,13 @@
+CreateIndex({
+  name: 'unique_user_and_follower',
+  source: Collection('user_followers'),
+  unique: true,
+  terms: [
+    {
+      field: ['data', 'user'],
+    },
+    {
+      field: ['data', 'follower'],
+    },
+  ],
+})

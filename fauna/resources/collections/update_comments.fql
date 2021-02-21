@@ -1,0 +1,15 @@
+CreateCollection({ 
+  name: 'update_comments' 
+})
+
+/**
+# data: {
+#   update: GoalUpdate
+#   postedBy: User
+#   description: string
+#   timestamps {
+#     createdAt: Time
+#     updatedAt: Time
+#   }
+# }
+**/

@@ -1,0 +1,7 @@
+CreateIndex({
+  name: "all_comments_by_update",
+  source: Collection("update_comments"),
+  terms: [{
+    field: ["data", "update"]
+  }]
+})

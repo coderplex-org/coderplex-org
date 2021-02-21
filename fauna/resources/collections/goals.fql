@@ -1,0 +1,15 @@
+CreateCollection({ 
+  name: 'goals' 
+})
+
+/**
+# data: {
+#   createdBy: User
+#   title: string
+#   description: string(markdown)
+#   timestamps {
+#     createdAt: Time
+#     updatedAt: Time
+#   }
+# }
+**/

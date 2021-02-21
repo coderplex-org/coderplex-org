@@ -1,0 +1,15 @@
+CreateCollection({ 
+  name: 'update_likes' 
+})
+
+/**
+# data: {
+#   update: GoalUpdate
+#   user: User
+#   liked: boolean
+#   timestamps {
+#     createdAt: Time
+#     updatedAt: Time
+#   }
+# }
+**/

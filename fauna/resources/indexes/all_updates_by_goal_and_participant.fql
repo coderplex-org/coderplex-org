@@ -1,0 +1,13 @@
+CreateIndex({
+  name: 'all_updates_by_goal_and_participant',
+  source: Collection('goal_updates'),
+  unique: false,
+  terms: [
+    {
+      field: ['data', 'goal'],
+    },
+    {
+      field: ['data', 'postedBy'],
+    },
+  ],
+})

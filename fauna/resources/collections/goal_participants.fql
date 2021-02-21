@@ -1,0 +1,14 @@
+CreateCollection({ 
+  name: 'goal_participants' 
+})
+
+/**
+# data {
+#   goal: Goal
+#   participant: User
+#   timestamps {
+#     createdAt: Time
+#     updatedAt: Time
+#   }
+# }
+**/

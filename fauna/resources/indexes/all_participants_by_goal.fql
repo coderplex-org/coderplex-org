@@ -1,0 +1,10 @@
+CreateIndex({
+  name: 'all_participants_by_goal',
+  source: Collection('goal_participants'),
+  unique: false,
+  terms: [
+    {
+      field: ['data', 'goal'],
+    },
+  ],
+})

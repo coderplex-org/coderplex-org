@@ -1,0 +1,9 @@
+CreateIndex({
+  name: 'all_likes_by_update',
+  source: Collection('update_likes'),
+  terms: [
+    {
+      field: ['data', 'update'],
+    },
+  ],
+})
