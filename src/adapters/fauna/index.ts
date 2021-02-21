@@ -62,6 +62,7 @@ const Adapter = (config, options = {}) => {
             createdAt: q.Now(),
             updatedAt: q.Now(),
           },
+          loggedInFromCoderplexOrg: true,
         },
       })
 
