@@ -107,6 +107,7 @@ export default function ProfileSettings() {
                     defaultValue={user.username}
                     ref={register({
                       required: true,
+                      maxLength: 50,
                       validate: (username: string) => {
                         if (username === user.username) {
                           return true
@@ -126,7 +127,9 @@ export default function ProfileSettings() {
                     errorMessage={
                       errors.username?.type === 'validate'
                         ? 'Username is already taken'
-                        : 'This field is required'
+                        : errors.username?.type === 'maxLength'
+                        ? 'Username should have less than 50 chars'
+                        : 'Username is required'
                     }
                   />
                   <Input
@@ -136,7 +139,7 @@ export default function ProfileSettings() {
                     defaultValue={user.image ?? ''}
                     ref={register({ required: true })}
                     hasError={Boolean(errors.image)}
-                    errorMessage="This field is required"
+                    errorMessage="Profile picture is required"
                   />
                 </div>
                 <div className="md:col-span-1 grid place-items-center">
@@ -163,9 +166,13 @@ export default function ProfileSettings() {
                 name="firstName"
                 className="col-span-4 sm:col-span-2"
                 defaultValue={user.account?.firstName}
-                ref={register({ required: true })}
+                ref={register({ required: true, maxLength: 50 })}
                 hasError={Boolean(errors.firstName)}
-                errorMessage="This field is required"
+                errorMessage={
+                  errors.firstName?.type === 'maxLength'
+                    ? 'Firstname should have less than 50 chars'
+                    : 'Firstname is required'
+                }
               />
 
               <Input
@@ -173,9 +180,9 @@ export default function ProfileSettings() {
                 type="text"
                 name="lastName"
                 className="col-span-4 sm:col-span-2"
-                ref={register}
+                ref={register({ maxLength: 50 })}
                 hasError={Boolean(errors.lastName)}
-                errorMessage="Something went wrong!!"
+                errorMessage="Lastname should have less than 50 chars"
                 defaultValue={user.account?.lastName ?? ''}
               />
             </div>

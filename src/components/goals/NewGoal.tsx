@@ -57,6 +57,7 @@ export default function NewGoal() {
     toastId.current = id
     mutate(data)
   }
+
   return (
     <>
       <Toaster />
@@ -65,13 +66,17 @@ export default function NewGoal() {
           <div className="min-w-0 flex-1">
             <form onSubmit={handleSubmit(onSubmit)}>
               <Input
-                ref={register({ required: true })}
+                ref={register({ required: true, maxLength: 50 })}
                 name="title"
                 label="Goal Title"
                 type="text"
                 placeholder="Participate in #100DaysOfCode"
                 hasError={Boolean(errors.title)}
-                errorMessage="Title is required"
+                errorMessage={
+                  errors.title?.type === 'maxLength'
+                    ? 'Title should have less than 50 chars'
+                    : 'Title is required'
+                }
               />
 
               <TextArea
