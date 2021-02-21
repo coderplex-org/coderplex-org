@@ -11,12 +11,7 @@ export default function Logo({
 }) {
   return (
     <A href="/" className="flex items-center cursor-pointer">
-      <Image
-        src="/blue-logo.svg"
-        width={size}
-        height={size}
-        alt="Coderplex Logo"
-      />
+      <Image src="/logo.svg" width={size} height={size} alt="Coderplex Logo" />
       <span
         className={classNames(
           'ml-2 text-base font-medium text-black',

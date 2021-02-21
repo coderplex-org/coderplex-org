@@ -15,7 +15,8 @@
     "setup-db": "node ./src/adapters/fauna/setup.mjs",
     "clear-db": "node ./src/adapters/fauna/clear-db.mjs",
     "seed-db": "node ./src/adapters/fauna/seed.mjs",
-    "shell": "node ./src/adapters/fauna/shell.mjs"
+    "shell": "node ./src/adapters/fauna/shell.mjs",
+    "gen-favicons": "npx real-favicon generate faviconDescription.json faviconData.json public/favicons"
   },
   "dependencies": {
     "@badrap/bar-of-progress": "0.1.2",
@@ -51,6 +52,7 @@
     "@typescript-eslint/parser": "4.15.1",
     "autoprefixer": "10.2.4",
     "babel-eslint": "10.1.0",
+    "cli-real-favicon": "0.0.8",
     "eslint": "7.20.0",
     "eslint-config-prettier": "8.0.0",
     "eslint-config-react-app": "6.0.0",
