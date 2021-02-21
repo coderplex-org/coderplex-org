@@ -21,7 +21,7 @@ export default function Meta() {
       <meta
         key="twitter:image"
         name="twitter:image"
-        content={`${baseUrl}/logo.svg`}
+        content={`${baseUrl}/preview.png`}
       />
       <meta
         key="twitter:creator"
@@ -37,7 +37,7 @@ export default function Meta() {
       <meta
         key="og:image"
         property="og:image"
-        content={`${baseUrl}/logo.svg`}
+        content={`${baseUrl}/preview.png`}
       />
     </Head>
   )
