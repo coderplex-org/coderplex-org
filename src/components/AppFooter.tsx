@@ -88,7 +88,7 @@ export default function AppFooter({ className = '' }: { className?: string }) {
           </div>
           <div className="mt-8 md:mt-0 md:order-1">
             <p className="text-base text-center text-gray-500">
-              &#xA9; 2020 Coderplex Foundation. All rights reserved.
+              &#xA9; 2021 Coderplex Foundation. All rights reserved.
             </p>
           </div>
         </div>
