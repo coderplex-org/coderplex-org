@@ -201,14 +201,6 @@ export function HomePageFeedUpdate({
               </button>
             </span>
           </div>
-          <div className="flex text-sm">
-            <span className="inline-flex items-center text-sm">
-              <button className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
-                <ShareNetwork className="h-5 w-5" />
-                <span className="font-medium text-gray-900">Share</span>
-              </button>
-            </span>
-          </div>
         </div>
       </article>
 
