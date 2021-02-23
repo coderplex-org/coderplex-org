@@ -1,6 +1,6 @@
 import MarkdownOriginal, { MarkdownToJSX } from 'markdown-to-jsx'
 import React from 'react'
-import { A } from '.'
+import { A, Pre } from '@/components'
 
 export default function Markdown(props: {
   [key: string]: any
@@ -17,6 +17,9 @@ export default function Markdown(props: {
           ...(props?.options?.overrides ?? {}),
           a: {
             component: A,
+          },
+          pre: {
+            component: Pre,
           },
         },
       }}
