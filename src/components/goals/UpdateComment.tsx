@@ -23,14 +23,7 @@ export default function UpdateComment({
 }) {
   return (
     <li>
-      <div className="relative pb-8">
-        {!isLastComment && (
-          <span
-            className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-            aria-hidden="true"
-          ></span>
-        )}
-
+      <div className="relative pb-6">
         <div className="relative flex items-start space-x-3">
           <div className="relative">
             <Avatar src={postedBy.image} />
