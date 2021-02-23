@@ -21,6 +21,7 @@
   "dependencies": {
     "@badrap/bar-of-progress": "0.1.2",
     "@headlessui/react": "0.3.1",
+    "@tailwindcss/line-clamp": "0.2.0",
     "classnames": "2.2.6",
     "fauna-schema-migrate": "0.1.7",
     "faunadb": "4.1.0",

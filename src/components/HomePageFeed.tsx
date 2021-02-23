@@ -3,7 +3,6 @@ import {
   ChatCenteredDots,
   Gear,
   RocketLaunch,
-  ShareNetwork,
   ThumbsUp,
   UserCircle,
   Users,

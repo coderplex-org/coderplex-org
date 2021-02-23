@@ -61,7 +61,9 @@ export default function Member({ user }: { user: User }) {
           </A>
           <dl className="mt-1 flex-grow flex flex-col justify-between">
             <dt className="sr-only">Bio</dt>
-            <dd className="text-gray-500 text-xs">{account.bio}</dd>
+            <dd className="text-gray-500 text-xs line-clamp-2">
+              {account.bio}
+            </dd>
             <dt className="sr-only">Role</dt>
             <dt className="sr-only">Social Media</dt>
             {socials && (
