@@ -40,10 +40,7 @@ export default function NewGoal() {
         toast.success('You have successfully set your goal.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries([
-          '/api/fauna/goals/all-goals-by-user',
-          (session.user as User).id,
-        ])
+        queryClient.refetchQueries('/api/fauna/goals/all-goals-by-user')
         queryClient.refetchQueries('/api/fauna/goals/get-current-goal')
       },
       onError: () => {

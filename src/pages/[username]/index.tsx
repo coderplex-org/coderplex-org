@@ -41,7 +41,7 @@ export default function UserProfile({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [session, loading] = useSession()
   const { isLoading, isError, data } = useQuery(
-    ['/api/fauna/goals/all-goals-by-user', user.id],
+    '/api/fauna/goals/all-goals-by-user',
     () =>
       fetch(`/api/fauna/goals/all-goals-by-user`, {
         method: 'POST',
