@@ -492,7 +492,7 @@ function HomePageAside({ goalId }: { goalId: string }) {
         {Boolean(goalId) && (
           <section
             aria-labelledby="trending-heading"
-            className="h-100 overflow-y-auto"
+            className="max-h-150 overflow-y-auto"
           >
             <div className="bg-white rounded-lg shadow">
               <div className="p-6">
