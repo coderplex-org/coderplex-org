@@ -19,6 +19,7 @@ module.exports = {
         13: '3.25rem',
         26: '6.5rem',
         100: '25rem',
+        150: '37.5rem',
       },
       colors: {
         blueGray: colors.blueGray,
