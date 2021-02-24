@@ -1,9 +1,12 @@
-import { Avatar } from '@/ui'
+import { Avatar, Menu } from '@/ui'
 import {
   ChatCenteredDots,
+  DotsThreeOutlineVertical,
   Gear,
+  Pencil,
   RocketLaunch,
   ThumbsUp,
+  Trash,
   UserCircle,
   Users,
 } from 'phosphor-react'
@@ -34,7 +37,8 @@ import {
 import { Goal } from './goals'
 import type { GoalResponse } from 'src/pages/[username]'
 import { scrollToContentWithId } from 'src/utils'
-import { IconBrandDiscord } from 'tabler-icons'
+import { IconBrandDiscord, IconMenu } from 'tabler-icons'
+import EditUpdate from './goals/EditUpdate'
 
 type LikeData = {
   count: number
@@ -65,6 +69,7 @@ export function HomePageFeedUpdate({
   update: HomePageFeedUpdateType
   setGoalId: () => void
 }) {
+  const [isInEditMode, setIsInEditMode] = useState(false)
   const [isLikeModalOpen, setIsLikeModalOpen] = useState(false)
   const [session] = useSession()
   const [showComments, setShowComments] = useState(false)
@@ -120,114 +125,154 @@ export function HomePageFeedUpdate({
       className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg"
       id={`homepage-update-${update.id}`}
     >
-      <article>
-        <div>
-          <div className="flex space-x-3">
-            <div className="flex-shrink-0">
-              <A href={`/${postedBy.username}`}>
-                <Avatar src={postedBy.image} />
-              </A>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                <A href={`/${postedBy.username}`} className="hover:underline">
-                  {postedBy.name}
-                </A>
-              </p>
-              <p className="text-sm text-gray-500">
-                <time dateTime={createdAt.toISO()}>
-                  {createdAt.toLocaleString(DateTime.DATETIME_MED)}
-                </time>
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 flex">
-            <button
-              onClick={() => {
-                setGoalId()
-                scrollToContentWithId(`homepage-update-${update.id}`)
-              }}
-              className="hidden lg:block"
-            >
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
-                🚀 Goal: {goal.title}
-              </span>
-            </button>
-            <A href={`/${postedBy.username}`} className="lg:hidden">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
-                🚀 Goal: {goal.title}
-              </span>
-            </A>
-          </div>
-        </div>
-        <div className="mt-2 text-sm text-gray-700 space-y-4">
-          <div className="prose max-w-none">
-            <Markdown>{description}</Markdown>
-          </div>
-        </div>
-        <div className="mt-6 flex justify-between space-x-8">
-          <div className="flex space-x-6">
-            <span className="inline-flex items-center text-sm">
-              <button
-                className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
-                onClick={() => {
-                  if (!session) {
-                    setIsLikeModalOpen(true)
-                    return
-                  }
-                  dispatch({ type: 'toggle' })
-                  mutate()
-                }}
-              >
-                <ThumbsUp
-                  className={classNames(
-                    'h-5 w-5',
-                    hasLiked && 'text-brand-600'
-                  )}
-                  weight={hasLiked ? 'bold' : 'regular'}
-                />
-                <span className="font-medium text-gray-900">{likesCount}</span>
-                <span className="sr-only">likes</span>
-              </button>
-              <LikeModal
-                user={postedBy}
-                isOpen={isLikeModalOpen}
-                setIsOpen={setIsLikeModalOpen}
-              />
-            </span>
-            <span className="inline-flex items-center text-sm">
-              <button
-                className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
-                onClick={() => setShowComments(!showComments)}
-              >
-                <ChatCenteredDots className="h-5 w-5" />
-                <span className="font-medium text-gray-900">
-                  {update.comments.data.length}
-                </span>
-                <span className="sr-only">replies</span>
-              </button>
-            </span>
-          </div>
-        </div>
-      </article>
-
-      {showComments && (
+      {isInEditMode ? (
+        <EditUpdate
+          update={update}
+          goalId={goal.id}
+          cancelEditMode={() => setIsInEditMode(false)}
+          updateFromHomePage={true}
+        />
+      ) : (
         <>
-          <UpdateComments>
-            <UpdateCommentsList>
-              {update.comments.data.map((comment, index) => (
-                <UpdateComment
-                  key={comment.id}
-                  postedBy={comment.postedBy}
-                  postedOn={DateTime.fromMillis(comment.createdAt)}
-                  isLastComment={index === update.comments.data.length - 1}
+          <article>
+            <div>
+              <div className="flex space-x-3">
+                <div className="flex-shrink-0">
+                  <A href={`/${postedBy.username}`}>
+                    <Avatar src={postedBy.image} />
+                  </A>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    <A
+                      href={`/${postedBy.username}`}
+                      className="hover:underline"
+                    >
+                      {postedBy.name}
+                    </A>
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    <time dateTime={createdAt.toISO()}>
+                      {createdAt.toLocaleString(DateTime.DATETIME_MED)}
+                    </time>
+                  </p>
+                </div>
+
+                <div className="flex-shrink-0 self-center flex">
+                  <div className="relative inline-block text-left">
+                    <Menu
+                      trigger={
+                        <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
+                          <span className="sr-only">Open quick actions</span>
+                          <DotsThreeOutlineVertical
+                            className="h-5 w-5"
+                            aria-hidden={true}
+                          />
+                        </button>
+                      }
+                    >
+                      <Menu.Item
+                        icon={Pencil}
+                        onClick={() => setIsInEditMode(true)}
+                      >
+                        Edit
+                      </Menu.Item>
+                      <Menu.Item icon={Trash}>Delete</Menu.Item>
+                    </Menu>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex">
+                <button
+                  onClick={() => {
+                    setGoalId()
+                    scrollToContentWithId(`homepage-update-${update.id}`)
+                  }}
+                  className="hidden lg:block"
                 >
-                  {comment.description}
-                </UpdateComment>
-              ))}
-            </UpdateCommentsList>
-            {session && <NewComment updateId={update.id} />}
-          </UpdateComments>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
+                    🚀 Goal: {goal.title}
+                  </span>
+                </button>
+                <A href={`/${postedBy.username}`} className="lg:hidden">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
+                    🚀 Goal: {goal.title}
+                  </span>
+                </A>
+              </div>
+            </div>
+            <div className="mt-2 text-sm text-gray-700 space-y-4">
+              <div className="prose max-w-none">
+                <Markdown>{description}</Markdown>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-between space-x-8">
+              <div className="flex space-x-6">
+                <span className="inline-flex items-center text-sm">
+                  <button
+                    className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                    onClick={() => {
+                      if (!session) {
+                        setIsLikeModalOpen(true)
+                        return
+                      }
+                      dispatch({ type: 'toggle' })
+                      mutate()
+                    }}
+                  >
+                    <ThumbsUp
+                      className={classNames(
+                        'h-5 w-5',
+                        hasLiked && 'text-brand-600'
+                      )}
+                      weight={hasLiked ? 'bold' : 'regular'}
+                    />
+                    <span className="font-medium text-gray-900">
+                      {likesCount}
+                    </span>
+                    <span className="sr-only">likes</span>
+                  </button>
+                  <LikeModal
+                    user={postedBy}
+                    isOpen={isLikeModalOpen}
+                    setIsOpen={setIsLikeModalOpen}
+                  />
+                </span>
+                <span className="inline-flex items-center text-sm">
+                  <button
+                    className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                    onClick={() => setShowComments(!showComments)}
+                  >
+                    <ChatCenteredDots className="h-5 w-5" />
+                    <span className="font-medium text-gray-900">
+                      {update.comments.data.length}
+                    </span>
+                    <span className="sr-only">replies</span>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </article>
+
+          {showComments && (
+            <>
+              <UpdateComments>
+                <UpdateCommentsList>
+                  {update.comments.data.map((comment, index) => (
+                    <UpdateComment
+                      key={comment.id}
+                      postedBy={comment.postedBy}
+                      postedOn={DateTime.fromMillis(comment.createdAt)}
+                      isLastComment={index === update.comments.data.length - 1}
+                    >
+                      {comment.description}
+                    </UpdateComment>
+                  ))}
+                </UpdateCommentsList>
+                {session && <NewComment updateId={update.id} />}
+              </UpdateComments>
+            </>
+          )}
         </>
       )}
     </li>
