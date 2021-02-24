@@ -51,10 +51,7 @@ export default function EditUpdate({
         toast.success('You have successfully edited the update.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries([
-          '/api/fauna/goals/all-goals-by-user',
-          (session.user as User).id,
-        ])
+        queryClient.refetchQueries('/api/fauna/goals/all-goals-by-user')
         if (updateFromHomePage) {
           queryClient.refetchQueries('/api/fauna/all-updates')
           queryClient.refetchQueries(['/api/fauna/recent-updates', goalId])

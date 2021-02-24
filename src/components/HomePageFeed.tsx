@@ -13,9 +13,9 @@ import {
 import * as React from 'react'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import classNames from 'classnames'
-import { useEffect, useReducer, useState } from 'react'
+import { useEffect, useReducer, useState, useRef } from 'react'
 import { signIn, useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
 import useFollowUser from './profile/useFollowUser'
@@ -37,8 +37,9 @@ import {
 import { Goal } from './goals'
 import type { GoalResponse } from 'src/pages/[username]'
 import { scrollToContentWithId } from 'src/utils'
-import { IconBrandDiscord, IconMenu } from 'tabler-icons'
+import { IconBrandDiscord } from 'tabler-icons'
 import EditUpdate from './goals/EditUpdate'
+import toast, { Toaster } from 'react-hot-toast'
 
 type LikeData = {
   count: number
@@ -69,12 +70,14 @@ export function HomePageFeedUpdate({
   update: HomePageFeedUpdateType
   setGoalId: () => void
 }) {
+  const queryClient = useQueryClient()
   const [isInEditMode, setIsInEditMode] = useState(false)
   const [isLikeModalOpen, setIsLikeModalOpen] = useState(false)
   const [session] = useSession()
   const [showComments, setShowComments] = useState(false)
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
   const createdAt = DateTime.fromMillis(createdAtInMillis)
+  const toastId = useRef('')
   const { isLoading, isError, data } = useQuery(
     ['api/fauna/has-liked', update.id],
     () => {
@@ -106,6 +109,35 @@ export function HomePageFeedUpdate({
     })
   })
 
+  const { mutate: deleteUpdate } = useMutation(
+    () => {
+      return fetch(`/api/fauna/goals/delete-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: update.id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('something went wrong!!!')
+        }
+        return res.json()
+      })
+    },
+    {
+      onSuccess: () => {
+        toast.success('Deleted your update!!', {
+          id: toastId.current,
+          icon: <Trash className="text-danger-400" />,
+        })
+        queryClient.refetchQueries('/api/fauna/all-updates')
+        queryClient.refetchQueries(['/api/fauna/recent-updates', goal.id])
+      },
+    }
+  )
+
   const [{ count: likesCount, hasLiked }, dispatch] = useReducer(
     reducer,
     initialState
@@ -121,161 +153,175 @@ export function HomePageFeedUpdate({
   }, [data?.liked, isError, isLoading, update.likes.data])
 
   return (
-    <li
-      className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg"
-      id={`homepage-update-${update.id}`}
-    >
-      {isInEditMode ? (
-        <EditUpdate
-          update={update}
-          goalId={goal.id}
-          cancelEditMode={() => setIsInEditMode(false)}
-          updateFromHomePage={true}
-        />
-      ) : (
-        <>
-          <article>
-            <div>
-              <div className="flex space-x-3">
-                <div className="flex-shrink-0">
-                  <A href={`/${postedBy.username}`}>
-                    <Avatar src={postedBy.image} />
-                  </A>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-900">
-                    <A
-                      href={`/${postedBy.username}`}
-                      className="hover:underline"
-                    >
-                      {postedBy.name}
+    <>
+      <Toaster />
+      <li
+        className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg"
+        id={`homepage-update-${update.id}`}
+      >
+        {isInEditMode ? (
+          <EditUpdate
+            update={update}
+            goalId={goal.id}
+            cancelEditMode={() => setIsInEditMode(false)}
+            updateFromHomePage={true}
+          />
+        ) : (
+          <>
+            <article>
+              <div>
+                <div className="flex space-x-3">
+                  <div className="flex-shrink-0">
+                    <A href={`/${postedBy.username}`}>
+                      <Avatar src={postedBy.image} />
                     </A>
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    <time dateTime={createdAt.toISO()}>
-                      {createdAt.toLocaleString(DateTime.DATETIME_MED)}
-                    </time>
-                  </p>
-                </div>
-
-                <div className="flex-shrink-0 self-center flex">
-                  <div className="relative inline-block text-left">
-                    <Menu
-                      trigger={
-                        <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
-                          <span className="sr-only">Open quick actions</span>
-                          <DotsThreeOutlineVertical
-                            className="h-5 w-5"
-                            aria-hidden={true}
-                          />
-                        </button>
-                      }
-                    >
-                      <Menu.Item
-                        icon={Pencil}
-                        onClick={() => setIsInEditMode(true)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      <A
+                        href={`/${postedBy.username}`}
+                        className="hover:underline"
                       >
-                        Edit
-                      </Menu.Item>
-                      <Menu.Item icon={Trash}>Delete</Menu.Item>
-                    </Menu>
+                        {postedBy.name}
+                      </A>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      <time dateTime={createdAt.toISO()}>
+                        {createdAt.toLocaleString(DateTime.DATETIME_MED)}
+                      </time>
+                    </p>
+                  </div>
+
+                  <div className="flex-shrink-0 self-center flex">
+                    <div className="relative inline-block text-left">
+                      <Menu
+                        trigger={
+                          <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
+                            <span className="sr-only">Open quick actions</span>
+                            <DotsThreeOutlineVertical
+                              className="h-5 w-5"
+                              aria-hidden={true}
+                            />
+                          </button>
+                        }
+                      >
+                        <Menu.Item
+                          icon={Pencil}
+                          onClick={() => setIsInEditMode(true)}
+                        >
+                          Edit
+                        </Menu.Item>
+                        <Menu.Item
+                          icon={Trash}
+                          onClick={() => {
+                            deleteUpdate()
+                            const id = toast.loading('Deleting your update...')
+                            toastId.current = id
+                          }}
+                        >
+                          Delete
+                        </Menu.Item>
+                      </Menu>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="mt-4 flex">
-                <button
-                  onClick={() => {
-                    setGoalId()
-                    scrollToContentWithId(`homepage-update-${update.id}`)
-                  }}
-                  className="hidden lg:block"
-                >
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
-                    🚀 Goal: {goal.title}
-                  </span>
-                </button>
-                <A href={`/${postedBy.username}`} className="lg:hidden">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
-                    🚀 Goal: {goal.title}
-                  </span>
-                </A>
-              </div>
-            </div>
-            <div className="mt-2 text-sm text-gray-700 space-y-4">
-              <div className="prose max-w-none">
-                <Markdown>{description}</Markdown>
-              </div>
-            </div>
-            <div className="mt-6 flex justify-between space-x-8">
-              <div className="flex space-x-6">
-                <span className="inline-flex items-center text-sm">
+                <div className="mt-4 flex">
                   <button
-                    className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
                     onClick={() => {
-                      if (!session) {
-                        setIsLikeModalOpen(true)
-                        return
-                      }
-                      dispatch({ type: 'toggle' })
-                      mutate()
+                      setGoalId()
+                      scrollToContentWithId(`homepage-update-${update.id}`)
                     }}
+                    className="hidden lg:block"
                   >
-                    <ThumbsUp
-                      className={classNames(
-                        'h-5 w-5',
-                        hasLiked && 'text-brand-600'
-                      )}
-                      weight={hasLiked ? 'bold' : 'regular'}
-                    />
-                    <span className="font-medium text-gray-900">
-                      {likesCount}
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
+                      🚀 Goal: {goal.title}
                     </span>
-                    <span className="sr-only">likes</span>
                   </button>
-                  <LikeModal
-                    user={postedBy}
-                    isOpen={isLikeModalOpen}
-                    setIsOpen={setIsLikeModalOpen}
-                  />
-                </span>
-                <span className="inline-flex items-center text-sm">
-                  <button
-                    className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
-                    onClick={() => setShowComments(!showComments)}
-                  >
-                    <ChatCenteredDots className="h-5 w-5" />
-                    <span className="font-medium text-gray-900">
-                      {update.comments.data.length}
+                  <A href={`/${postedBy.username}`} className="lg:hidden">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-brand-100 text-brand-800 hover:text-brand-600">
+                      🚀 Goal: {goal.title}
                     </span>
-                    <span className="sr-only">replies</span>
-                  </button>
-                </span>
+                  </A>
+                </div>
               </div>
-            </div>
-          </article>
-
-          {showComments && (
-            <>
-              <UpdateComments>
-                <UpdateCommentsList>
-                  {update.comments.data.map((comment, index) => (
-                    <UpdateComment
-                      key={comment.id}
-                      postedBy={comment.postedBy}
-                      postedOn={DateTime.fromMillis(comment.createdAt)}
-                      isLastComment={index === update.comments.data.length - 1}
+              <div className="mt-2 text-sm text-gray-700 space-y-4">
+                <div className="prose max-w-none">
+                  <Markdown>{description}</Markdown>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-between space-x-8">
+                <div className="flex space-x-6">
+                  <span className="inline-flex items-center text-sm">
+                    <button
+                      className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                      onClick={() => {
+                        if (!session) {
+                          setIsLikeModalOpen(true)
+                          return
+                        }
+                        dispatch({ type: 'toggle' })
+                        mutate()
+                      }}
                     >
-                      {comment.description}
-                    </UpdateComment>
-                  ))}
-                </UpdateCommentsList>
-                {session && <NewComment updateId={update.id} />}
-              </UpdateComments>
-            </>
-          )}
-        </>
-      )}
-    </li>
+                      <ThumbsUp
+                        className={classNames(
+                          'h-5 w-5',
+                          hasLiked && 'text-brand-600'
+                        )}
+                        weight={hasLiked ? 'bold' : 'regular'}
+                      />
+                      <span className="font-medium text-gray-900">
+                        {likesCount}
+                      </span>
+                      <span className="sr-only">likes</span>
+                    </button>
+                    <LikeModal
+                      user={postedBy}
+                      isOpen={isLikeModalOpen}
+                      setIsOpen={setIsLikeModalOpen}
+                    />
+                  </span>
+                  <span className="inline-flex items-center text-sm">
+                    <button
+                      className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
+                      onClick={() => setShowComments(!showComments)}
+                    >
+                      <ChatCenteredDots className="h-5 w-5" />
+                      <span className="font-medium text-gray-900">
+                        {update.comments.data.length}
+                      </span>
+                      <span className="sr-only">replies</span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </article>
+
+            {showComments && (
+              <>
+                <UpdateComments>
+                  <UpdateCommentsList>
+                    {update.comments.data.map((comment, index) => (
+                      <UpdateComment
+                        key={comment.id}
+                        postedBy={comment.postedBy}
+                        postedOn={DateTime.fromMillis(comment.createdAt)}
+                        isLastComment={
+                          index === update.comments.data.length - 1
+                        }
+                      >
+                        {comment.description}
+                      </UpdateComment>
+                    ))}
+                  </UpdateCommentsList>
+                  {session && <NewComment updateId={update.id} />}
+                </UpdateComments>
+              </>
+            )}
+          </>
+        )}
+      </li>
+    </>
   )
 }
 

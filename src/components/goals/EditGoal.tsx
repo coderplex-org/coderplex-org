@@ -51,10 +51,7 @@ export default function EditGoal({
         toast.success('You have successfully updated your goal.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries([
-          '/api/fauna/goals/all-goals-by-user',
-          (session.user as User).id,
-        ])
+        queryClient.refetchQueries('/api/fauna/goals/all-goals-by-user')
         onCancelClick()
       },
       onError: () => {
