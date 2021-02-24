@@ -45,10 +45,7 @@ export default function NewUpdate({
         toast.success('You have successfully added an update.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries([
-          '/api/fauna/goals/all-goals-by-user',
-          (session.user as User).id,
-        ])
+        queryClient.refetchQueries('/api/fauna/goals/all-goals-by-user')
         if (updateFromHomePage) {
           queryClient.refetchQueries('/api/fauna/all-updates')
           queryClient.refetchQueries(['/api/fauna/recent-updates', goal.id])
