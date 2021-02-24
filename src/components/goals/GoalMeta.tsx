@@ -1,6 +1,7 @@
 import { User } from 'src/pages/members'
 import { Avatar } from '@/ui'
 import { DateTime } from 'luxon'
+import { A } from '@/components'
 
 export default function GoalMeta({
   className = '',
@@ -81,14 +82,21 @@ export default function GoalMeta({
           <ul className="mt-3 space-y-3">
             {participants.map((participant) => (
               <li className="flex justify-start" key={participant.id}>
-                <a href="/" className="flex items-end space-x-3">
+                <A
+                  href={`/${participant.username}`}
+                  className="flex items-end space-x-3"
+                >
                   <div className="flex-shrink-0">
-                    <Avatar src={participant.image} size="2xs" />
+                    <Avatar
+                      src={participant.image}
+                      size="2xs"
+                      alt={participant.account?.firstName}
+                    />
                   </div>
                   <div className="text-sm font-medium text-gray-900">
                     {participant.account?.firstName ?? participant.name}
                   </div>
-                </a>
+                </A>
               </li>
             ))}
           </ul>

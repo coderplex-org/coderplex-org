@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/client'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
-import { Markdown } from '@/components'
+import { Markdown, A } from '@/components'
 
 type Inputs = {
   description: string
@@ -73,7 +73,12 @@ export default function NewUpdate({
         <div className="flex space-x-3">
           <div className="flex-shrink-0">
             <div className="relative">
-              <Avatar src={(session.user as User).image} />
+              <A href={`/${(session.user as User).username}`}>
+                <Avatar
+                  src={(session.user as User).image}
+                  alt={(session.user as User).account?.firstName}
+                />
+              </A>
             </div>
           </div>
           <div className="min-w-0 flex-1">

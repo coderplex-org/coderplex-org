@@ -45,11 +45,13 @@ export default function Profile({ user }: { user: User }) {
         <div className="sm:flex sm:items-center sm:justify-between">
           <div className="sm:flex sm:space-x-5 sm:items-center">
             <div className="flex-shrink-0">
-              <img
-                className="mx-auto h-20 w-20 rounded-full"
-                src={user.image}
-                alt=""
-              />
+              <A href={`/${(session.user as User).username}`}>
+                <img
+                  className="mx-auto h-20 w-20 rounded-full"
+                  src={user.image}
+                  alt={user.name}
+                />
+              </A>
             </div>
             <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
               <p className="text-xl font-bold text-gray-900 sm:text-2xl">
