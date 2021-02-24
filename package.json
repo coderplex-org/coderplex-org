@@ -23,7 +23,7 @@
     "@headlessui/react": "0.3.1",
     "@tailwindcss/line-clamp": "0.2.0",
     "classnames": "2.2.6",
-    "fauna-schema-migrate": "0.1.7",
+    "fauna-schema-migrate": "0.1.10",
     "faunadb": "4.1.0",
     "luxon": "1.26.0",
     "markdown-to-jsx": "7.1.1",
