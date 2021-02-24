@@ -135,6 +135,11 @@ export function HomePageFeedUpdate({
         queryClient.refetchQueries('/api/fauna/all-updates')
         queryClient.refetchQueries(['/api/fauna/recent-updates', goal.id])
       },
+      onError: () => {
+        toast.error('Something went wrong!!!', {
+          id: toastId.current,
+        })
+      },
     }
   )
 
@@ -192,38 +197,44 @@ export function HomePageFeedUpdate({
                     </p>
                   </div>
 
-                  <div className="flex-shrink-0 self-center flex">
-                    <div className="relative inline-block text-left">
-                      <Menu
-                        trigger={
-                          <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
-                            <span className="sr-only">Open quick actions</span>
-                            <DotsThreeOutlineVertical
-                              className="h-5 w-5"
-                              aria-hidden={true}
-                            />
-                          </button>
-                        }
-                      >
-                        <Menu.Item
-                          icon={Pencil}
-                          onClick={() => setIsInEditMode(true)}
+                  {session && (session.user as User).id === update.postedBy.id && (
+                    <div className="flex-shrink-0 self-center flex">
+                      <div className="relative inline-block text-left">
+                        <Menu
+                          trigger={
+                            <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
+                              <span className="sr-only">
+                                Open quick actions
+                              </span>
+                              <DotsThreeOutlineVertical
+                                className="h-5 w-5"
+                                aria-hidden={true}
+                              />
+                            </button>
+                          }
                         >
-                          Edit
-                        </Menu.Item>
-                        <Menu.Item
-                          icon={Trash}
-                          onClick={() => {
-                            deleteUpdate()
-                            const id = toast.loading('Deleting your update...')
-                            toastId.current = id
-                          }}
-                        >
-                          Delete
-                        </Menu.Item>
-                      </Menu>
+                          <Menu.Item
+                            icon={Pencil}
+                            onClick={() => setIsInEditMode(true)}
+                          >
+                            Edit
+                          </Menu.Item>
+                          <Menu.Item
+                            icon={Trash}
+                            onClick={() => {
+                              deleteUpdate()
+                              const id = toast.loading(
+                                'Deleting your update...'
+                              )
+                              toastId.current = id
+                            }}
+                          >
+                            Delete
+                          </Menu.Item>
+                        </Menu>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
                 <div className="mt-4 flex">
                   <button
