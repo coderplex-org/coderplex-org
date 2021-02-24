@@ -7,6 +7,7 @@ export type AvatarProps = {
   className?: string
   size?: SizeVariant
   src?: string
+  alt?: string
   name?: string
   squared?: boolean
 }
@@ -24,6 +25,7 @@ export default function Avatar({
   className,
   size = 'md',
   src,
+  alt = '',
   name,
   squared = false,
 }: AvatarProps) {
@@ -48,7 +50,7 @@ export default function Avatar({
             className
           )}
           src={src}
-          alt=""
+          alt={alt}
           tabIndex={0}
         />
       ) : name ? (

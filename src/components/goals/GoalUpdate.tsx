@@ -1,7 +1,7 @@
 import { Avatar } from '@/ui'
 import React from 'react'
 import { User } from 'src/pages/members'
-import { Markdown } from '@/components'
+import { Markdown, A } from '@/components'
 import { DateTime } from 'luxon'
 
 export type GoalUpdateType = {
@@ -33,7 +33,9 @@ export default function GoalUpdate({
 
         <div className="relative flex items-start space-x-3">
           <div className="relative">
-            <Avatar src={postedBy.image} />
+            <A href={`/${postedBy.username}`}>
+              <Avatar src={postedBy.image} alt={postedBy.account?.firstName} />
+            </A>
           </div>
           <div className="min-w-0 flex-1">
             <div>
