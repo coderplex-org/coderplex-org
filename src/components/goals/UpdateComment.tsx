@@ -1,5 +1,5 @@
 import { Avatar, Menu } from '@/ui'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Markdown, A, LikeModal, useLikes, EditComment } from '@/components'
 import { DateTime } from 'luxon'
 import { UpdateCommentType } from 'src/pages'
@@ -12,6 +12,8 @@ import {
   Trash,
 } from 'phosphor-react'
 import { User } from 'src/pages/members'
+import { useMutation, useQueryClient } from 'react-query'
+import toast from 'react-hot-toast'
 
 export type GoalUpdateType = {
   id: string
@@ -30,9 +32,11 @@ export default function UpdateComment({
   comment: UpdateCommentType
   isLastComment?: boolean
 }) {
+  const queryClient = useQueryClient()
   const [isInEditMode, setIsInEditMode] = useState(false)
   const postedOn = DateTime.fromMillis(comment.createdAt)
   const [session] = useSession()
+  const toastId = useRef('')
   const [isLikeModalOpen, setIsLikeModalOpen] = useState(false)
   const { count: likesCount, hasLiked, toggleLike } = useLikes({
     initialCount: comment.likes.data,
@@ -50,6 +54,38 @@ export default function UpdateComment({
       },
     },
   })
+  const { mutate: deleteComment } = useMutation(
+    () => {
+      return fetch(`/api/fauna/goals/delete-comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: comment.id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error('something went wrong!!!')
+        }
+        return res.json()
+      })
+    },
+    {
+      onSuccess: () => {
+        toast.success('Deleted your comment!!', {
+          id: toastId.current,
+          icon: <Trash className="text-danger-400" />,
+        })
+        queryClient.refetchQueries('/api/fauna/all-updates')
+      },
+      onError: () => {
+        toast.error('Something went wrong!!!', {
+          id: toastId.current,
+        })
+      },
+    }
+  )
   return (
     <li>
       {isInEditMode ? (
@@ -111,9 +147,9 @@ export default function UpdateComment({
                         <Menu.Item
                           icon={Trash}
                           onClick={() => {
-                            // deleteUpdate()
-                            // const id = toast.loading('Deleting your update...')
-                            // toastId.current = id
+                            deleteComment()
+                            const id = toast.loading('Deleting your comment...')
+                            toastId.current = id
                           }}
                         >
                           Delete
