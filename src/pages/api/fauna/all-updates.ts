@@ -47,6 +47,16 @@ const FaunaCreateHandler: NextApiHandler = async (
                 createdAt: q.ToMillis(
                   q.Select(['data', 'timestamps', 'createdAt'], commentDoc)
                 ),
+                likes: q.Count(
+                  q.Filter(
+                    q.Paginate(
+                      q.Match(q.Index('all_likes_by_comment'), commentRef)
+                    ),
+                    (commentLikeRef) => {
+                      return q.Select(['data', 'liked'], q.Get(commentLikeRef))
+                    }
+                  )
+                ),
                 postedBy: {
                   id: q.Select(['ref', 'id'], postedByDoc),
                   name: q.Select(['data', 'name'], postedByDoc, null),

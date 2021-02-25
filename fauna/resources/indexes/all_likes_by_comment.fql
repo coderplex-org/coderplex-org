@@ -1,0 +1,9 @@
+CreateIndex({
+  name: 'all_likes_by_comment',
+  source: Collection('comment_likes'),
+  terms: [
+    {
+      field: ['data', 'comment'],
+    },
+  ],
+})

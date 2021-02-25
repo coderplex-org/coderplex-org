@@ -1,0 +1,15 @@
+CreateCollection({ 
+  name: 'comment_likes' 
+})
+
+/**
+# data: {
+#   comment: UpdateComment
+#   user: User
+#   liked: boolean
+#   timestamps {
+#     createdAt: Time
+#     updatedAt: Time
+#   }
+# }
+**/
