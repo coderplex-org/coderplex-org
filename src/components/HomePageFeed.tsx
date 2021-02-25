@@ -265,6 +265,7 @@ export function HomePageFeedUpdate({
                   <UpdateCommentsList>
                     {update.comments.data.map((comment, index) => (
                       <UpdateComment
+                        updateId={update.id}
                         key={comment.id}
                         comment={comment}
                         isLastComment={
