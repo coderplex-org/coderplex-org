@@ -1,0 +1,10 @@
+CreateIndex({
+  name: "unique_comment_user_like",
+  source: Collection("comment_likes"),
+  unique: true,
+  terms: [{
+    field: ["data", "comment"]
+  }, {
+    field: ["data", "user"]
+  }]
+})

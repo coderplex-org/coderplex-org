@@ -8,6 +8,9 @@ export type UpdateCommentType = {
   description: string
   createdAt: number
   postedBy: User
+  likes: {
+    data: number
+  }
 }
 
 export type HomePageFeedUpdateType = {

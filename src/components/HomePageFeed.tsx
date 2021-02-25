@@ -33,14 +33,14 @@ import {
   UpdateCommentsList,
   FollowModal,
   LikeModal,
+  useLikes,
+  EditUpdate,
+  Goal,
 } from '@/components'
-import { Goal } from './goals'
 import type { GoalResponse } from 'src/pages/[username]'
 import { scrollToContentWithId } from 'src/utils'
 import { IconBrandDiscord } from 'tabler-icons'
-import EditUpdate from './goals/EditUpdate'
 import toast, { Toaster } from 'react-hot-toast'
-import { useLikes } from './useLikes'
 
 export function HomePageFeedUpdate({
   update,
@@ -266,8 +266,7 @@ export function HomePageFeedUpdate({
                     {update.comments.data.map((comment, index) => (
                       <UpdateComment
                         key={comment.id}
-                        postedBy={comment.postedBy}
-                        postedOn={DateTime.fromMillis(comment.createdAt)}
+                        comment={comment}
                         isLastComment={
                           index === update.comments.data.length - 1
                         }
