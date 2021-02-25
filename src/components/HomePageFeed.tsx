@@ -15,7 +15,7 @@ import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import classNames from 'classnames'
-import { useEffect, useReducer, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { signIn, useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
 import useFollowUser from './profile/useFollowUser'
@@ -40,28 +40,7 @@ import { scrollToContentWithId } from 'src/utils'
 import { IconBrandDiscord } from 'tabler-icons'
 import EditUpdate from './goals/EditUpdate'
 import toast, { Toaster } from 'react-hot-toast'
-
-type LikeData = {
-  count: number
-  hasLiked: boolean
-}
-const initialState: LikeData = { count: 0, hasLiked: false }
-
-function reducer(state: LikeData, action: { type: string; payload?: any }) {
-  switch (action.type) {
-    case 'toggle':
-      return {
-        hasLiked: !state.hasLiked,
-        count: state.hasLiked
-          ? Number(state.count) - 1
-          : Number(state.count) + 1,
-      }
-    case 'set':
-      return { count: action.payload.count, hasLiked: action.payload.hasLiked }
-    default:
-      throw new Error()
-  }
-}
+import { useLikes } from './useLikes'
 
 export function HomePageFeedUpdate({
   update,
@@ -78,36 +57,6 @@ export function HomePageFeedUpdate({
   const { postedBy, createdAt: createdAtInMillis, goal, description } = update
   const createdAt = DateTime.fromMillis(createdAtInMillis)
   const toastId = useRef('')
-  const { isLoading, isError, data } = useQuery(
-    ['api/fauna/has-liked', update.id],
-    () => {
-      return fetch(`/api/fauna/has-liked`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          updateId: update.id,
-        }),
-      }).then((res) => res.json())
-    }
-  )
-  const { mutate } = useMutation(() => {
-    return fetch(`/api/fauna/toggle-like`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        updateId: update.id,
-      }),
-    }).then((res) => {
-      if (!res.ok) {
-        throw new Error('something went wrong!!!')
-      }
-      return res.json()
-    })
-  })
 
   const { mutate: deleteUpdate } = useMutation(
     () => {
@@ -143,19 +92,22 @@ export function HomePageFeedUpdate({
     }
   )
 
-  const [{ count: likesCount, hasLiked }, dispatch] = useReducer(
-    reducer,
-    initialState
-  )
-
-  useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch({
-        type: 'set',
-        payload: { hasLiked: data.liked, count: update.likes.data },
-      })
-    }
-  }, [data?.liked, isError, isLoading, update.likes.data])
+  const { count: likesCount, hasLiked, toggleLike } = useLikes({
+    initialCount: update.likes.data,
+    query: {
+      key: ['api/fauna/has-liked-update', update.id],
+      endpoint: '/api/fauna/has-liked-update',
+      body: {
+        updateId: update.id,
+      },
+    },
+    mutation: {
+      endpoint: '/api/fauna/toggle-update-like',
+      body: {
+        updateId: update.id,
+      },
+    },
+  })
 
   return (
     <>
@@ -270,8 +222,7 @@ export function HomePageFeedUpdate({
                           setIsLikeModalOpen(true)
                           return
                         }
-                        dispatch({ type: 'toggle' })
-                        mutate()
+                        toggleLike()
                       }}
                     >
                       <ThumbsUp
