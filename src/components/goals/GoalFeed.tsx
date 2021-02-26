@@ -56,6 +56,7 @@ export default function GoalFeed({
                   participants={participants}
                   createdAt={createdAt}
                   updatesCount={updatesCount}
+                  deadline={goal.deadline}
                 />
               </div>
             </div>
@@ -67,6 +68,7 @@ export default function GoalFeed({
             participants={participants}
             createdAt={createdAt}
             updatesCount={updatesCount}
+            deadline={goal.deadline}
           />
         </div>
       </div>
@@ -79,4 +81,5 @@ export type GoalType = {
   title: string
   description: string
   creatorId: string
+  deadline: DateTime
 }

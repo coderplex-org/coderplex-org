@@ -21,7 +21,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   if (!session) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
-  const { id, title, description, creatorId } = req.body
+  const { id, title, description, creatorId, deadline } = req.body
   const userId = (session.user as User).id
 
   if (userId !== creatorId) {
@@ -36,6 +36,7 @@ const FaunaCreateHandler: NextApiHandler = async (
             data: {
               title,
               description,
+              deadline: q.Time(new Date(deadline).toISOString()),
               timestamps: {
                 updatedAt: q.Now(),
               },

@@ -4,12 +4,12 @@ import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
 import { useSession } from 'next-auth/client'
-import { User } from 'src/pages/members'
 import { Markdown } from '@/components'
 
 type Inputs = {
   title: string
   description: string
+  deadline: Date
 }
 
 export default function NewGoal() {
@@ -17,7 +17,6 @@ export default function NewGoal() {
   const queryClient = useQueryClient()
   const { register, handleSubmit, errors, trigger } = useForm<Inputs>()
   const toastId = useRef('')
-  const [session] = useSession()
   const { mutate } = useMutation(
     (data: Inputs) =>
       fetch(`/api/fauna/goals/create-and-participate-in-a-goal`, {
@@ -28,6 +27,7 @@ export default function NewGoal() {
         body: JSON.stringify({
           title: data.title,
           description: data.description,
+          deadline: data.deadline,
         }),
       }).then((res) => {
         if (!res.ok) {
@@ -74,6 +74,15 @@ export default function NewGoal() {
                     ? 'Title should have less than 50 chars'
                     : 'Title is required'
                 }
+              />
+
+              <Input
+                type="date"
+                label="Goal Deadline"
+                ref={register({ valueAsDate: true, required: true })}
+                name="deadline"
+                hasError={Boolean(errors.deadline)}
+                errorMessage="You must set the deadline."
               />
 
               <TextArea
