@@ -61,11 +61,11 @@ export default function NewGoal() {
       <div className="mt-6">
         <div className="flex space-x-3">
           <div className="min-w-0 flex-1">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
               <Input
                 ref={register({ required: true, maxLength: 50 })}
                 name="title"
-                label="Goal Title"
+                label="What is your goal?"
                 type="text"
                 placeholder="Participate in #100DaysOfCode"
                 hasError={Boolean(errors.title)}
@@ -78,7 +78,7 @@ export default function NewGoal() {
 
               <Input
                 type="date"
-                label="Goal Deadline"
+                label="By what time do you want to achieve this goal?"
                 ref={register({ valueAsDate: true, required: true })}
                 name="deadline"
                 hasError={Boolean(errors.deadline)}
@@ -88,7 +88,7 @@ export default function NewGoal() {
               <TextArea
                 ref={register}
                 name="description"
-                label="Goal description"
+                label="What is your plan to achieve this goal?"
                 rows={3}
                 placeholder="I will code for atleast 2 hours everyday."
                 helpText="[Basic Markdown](/markdown) is supported."

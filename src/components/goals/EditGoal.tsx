@@ -75,7 +75,7 @@ export default function EditGoal({
                 ref={register({ required: true, maxLength: 50 })}
                 defaultValue={goal.title}
                 name="title"
-                label="Goal Title"
+                label="What is your goal?"
                 type="text"
                 placeholder="Participate in #100DaysOfCode"
                 hasError={Boolean(errors.title)}
@@ -88,7 +88,7 @@ export default function EditGoal({
 
               <Input
                 type="date"
-                label="Goal Deadline"
+                label="By what time do you want to achieve this goal?"
                 ref={register({ valueAsDate: true, required: true })}
                 name="deadline"
                 defaultValue={goal.deadline.toISODate()}
@@ -100,7 +100,7 @@ export default function EditGoal({
                 ref={register}
                 defaultValue={goal.description}
                 name="description"
-                label="Goal description"
+                label="What is your plan to achieve this goal?"
                 rows={5}
                 placeholder="I will code for atleast 2 hours everyday."
                 helpText="[Basic Markdown](/markdown) is supported."
