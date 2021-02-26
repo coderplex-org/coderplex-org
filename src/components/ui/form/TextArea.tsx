@@ -50,7 +50,7 @@ const TextArea = React.forwardRef(
         <label
           htmlFor={id}
           className={classNames(
-            'block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2',
+            'block text-sm font-medium text-gray-700',
             hideLabel && 'sr-only'
           )}
         >
