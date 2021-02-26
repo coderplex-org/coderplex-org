@@ -14,7 +14,7 @@ import useFollowUser from './useFollowUser'
 import { useSession } from 'next-auth/client'
 
 export default function Profile({ user }: { user: User }) {
-  const [session] = useSession()
+  const [session, loading] = useSession()
   const {
     shouldShowFollowButton,
     isFollowing: isFollowingData,
@@ -45,7 +45,7 @@ export default function Profile({ user }: { user: User }) {
         <div className="sm:flex sm:items-center sm:justify-between">
           <div className="sm:flex sm:space-x-5 sm:items-center">
             <div className="flex-shrink-0">
-              <A href={`/${(session.user as User).username}`}>
+              <A href={user.username}>
                 <img
                   className="mx-auto h-20 w-20 rounded-full"
                   src={user.image}

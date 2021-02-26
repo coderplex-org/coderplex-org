@@ -2,6 +2,7 @@ import { User } from 'src/pages/members'
 import { Avatar } from '@/ui'
 import { DateTime } from 'luxon'
 import { A } from '@/components'
+import classNames from 'classnames'
 
 export default function GoalMeta({
   className = '',
@@ -104,7 +105,12 @@ export default function GoalMeta({
           </ul>
           <div className="flex items-center space-x-2 mt-5">
             <svg
-              className="h-5 w-5 text-gray-400"
+              className={classNames(
+                'h-5 w-5',
+                deadline.diffNow('days').days > 0
+                  ? 'text-gray-400'
+                  : 'text-danger-500'
+              )}
               data-todo-x-description="Heroicon name: solid/calendar"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -117,7 +123,14 @@ export default function GoalMeta({
                 clipRule="evenodd"
               ></path>
             </svg>
-            <span className="text-gray-900 text-sm font-medium">
+            <span
+              className={classNames(
+                'text-sm font-medium',
+                deadline.diffNow('days').days > 0
+                  ? 'text-gray-900'
+                  : 'text-danger-500'
+              )}
+            >
               Deadline on{' '}
               <time dateTime={createdAt.toISO()}>
                 {deadline.toLocaleString(DateTime.DATE_FULL)}
