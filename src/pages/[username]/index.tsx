@@ -26,6 +26,7 @@ export type GoalResponse = {
   id: string
   title: string
   description: string
+  deadline: number
   createdAt: number
   createdBy: User
   participants: {
@@ -99,6 +100,7 @@ export default function UserProfile({
             title: goalResponse.title,
             description: goalResponse.description,
             creatorId: goalResponse.createdBy.id,
+            deadline: DateTime.fromMillis(goalResponse.deadline),
           }}
           participants={goalResponse.participants.data}
           createdAt={DateTime.fromMillis(goalResponse.createdAt)}

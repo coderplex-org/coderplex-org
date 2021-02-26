@@ -33,6 +33,11 @@ const FaunaCreateHandler: NextApiHandler = async (
           id: q.Select(['ref', 'id'], goalDoc),
           title: q.Select(['data', 'title'], goalDoc),
           description: q.Select(['data', 'description'], goalDoc),
+          deadline: q.If(
+            q.IsNull(q.Select(['data', 'deadline'], goalDoc, null)),
+            0,
+            q.ToMillis(q.Select(['data', 'deadline'], goalDoc, null))
+          ),
           createdAt: q.ToMillis(
             q.Select(['data', 'timestamps', 'createdAt'], goalDoc, 0)
           ),

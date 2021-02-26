@@ -3,13 +3,12 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useEffect, useRef, useState } from 'react'
-import { useSession } from 'next-auth/client'
-import { User } from 'src/pages/members'
 import { Markdown, GoalType } from '@/components'
 
 type Inputs = {
   title: string
   description: string
+  deadline: Date
 }
 
 export default function EditGoal({
@@ -26,7 +25,6 @@ export default function EditGoal({
   const queryClient = useQueryClient()
   const { register, handleSubmit, errors, trigger } = useForm<Inputs>()
   const toastId = useRef('')
-  const [session] = useSession()
   const { mutate } = useMutation(
     (data: Inputs) =>
       fetch(`/api/fauna/goals/update-goal`, {
@@ -39,6 +37,7 @@ export default function EditGoal({
           title: data.title,
           description: data.description,
           creatorId: goal.creatorId,
+          deadline: data.deadline,
         }),
       }).then((res) => {
         if (!res.ok) {
@@ -71,7 +70,7 @@ export default function EditGoal({
       <div className="mt-6">
         <div className="flex space-x-3">
           <div className="min-w-0 flex-1">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
               <Input
                 ref={register({ required: true, maxLength: 50 })}
                 defaultValue={goal.title}
@@ -85,6 +84,16 @@ export default function EditGoal({
                     ? 'Title should have less than 50 chars'
                     : 'Title is required'
                 }
+              />
+
+              <Input
+                type="date"
+                label="Goal Deadline"
+                ref={register({ valueAsDate: true, required: true })}
+                name="deadline"
+                defaultValue={goal.deadline.toISODate()}
+                hasError={Boolean(errors.deadline)}
+                errorMessage="You must set the deadline."
               />
 
               <TextArea
