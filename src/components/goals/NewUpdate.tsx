@@ -74,28 +74,21 @@ export default function NewUpdate({
         )
 
         if (updateFromHomePage) {
-          queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
-            '/api/fauna/all-updates',
-            (oldData) => {
-              if (!oldData) {
-                return oldData
-              }
-              return {
+          if (queryClient.getQueryState('/api/fauna/all-updates')) {
+            queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
+              '/api/fauna/all-updates',
+              (oldData) => ({
                 updates: [data.response, ...oldData.updates],
-              }
-            }
-          )
+              })
+            )
+          }
 
-          queryClient.setQueryData<{ response: GoalResponse }>(
-            ['/api/fauna/recent-updates', goal.id],
-            (oldData) => {
-              // If the recent-updates panel is not opened yet
-              // then this oldData will be undefined
-              // since the corresponsing query is not execcuted even once
-              if (!oldData) {
-                return oldData
-              }
-              return {
+          if (
+            queryClient.getQueryState(['/api/fauna/recent-updates', goal.id])
+          ) {
+            queryClient.setQueryData<{ response: GoalResponse }>(
+              ['/api/fauna/recent-updates', goal.id],
+              (oldData) => ({
                 response: {
                   ...oldData.response,
                   updates: {
@@ -110,9 +103,9 @@ export default function NewUpdate({
                     ],
                   },
                 },
-              }
-            }
-          )
+              })
+            )
+          }
         }
 
         reset()
