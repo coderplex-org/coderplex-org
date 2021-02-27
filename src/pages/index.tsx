@@ -32,7 +32,9 @@ export type HomePageFeedUpdateType = {
 export default function Home() {
   const [session] = useSession()
 
-  const { isLoading, isError, data } = useQuery('/api/fauna/all-updates', () =>
+  const { isLoading, isError, data } = useQuery<{
+    updates: HomePageFeedUpdateType[]
+  }>('/api/fauna/all-updates', () =>
     fetch(`/api/fauna/all-updates`).then((res) => {
       if (!res.ok) {
         throw new Error('Something went wrong!!')
@@ -62,7 +64,7 @@ export default function Home() {
     <>
       <Title>Learn. Code. Collaborate.</Title>
       <HomePageFeed
-        updates={isLoading ? [] : data.updates}
+        updates={data?.updates ?? []}
         showGoal={Boolean(
           !isGoalLoading && !isGoalError && session && goalData?.goal
         )}

@@ -513,7 +513,7 @@ function FollowButton({ user }: { user: User }) {
 
 function HomePageAside({ goalId }: { goalId: string }) {
   const [session] = useSession()
-  const { isLoading, isError, data } = useQuery(
+  const { isLoading, isError, data } = useQuery<{ response: GoalResponse }>(
     ['/api/fauna/recent-updates', goalId],
     () => {
       if (!goalId) {
@@ -545,7 +545,7 @@ function HomePageAside({ goalId }: { goalId: string }) {
 
   const shouldShowRecentUpdates =
     Boolean(goalId) && goalId !== '' && !isLoading && !isError
-  const goal: GoalResponse = data?.response ?? {}
+  const goal: GoalResponse = data?.response
 
   return (
     <>

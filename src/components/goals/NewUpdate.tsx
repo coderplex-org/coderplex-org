@@ -6,6 +6,8 @@ import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
 import { Markdown, A } from '@/components'
+import { HomePageFeedUpdateType } from 'src/pages'
+import { GoalResponse } from 'src/pages/[username]'
 
 type Inputs = {
   description: string
@@ -41,15 +43,78 @@ export default function NewUpdate({
         return res.json()
       }),
     {
-      onSuccess: () => {
+      onSuccess: (data, variables, context) => {
         toast.success('You have successfully added an update.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries('/api/fauna/goals/all-goals-by-user')
+
+        queryClient.setQueryData<GoalResponse[]>(
+          '/api/fauna/goals/all-goals-by-user',
+          (oldData) => {
+            if (!oldData) {
+              return oldData
+            }
+            return oldData.map((goalResponse) => {
+              if (goalResponse.id === goal.id) {
+                goalResponse.updates = {
+                  data: [
+                    ...goalResponse.updates.data,
+                    {
+                      id: data.response.id,
+                      description: data.response.description,
+                      createdAt: data.response.createdAt,
+                      postedBy: data.response.postedBy,
+                    },
+                  ],
+                }
+              }
+              return goalResponse
+            })
+          }
+        )
+
         if (updateFromHomePage) {
-          queryClient.refetchQueries('/api/fauna/all-updates')
-          queryClient.refetchQueries(['/api/fauna/recent-updates', goal.id])
+          queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
+            '/api/fauna/all-updates',
+            (oldData) => {
+              if (!oldData) {
+                return oldData
+              }
+              return {
+                updates: [data.response, ...oldData.updates],
+              }
+            }
+          )
+
+          queryClient.setQueryData<{ response: GoalResponse }>(
+            ['/api/fauna/recent-updates', goal.id],
+            (oldData) => {
+              // If the recent-updates panel is not opened yet
+              // then this oldData will be undefined
+              // since the corresponsing query is not execcuted even once
+              if (!oldData) {
+                return oldData
+              }
+              return {
+                response: {
+                  ...oldData.response,
+                  updates: {
+                    data: [
+                      ...oldData.response.updates.data,
+                      {
+                        id: data.response.id,
+                        description: data.response.description,
+                        createdAt: data.response.createdAt,
+                        postedBy: data.response.postedBy,
+                      },
+                    ],
+                  },
+                },
+              }
+            }
+          )
         }
+
         reset()
       },
       onError: () => {
