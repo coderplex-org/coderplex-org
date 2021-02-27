@@ -39,6 +39,9 @@ export default function UpdateComment({
   const { count: likesCount, hasLiked, toggleLike } = useLikes({
     initialCount: comment.likes.data.length,
     initialHasLiked: comment.hasLiked,
+    updateId: comment.updateId,
+    commentId: comment.id,
+    type: 'COMMENT_LIKE',
     mutation: {
       endpoint: '/api/fauna/toggle-comment-like',
       body: {
@@ -124,45 +127,53 @@ export default function UpdateComment({
                       </time>
                     </p>
                   </div>
-                  {session &&
-                    (session.user as User).id === comment.postedBy.id && (
-                      <div className="flex-shrink-0 self-center flex">
-                        <div className="relative inline-block text-left">
-                          <Menu
-                            trigger={
-                              <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
-                                <span className="sr-only">
-                                  Open quick actions
-                                </span>
-                                <DotsThreeOutlineVertical
-                                  className="h-5 w-5"
-                                  aria-hidden={true}
-                                />
-                              </button>
-                            }
-                          >
-                            <Menu.Item
-                              icon={Pencil}
-                              onClick={() => setIsInEditMode(true)}
-                            >
-                              Edit
-                            </Menu.Item>
-                            <Menu.Item
-                              icon={Trash}
-                              onClick={() => {
-                                deleteComment()
-                                const id = toast.loading(
-                                  'Deleting your comment...'
-                                )
-                                toastId.current = id
-                              }}
-                            >
-                              Delete
-                            </Menu.Item>
-                          </Menu>
-                        </div>
-                      </div>
-                    )}
+
+                  <div className="flex-shrink-0 self-center flex">
+                    <div className="relative inline-block text-left">
+                      <Menu
+                        trigger={
+                          <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
+                            <span className="sr-only">Open quick actions</span>
+                            <DotsThreeOutlineVertical
+                              className="h-5 w-5"
+                              aria-hidden={true}
+                            />
+                          </button>
+                        }
+                      >
+                        {session &&
+                          (session.user as User).id === comment.postedBy.id && (
+                            <>
+                              <Menu.Item
+                                icon={Pencil}
+                                onClick={() => setIsInEditMode(true)}
+                              >
+                                Edit
+                              </Menu.Item>
+                              <Menu.Item
+                                icon={Trash}
+                                onClick={() => {
+                                  deleteComment()
+                                  const id = toast.loading(
+                                    'Deleting your comment...'
+                                  )
+                                  toastId.current = id
+                                }}
+                              >
+                                Delete
+                              </Menu.Item>
+                            </>
+                          )}
+
+                        <Menu.Item
+                          icon={ThumbsUp}
+                          onClick={() => setIsOpen(true)}
+                        >
+                          See who liked
+                        </Menu.Item>
+                      </Menu>
+                    </div>
+                  </div>
                 </div>
                 <div className="mt-2 text-sm text-gray-700">
                   <div className="prose prose-sm max-w-none">
@@ -201,15 +212,6 @@ export default function UpdateComment({
                         setIsOpen={setIsLikeModalOpen}
                       />
                     </span>
-                    {likesCount > 0 && (
-                      <Button
-                        variant="link"
-                        onClick={() => setIsOpen(true)}
-                        variantColor="brand"
-                      >
-                        See who liked
-                      </Button>
-                    )}
                   </div>
                 </div>
               </div>
