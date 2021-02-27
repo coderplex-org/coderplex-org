@@ -12,25 +12,6 @@ export default function useFollowUser(userId: string) {
       setCurrentUser(session.user)
     }
   }, [loading, session])
-  const { isLoading, data: isFollowingData } = useQuery(
-    ['/api/isFollowing', currentUser?.id, userId],
-    () => {
-      return fetch(`/api/fauna/is-following`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error('Something went wrong!!')
-        }
-        return res.json()
-      })
-    }
-  )
 
   const { mutate: toggleFollow } = useMutation(
     () =>
@@ -56,9 +37,7 @@ export default function useFollowUser(userId: string) {
   )
 
   return {
-    isLoading,
     shouldShowFollowButton: currentUser.id !== userId,
-    isFollowing: isFollowingData?.isFollowing ?? false,
     toggleFollow,
   }
 }

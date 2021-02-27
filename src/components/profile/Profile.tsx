@@ -15,21 +15,11 @@ import { useSession } from 'next-auth/client'
 
 export default function Profile({ user }: { user: User }) {
   const [session, loading] = useSession()
-  const {
-    shouldShowFollowButton,
-    isFollowing: isFollowingData,
-    toggleFollow,
-    isLoading,
-  } = useFollowUser(user.id)
+  const { shouldShowFollowButton, toggleFollow } = useFollowUser(user.id)
   const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const [isFollowing, setIsFollowing] = useState(false)
-  useEffect(() => {
-    if (!isLoading) {
-      setIsFollowing(isFollowingData)
-    }
-  }, [isFollowingData, isLoading])
+  const [isFollowing, setIsFollowing] = useState(user.isFollowing)
 
   const toggle = () => {
     setIsFollowing(!isFollowing)
@@ -145,39 +135,38 @@ export default function Profile({ user }: { user: User }) {
             </div>
           ) : (
             <div className="mt-5 flex justify-center sm:mt-0">
-              {!isLoading &&
-                (isFollowing ? (
-                  <>
-                    <Button
-                      onClick={() => toggle()}
-                      variant="solid"
-                      variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
-                      onMouseEnter={() => setIsHoveringFollowButton(true)}
-                      onMouseLeave={() => setIsHoveringFollowButton(false)}
-                    >
-                      {isHoveringFollowButton ? 'Unfollow' : 'Following'}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      onClick={() => {
-                        if (!session) {
-                          setIsModalOpen(true)
-                          return
-                        }
-                        toggle()
-                      }}
-                    >
-                      Follow
-                    </Button>
-                    <FollowModal
-                      user={user}
-                      isOpen={isModalOpen}
-                      setIsOpen={setIsModalOpen}
-                    />
-                  </>
-                ))}
+              {isFollowing ? (
+                <>
+                  <Button
+                    onClick={() => toggle()}
+                    variant="solid"
+                    variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
+                    onMouseEnter={() => setIsHoveringFollowButton(true)}
+                    onMouseLeave={() => setIsHoveringFollowButton(false)}
+                  >
+                    {isHoveringFollowButton ? 'Unfollow' : 'Following'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => {
+                      if (!session) {
+                        setIsModalOpen(true)
+                        return
+                      }
+                      toggle()
+                    }}
+                  >
+                    Follow
+                  </Button>
+                  <FollowModal
+                    user={user}
+                    isOpen={isModalOpen}
+                    setIsOpen={setIsModalOpen}
+                  />
+                </>
+              )}
             </div>
           )}
         </div>

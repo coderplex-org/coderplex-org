@@ -5,7 +5,7 @@ import { InferGetServerSidePropsType } from 'next'
 import { User } from '../members'
 import { DateTime } from 'luxon'
 import { useQuery } from 'react-query'
-import { useSession } from 'next-auth/client'
+import { getSession, useSession } from 'next-auth/client'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -149,17 +149,33 @@ export default function UserProfile({
   )
 }
 
-export const getServerSideProps = async (context) => {
-  const username = context.query.username
+export const getServerSideProps = async ({ req, query }) => {
+  const session = await getSession({ req })
+  const username = query.username
   const dbUser = q.Get(q.Match(q.Index('user_by_username'), username))
+  const userId = q.Select(['ref', 'id'], dbUser)
+  let isFollowing = false
+  if (session) {
+    const followerId = (session.user as User).id
+    const ref = q.Match(q.Index('unique_user_and_follower'), [
+      q.Ref(q.Collection('users'), userId),
+      q.Ref(q.Collection('users'), followerId),
+    ])
+    isFollowing = q.If(
+      q.Exists(ref),
+      q.Select(['data', 'isFollowing'], q.Get(ref)),
+      false
+    ) as boolean
+  }
   const user = (await client.query({
-    id: q.Select(['ref', 'id'], dbUser),
+    id: userId,
     name: q.Select(['data', 'name'], dbUser, null),
     username: q.Select(['data', 'username'], dbUser, null),
     email: q.Select(['data', 'email'], dbUser, null),
     image: q.Select(['data', 'image'], dbUser, null),
     account: q.Select(['data', 'account'], dbUser, null),
     socials: q.Select(['data', 'socials'], dbUser, null),
+    isFollowing,
   })) as User
   return {
     props: {
