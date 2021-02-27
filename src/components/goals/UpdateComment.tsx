@@ -25,12 +25,10 @@ export default function UpdateComment({
   updateId,
   comment,
   children,
-  isLastComment = false,
 }: {
   updateId: string
   children: string
   comment: UpdateCommentType
-  isLastComment?: boolean
 }) {
   const queryClient = useQueryClient()
   const [isInEditMode, setIsInEditMode] = useState(false)
@@ -40,13 +38,7 @@ export default function UpdateComment({
   const [isLikeModalOpen, setIsLikeModalOpen] = useState(false)
   const { count: likesCount, hasLiked, toggleLike } = useLikes({
     initialCount: comment.likes.data,
-    query: {
-      key: ['api/fauna/has-liked-comment', comment.id],
-      endpoint: '/api/fauna/has-liked-comment',
-      body: {
-        commentId: comment.id,
-      },
-    },
+    initialHasLiked: comment.hasLiked,
     mutation: {
       endpoint: '/api/fauna/toggle-comment-like',
       body: {
