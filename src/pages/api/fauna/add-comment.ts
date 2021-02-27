@@ -25,7 +25,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   const userId = (session.user as User).id
 
   try {
-    const response = await client.query(
+    const response: any = await client.query(
       q.Create(q.Collection('update_comments'), {
         data: {
           postedBy: q.Ref(q.Collection('users'), userId),
@@ -37,6 +37,41 @@ const FaunaCreateHandler: NextApiHandler = async (
           },
         },
       })
+    )
+    await client.query(
+      q.Let(
+        {
+          activityDoc: q.Create(q.Collection('activities'), {
+            data: {
+              user: q.Ref(q.Collection('users'), userId),
+              resource: q.Ref(q.Collection('update_comments'), response.ref.id),
+              type: 'COMMENTED_ON_UPDATE',
+              timestamps: {
+                createdAt: q.Now(),
+                updatedAt: q.Now(),
+              },
+            },
+          }),
+          notificationDoc: q.Create(q.Collection('notifications'), {
+            data: {
+              user: q.Select(
+                ['data', 'postedBy'],
+                q.Get(q.Ref(q.Collection('goal_updates'), updateId))
+              ),
+              activity: q.Ref(
+                q.Collection('activities'),
+                q.Select(['ref', 'id'], q.Var('activityDoc'))
+              ),
+              isRead: false,
+              timestamps: {
+                createdAt: q.Now(),
+                updatedAt: q.Now(),
+              },
+            },
+          }),
+        },
+        {}
+      )
     )
     res.status(201).json({ response })
   } catch (error) {

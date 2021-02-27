@@ -166,7 +166,7 @@ export function HomePageFeedUpdate({
                         href={`/${postedBy.username}`}
                         className="hover:underline"
                       >
-                        {postedBy.name}
+                        {postedBy.account?.firstName}
                       </A>
                     </p>
                     <p className="text-sm text-gray-500">
@@ -300,11 +300,7 @@ export function HomePageFeedUpdate({
                 <UpdateComments>
                   <UpdateCommentsList>
                     {update.comments.data.map((comment, index) => (
-                      <UpdateComment
-                        updateId={update.id}
-                        key={comment.id}
-                        comment={comment}
-                      >
+                      <UpdateComment key={comment.id} comment={comment}>
                         {comment.description}
                       </UpdateComment>
                     ))}

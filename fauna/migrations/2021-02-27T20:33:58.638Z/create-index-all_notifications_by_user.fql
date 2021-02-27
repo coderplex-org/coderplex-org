@@ -1,0 +1,7 @@
+CreateIndex({
+  name: "all_notifications_by_user",
+  source: Collection("notifications"),
+  terms: [{
+    field: ["data", "user"]
+  }]
+})

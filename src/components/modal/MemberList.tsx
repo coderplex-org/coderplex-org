@@ -86,7 +86,7 @@ export default function MembersList({ users }: { users: User[] }) {
     <div className="flow-root my-6">
       <ul className="-my-5 divide-y divide-gray-200">
         {users.map((user) => (
-          <Member user={user} />
+          <Member user={user} key={user.id} />
         ))}
       </ul>
     </div>
