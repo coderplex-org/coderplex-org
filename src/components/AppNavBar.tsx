@@ -1,6 +1,6 @@
 import { NavBar, Button, Menu, Avatar } from '@/ui'
 import { signIn, signOut, useSession } from 'next-auth/client'
-import { Logo, DonateModal } from '@/components'
+import { Logo, DonateModal, GlobalLoadingIndicator } from '@/components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { User } from 'src/pages/members'
@@ -72,6 +72,7 @@ export default function AppNavBar() {
       }
       rightDesktopItems={
         <>
+          <GlobalLoadingIndicator />
           <DonateModal
             isOpen={isDonateModalOpen}
             setIsOpen={setIsDonateModalOpen}
