@@ -49,9 +49,51 @@ const FaunaCreateHandler: NextApiHandler = async (
             }),
             null
           ),
+          goalDoc: q.Get(q.Select(['data', 'goal'], q.Var('goalUpdateDoc'))),
+          postedByDoc: q.Get(
+            q.Select(['data', 'postedBy'], q.Var('goalUpdateDoc'))
+          ),
         },
         {
           id: q.Select(['ref', 'id'], q.Var('goalUpdateDoc'), null),
+          goal: {
+            id: q.Select(['ref', 'id'], q.Var('goalDoc')),
+            title: q.Select(['data', 'title'], q.Var('goalDoc')),
+          },
+          comments: {
+            data: [],
+          },
+          hasLiked: false,
+          likes: {
+            data: [],
+          },
+          description: q.Select(
+            ['data', 'description'],
+            q.Var('goalUpdateDoc')
+          ),
+          createdAt: q.ToMillis(
+            q.Select(
+              ['data', 'timestamps', 'createdAt'],
+              q.Var('goalUpdateDoc')
+            )
+          ),
+          postedBy: {
+            id: q.Select(['ref', 'id'], q.Var('postedByDoc')),
+            name: q.Select(['data', 'name'], q.Var('postedByDoc'), null),
+            image: q.Select(['data', 'image'], q.Var('postedByDoc'), null),
+            username: q.Select(
+              ['data', 'username'],
+              q.Var('postedByDoc'),
+              null
+            ),
+            account: {
+              firstName: q.Select(
+                ['data', 'account', 'firstName'],
+                q.Var('postedByDoc'),
+                null
+              ),
+            },
+          },
         }
       )
     )

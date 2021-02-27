@@ -112,8 +112,8 @@ const FaunaCreateHandler: NextApiHandler = async (
         }
       }
     )
-    const response = await client.query(FQL)
-    res.status(200).json({ response })
+    const response: any = await client.query(FQL)
+    res.status(200).json(response.data)
   } catch (error) {
     console.error(error)
     console.error({ msg: error.message })

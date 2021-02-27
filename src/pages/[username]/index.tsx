@@ -60,7 +60,7 @@ export default function UserProfile({
       })
   )
 
-  const goalResponses = data?.response?.data ?? []
+  const goalResponses = data ?? []
 
   if (isLoading) {
     return (
