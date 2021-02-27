@@ -33,7 +33,9 @@ export function getUserFromUserRef({
     username: q.Select(['data', 'username'], userDoc, null),
     account: {
       firstName: q.Select(['data', 'account', 'firstName'], userDoc, null),
+      bio: q.Select(['data', 'account', 'bio'], userDoc, null),
     },
+    socials: q.Select(['data', 'socials'], userDoc, null),
     isFollowing,
   }
 }
