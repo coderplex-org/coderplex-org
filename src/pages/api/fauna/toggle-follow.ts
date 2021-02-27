@@ -27,46 +27,83 @@ const FaunaCreateHandler: NextApiHandler = async (
   try {
     const { userId } = req.body
 
-    const response = await client.query(
-      q.Let(
-        {
-          ref: q.Match(q.Index('unique_user_and_follower'), [
-            q.Ref(q.Collection('users'), userId),
-            q.Ref(q.Collection('users'), followerId),
-          ]),
-        },
-        q.If(
-          q.Exists(q.Var('ref')),
-          q.Update(
-            q.Ref(
-              q.Collection('user_followers'),
-              q.Select(['ref', 'id'], q.Get(q.Var('ref')))
+    const response: any = await client.query(
+      q.Do(
+        q.Let(
+          {
+            ref: q.Match(q.Index('unique_user_and_follower'), [
+              q.Ref(q.Collection('users'), userId),
+              q.Ref(q.Collection('users'), followerId),
+            ]),
+          },
+          q.If(
+            q.Exists(q.Var('ref')),
+            q.Update(
+              q.Ref(
+                q.Collection('user_followers'),
+                q.Select(['ref', 'id'], q.Get(q.Var('ref')))
+              ),
+              {
+                data: {
+                  isFollowing: q.Not(
+                    q.Select(['data', 'isFollowing'], q.Get(q.Var('ref')))
+                  ),
+                  timestamps: {
+                    updatedAt: q.Now(),
+                  },
+                },
+              }
             ),
-            {
+            q.Create(q.Collection('user_followers'), {
               data: {
-                isFollowing: q.Not(
-                  q.Select(['data', 'isFollowing'], q.Get(q.Var('ref')))
-                ),
+                user: q.Ref(q.Collection('users'), userId),
+                follower: q.Ref(q.Collection('users'), followerId),
+                isFollowing: true,
                 timestamps: {
+                  createdAt: q.Now(),
                   updatedAt: q.Now(),
                 },
               },
-            }
-          ),
-          q.Create(q.Collection('user_followers'), {
+            })
+          )
+        )
+      )
+    )
+
+    await client.query(
+      q.Let(
+        {
+          activityDoc: q.Create(q.Collection('activities'), {
             data: {
-              user: q.Ref(q.Collection('users'), userId),
-              follower: q.Ref(q.Collection('users'), followerId),
-              isFollowing: true,
+              user: q.Ref(q.Collection('users'), followerId),
+              // user_follower_ref
+              resource: q.Ref(q.Collection('user_followers'), response.ref.id),
+              type: response.data.isFollowing ? 'FOLLOWED' : 'UNFOLLOWED',
               timestamps: {
                 createdAt: q.Now(),
                 updatedAt: q.Now(),
               },
             },
-          })
-        )
+          }),
+          notificationDoc: q.Create(q.Collection('notifications'), {
+            data: {
+              user: q.Ref(q.Collection('users'), userId),
+              activity: q.Ref(
+                q.Collection('activities'),
+                q.Select(['ref', 'id'], q.Var('activityDoc'))
+              ),
+              isRead: false,
+              timestamps: {
+                createdAt: q.Now(),
+                updatedAt: q.Now(),
+              },
+            },
+          }),
+        },
+        {}
       )
     )
+
     res.status(200).json({ response })
   } catch (error) {
     console.error(error)

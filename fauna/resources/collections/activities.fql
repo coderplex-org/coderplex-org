@@ -1,0 +1,20 @@
+CreateCollection({ 
+  name: 'activities' 
+})
+
+/**
+# "data": {
+#   // this user performed this activity
+#   "user": User, 
+
+#    // This resource has been added/changed as a result of this action
+#   "resource": User | UPDATE_LIKE | COMMENT_LIKE | UPDATE_COMMENT
+
+#   "type": "LIKED_UPDATE" | "LIKED_COMMENT" | "COMMENTED" | "FOLLOWED"
+
+#   "timestamps": {
+#     "createdAt": Time,
+#     "updatedAt": Time
+#   }
+# }
+**/

@@ -23,11 +23,9 @@ export type GoalUpdateType = {
 }
 
 export default function UpdateComment({
-  updateId,
   comment,
   children,
 }: {
-  updateId: string
   children: string
   comment: UpdateCommentType
 }) {
@@ -90,7 +88,7 @@ export default function UpdateComment({
       <li>
         {isInEditMode ? (
           <EditComment
-            updateId={updateId}
+            updateId={comment.updateId}
             comment={comment}
             cancelEditMode={() => setIsInEditMode(false)}
           />

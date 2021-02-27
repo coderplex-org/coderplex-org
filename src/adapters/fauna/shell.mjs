@@ -9,8 +9,19 @@ const client = new faunadb.Client({
 })
 
 async function main() {
-  const response = client.query(q.Do())
+  const response = await client.query(
+    q.Do(
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('notifications'))),
+        (goalUpdate) => q.Delete(goalUpdate)
+      ),
+      q.Map(q.Paginate(q.Documents(q.Collection('activities'))), (goalUpdate) =>
+        q.Delete(goalUpdate)
+      )
+    )
+  )
   console.log(JSON.stringify(response, null, 2))
+  console.log('THE_END')
 }
 
 main().catch((e) => console.error(e))

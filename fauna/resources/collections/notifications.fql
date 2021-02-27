@@ -1,0 +1,16 @@
+CreateCollection({ 
+  name: 'notifications' 
+})
+
+/**
+# "data": {
+#   // this user will receive the notification
+#   "user": User,
+#   "activity": ACTIVITY
+#   isRead: Boolean,
+#   "timestamps": {
+#     "createdAt": Time,
+#     "updatedAt": Time
+#   }
+# }
+**/

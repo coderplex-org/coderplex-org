@@ -26,7 +26,7 @@ const FaunaCreateHandler: NextApiHandler = async (
 
   try {
     const { commentId } = req.body
-    const response = await client.query(
+    const response: any = await client.query(
       q.Let(
         {
           ref: q.Match(q.Index('unique_comment_user_like'), [
@@ -62,6 +62,41 @@ const FaunaCreateHandler: NextApiHandler = async (
             },
           })
         )
+      )
+    )
+    await client.query(
+      q.Let(
+        {
+          activityDoc: q.Create(q.Collection('activities'), {
+            data: {
+              user: q.Ref(q.Collection('users'), userId),
+              resource: q.Ref(q.Collection('comment_likes'), response.ref.id),
+              type: response.data.liked ? 'LIKED_COMMENT' : 'UNLIKED_COMMENT',
+              timestamps: {
+                createdAt: q.Now(),
+                updatedAt: q.Now(),
+              },
+            },
+          }),
+          notificationDoc: q.Create(q.Collection('notifications'), {
+            data: {
+              user: q.Select(
+                ['data', 'postedBy'],
+                q.Get(q.Ref(q.Collection('update_comments'), commentId))
+              ),
+              activity: q.Ref(
+                q.Collection('activities'),
+                q.Select(['ref', 'id'], q.Var('activityDoc'))
+              ),
+              isRead: false,
+              timestamps: {
+                createdAt: q.Now(),
+                updatedAt: q.Now(),
+              },
+            },
+          }),
+        },
+        {}
       )
     )
     res.status(200).json({ response })

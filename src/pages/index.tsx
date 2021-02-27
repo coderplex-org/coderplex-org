@@ -9,6 +9,7 @@ export type UpdateCommentType = {
   createdAt: number
   postedBy: User
   hasLiked: boolean
+  updateId: string
   likes: {
     data: User[]
   }
