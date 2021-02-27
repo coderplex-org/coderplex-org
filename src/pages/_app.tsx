@@ -52,7 +52,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     >
       <QueryClientProvider client={queryClient}>
         <Provider session={pageProps.session}>
-          <Title>{meta.metaTitle || meta.title}</Title>
+          <Title suffix="Coderplex Community">
+            {meta.metaTitle || meta.title}
+          </Title>
           <Description>{description}</Description>
           <Meta />
           <Layout {...layoutProps}>

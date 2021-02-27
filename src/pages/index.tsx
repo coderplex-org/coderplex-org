@@ -63,7 +63,7 @@ export default function Home() {
 
   return (
     <>
-      <Title>Learn. Code. Collaborate.</Title>
+      <Title suffix="Learn. Code. Collaborate.">Coderplex Community</Title>
       <HomePageFeed
         updates={data?.updates ?? []}
         showGoal={Boolean(
