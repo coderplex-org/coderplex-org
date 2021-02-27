@@ -1,11 +1,9 @@
 {
-  "masterPicture": "./public/blue-logo.svg",
+  "masterPicture": "./public/logo.svg",
   "iconsPath": "/",
   "design": {
     "ios": {
-      "pictureAspect": "backgroundAndMargin",
-      "backgroundColor": "#ffffff",
-      "margin": "14%",
+      "pictureAspect": "noChange",
       "assets": {
         "ios6AndPriorIcons": false,
         "ios7AndLaterIcons": false,
@@ -14,13 +12,10 @@
       }
     },
     "desktopBrowser": {
-      "design": "background",
-      "backgroundColor": "#ffffff",
-      "backgroundRadius": 0.45,
-      "imageScale": 0.9
+      "design": "raw"
     },
     "windows": {
-      "pictureAspect": "whiteSilhouette",
+      "pictureAspect": "noChange",
       "backgroundColor": "#da532c",
       "onConflict": "override",
       "assets": {
@@ -34,12 +29,9 @@
       }
     },
     "androidChrome": {
-      "pictureAspect": "backgroundAndMargin",
-      "margin": "17%",
-      "backgroundColor": "#ffffff",
+      "pictureAspect": "noChange",
       "themeColor": "#ffffff",
       "manifest": {
-        "name": "Coderplex",
         "display": "standalone",
         "orientation": "notSet",
         "onConflict": "override",
