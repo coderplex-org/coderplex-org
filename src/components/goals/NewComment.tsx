@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
 import { Markdown, A } from '@/components'
+import { HomePageFeedUpdateType, UpdateCommentType } from 'src/pages'
 
 type Inputs = {
   description: string
@@ -35,11 +36,23 @@ export default function NewComment({ updateId }: { updateId: string }) {
         return res.json()
       }),
     {
-      onSuccess: () => {
+      onSuccess: (data: UpdateCommentType) => {
         toast.success('You have successfully added your comment.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries('/api/fauna/all-updates')
+        if (queryClient.getQueryState('/api/fauna/all-updates')) {
+          queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
+            '/api/fauna/all-updates',
+            (oldData) => ({
+              updates: oldData.updates.map((_update) => {
+                if (_update.id === data.updateId) {
+                  _update.comments.data = [..._update.comments.data, data]
+                }
+                return _update
+              }),
+            })
+          )
+        }
         reset()
       },
       onError: () => {
