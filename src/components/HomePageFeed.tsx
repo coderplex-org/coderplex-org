@@ -77,13 +77,38 @@ export function HomePageFeedUpdate({
       })
     },
     {
-      onSuccess: () => {
+      onSuccess: (data, variables, context) => {
         toast.success('Deleted your update!!', {
           id: toastId.current,
           icon: <Trash className="text-danger-400" />,
         })
-        queryClient.refetchQueries('/api/fauna/all-updates')
-        queryClient.refetchQueries(['/api/fauna/recent-updates', goal.id])
+
+        if (queryClient.getQueryState('/api/fauna/all-updates')) {
+          queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
+            '/api/fauna/all-updates',
+            (oldData) => ({
+              updates: oldData.updates.filter(
+                (_update) => _update.id !== update.id
+              ),
+            })
+          )
+        }
+
+        if (queryClient.getQueryState(['/api/fauna/recent-updates', goal.id])) {
+          queryClient.setQueryData<{ response: GoalResponse }>(
+            ['/api/fauna/recent-updates', goal.id],
+            (oldData) => ({
+              response: {
+                ...oldData.response,
+                updates: {
+                  data: oldData.response.updates.data.filter(
+                    (_update) => _update.id !== update.id
+                  ),
+                },
+              },
+            })
+          )
+        }
       },
       onError: () => {
         toast.error('Something went wrong!!!', {
