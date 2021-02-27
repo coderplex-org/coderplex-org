@@ -1,5 +1,5 @@
-import { useEffect, useReducer } from 'react'
-import { useMutation, useQuery } from 'react-query'
+import { useReducer } from 'react'
+import { useMutation } from 'react-query'
 
 type LikeData = {
   count: number
@@ -24,30 +24,20 @@ function reducer(state: LikeData, action: { type: string; payload?: any }) {
 
 export function useLikes({
   initialCount,
-  query,
+  initialHasLiked,
   mutation,
 }: {
   initialCount: number
-  query: {
-    key: string | string[]
-    endpoint: string
-    body: any
-  }
+  initialHasLiked: boolean
   mutation: {
     endpoint: string
     body: any
   }
 }) {
-  const initialState: LikeData = { count: initialCount, hasLiked: false }
-  const { isLoading, isError, data } = useQuery(query.key, () => {
-    return fetch(query.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(query.body),
-    }).then((res) => res.json())
-  })
+  const initialState: LikeData = {
+    count: initialCount,
+    hasLiked: initialHasLiked,
+  }
 
   const { mutate } = useMutation(() => {
     return fetch(mutation.endpoint, {
@@ -65,15 +55,6 @@ export function useLikes({
   })
 
   const [{ count, hasLiked }, dispatch] = useReducer(reducer, initialState)
-
-  useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch({
-        type: 'set',
-        payload: { hasLiked: data.liked, count: initialCount },
-      })
-    }
-  }, [data?.liked, initialCount, isError, isLoading])
 
   const toggleLike = () => {
     dispatch({ type: 'toggle' })

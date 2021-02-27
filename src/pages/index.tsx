@@ -8,6 +8,7 @@ export type UpdateCommentType = {
   description: string
   createdAt: number
   postedBy: User
+  hasLiked: boolean
   likes: {
     data: number
   }
@@ -19,6 +20,7 @@ export type HomePageFeedUpdateType = {
   description: string
   createdAt: number
   postedBy: User
+  hasLiked: boolean
   likes: {
     data: number
   }

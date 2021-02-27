@@ -94,13 +94,7 @@ export function HomePageFeedUpdate({
 
   const { count: likesCount, hasLiked, toggleLike } = useLikes({
     initialCount: update.likes.data,
-    query: {
-      key: ['api/fauna/has-liked-update', update.id],
-      endpoint: '/api/fauna/has-liked-update',
-      body: {
-        updateId: update.id,
-      },
-    },
+    initialHasLiked: update.hasLiked,
     mutation: {
       endpoint: '/api/fauna/toggle-update-like',
       body: {
@@ -268,9 +262,6 @@ export function HomePageFeedUpdate({
                         updateId={update.id}
                         key={comment.id}
                         comment={comment}
-                        isLastComment={
-                          index === update.comments.data.length - 1
-                        }
                       >
                         {comment.description}
                       </UpdateComment>

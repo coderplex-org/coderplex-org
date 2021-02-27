@@ -1,6 +1,8 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 
 import faunadb from 'faunadb'
+import { getSession } from 'next-auth/client'
+import { User } from 'src/pages/members'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -14,6 +16,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
+  const session = await getSession({ req })
   try {
     const response: any = await client.query(
       q.Map(q.Paginate(q.Match(q.Index('all_recent_updates'))), (result) => {
@@ -26,8 +29,22 @@ const FaunaCreateHandler: NextApiHandler = async (
         const createdAt = q.ToMillis(
           q.Select(['data', 'timestamps', 'createdAt'], goalUpdateDoc)
         )
+        const updateId = q.Select(['ref', 'id'], goalUpdateDoc)
+        let hasLiked = false
+        if (session) {
+          const userId = (session.user as User).id
+          const ref = q.Match(q.Index('unique_update_user_like'), [
+            q.Ref(q.Collection('goal_updates'), updateId),
+            q.Ref(q.Collection('users'), userId),
+          ])
+          hasLiked = q.If(
+            q.Exists(ref),
+            q.Select(['data', 'liked'], q.Get(ref)),
+            false
+          ) as boolean
+        }
         return {
-          id: q.Select(['ref', 'id'], goalUpdateDoc),
+          id: updateId,
           goal: {
             id: q.Select(['ref', 'id'], goalDoc),
             title: q.Select(['data', 'title'], goalDoc),
@@ -41,12 +58,27 @@ const FaunaCreateHandler: NextApiHandler = async (
               const postedByDoc = q.Get(
                 q.Select(['data', 'postedBy'], commentDoc)
               )
+              let hasLiked = false
+              const commentId = q.Select(['ref', 'id'], commentDoc)
+              if (session) {
+                const userId = (session.user as User).id
+                const ref = q.Match(q.Index('unique_comment_user_like'), [
+                  q.Ref(q.Collection('update_comments'), commentId),
+                  q.Ref(q.Collection('users'), userId),
+                ])
+                hasLiked = q.If(
+                  q.Exists(ref),
+                  q.Select(['data', 'liked'], q.Get(ref)),
+                  false
+                ) as boolean
+              }
               return {
-                id: q.Select(['ref', 'id'], commentDoc),
+                id: commentId,
                 description: q.Select(['data', 'description'], commentDoc),
                 createdAt: q.ToMillis(
                   q.Select(['data', 'timestamps', 'createdAt'], commentDoc)
                 ),
+                hasLiked,
                 likes: q.Count(
                   q.Filter(
                     q.Paginate(
@@ -73,6 +105,7 @@ const FaunaCreateHandler: NextApiHandler = async (
               }
             }
           ),
+          hasLiked,
           likes: q.Count(
             q.Filter(
               q.Paginate(
