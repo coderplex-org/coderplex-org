@@ -1,8 +1,8 @@
-import { Avatar, Button, Menu } from '@/ui'
+import { Avatar, Menu } from '@/ui'
 import React, { useRef, useState } from 'react'
 import { Markdown, A, LikeModal, useLikes, EditComment } from '@/components'
 import { DateTime } from 'luxon'
-import { UpdateCommentType } from 'src/pages'
+import { HomePageFeedUpdateType, UpdateCommentType } from 'src/pages'
 import { useSession } from 'next-auth/client'
 import classNames from 'classnames'
 import {
@@ -72,7 +72,21 @@ export default function UpdateComment({
           id: toastId.current,
           icon: <Trash className="text-danger-400" />,
         })
-        queryClient.refetchQueries('/api/fauna/all-updates')
+        if (queryClient.getQueryState('/api/fauna/all-updates')) {
+          queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
+            '/api/fauna/all-updates',
+            (oldData) => ({
+              updates: oldData.updates.map((_update) => {
+                if (_update.id === comment.updateId) {
+                  _update.comments.data = _update.comments.data.filter(
+                    (_comment) => _comment.id !== comment.id
+                  )
+                }
+                return _update
+              }),
+            })
+          )
+        }
       },
       onError: () => {
         toast.error('Something went wrong!!!', {
