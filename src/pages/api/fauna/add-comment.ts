@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/client'
 
 import faunadb from 'faunadb'
 import { User } from 'src/pages/members'
+import { getCommentFromCommentRef, getUserFromUserRef } from 'src/utils/fauna'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -26,25 +27,34 @@ const FaunaCreateHandler: NextApiHandler = async (
 
   try {
     const response: any = await client.query(
-      q.Create(q.Collection('update_comments'), {
-        data: {
-          postedBy: q.Ref(q.Collection('users'), userId),
-          update: q.Ref(q.Collection('goal_updates'), updateId),
-          description,
-          timestamps: {
-            createdAt: q.Now(),
-            updatedAt: q.Now(),
-          },
+      q.Let(
+        {
+          commentDoc: q.Create(q.Collection('update_comments'), {
+            data: {
+              postedBy: q.Ref(q.Collection('users'), userId),
+              update: q.Ref(q.Collection('goal_updates'), updateId),
+              description,
+              timestamps: {
+                createdAt: q.Now(),
+                updatedAt: q.Now(),
+              },
+            },
+          }),
         },
-      })
+        getCommentFromCommentRef({
+          ref: q.Select(['ref'], q.Var('commentDoc')),
+          session,
+        })
+      )
     )
+
     await client.query(
       q.Let(
         {
           activityDoc: q.Create(q.Collection('activities'), {
             data: {
               user: q.Ref(q.Collection('users'), userId),
-              resource: q.Ref(q.Collection('update_comments'), response.ref.id),
+              resource: q.Ref(q.Collection('update_comments'), response.id),
               type: 'COMMENTED_ON_UPDATE',
               timestamps: {
                 createdAt: q.Now(),
@@ -73,7 +83,7 @@ const FaunaCreateHandler: NextApiHandler = async (
         {}
       )
     )
-    res.status(201).json({ response })
+    res.status(201).json(response)
   } catch (error) {
     console.error(error)
     console.error({ msg: error.message })

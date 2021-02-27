@@ -2,8 +2,7 @@ import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 
 import faunadb from 'faunadb'
 import { getSession } from 'next-auth/client'
-import { User } from 'src/pages/members'
-import { getUpdateFromUpdateRef, getUserFromUserRef } from 'src/utils/fauna'
+import { getUpdateFromUpdateRef } from 'src/utils/fauna'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
