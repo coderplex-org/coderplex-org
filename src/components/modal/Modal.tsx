@@ -1,5 +1,4 @@
 import { Transition } from '@headlessui/react'
-import { UserPlus } from 'phosphor-react'
 import { User } from 'src/pages/members'
 import { signIn } from 'next-auth/client'
 import type { TablerIcon } from 'tabler-icons'

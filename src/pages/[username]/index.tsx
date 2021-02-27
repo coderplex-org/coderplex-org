@@ -1,4 +1,4 @@
-import { Goal, NewGoal, Profile, Title } from '@/components'
+import { Goal, Profile, Title } from '@/components'
 import { PaddedLayout } from 'src/layouts'
 import faunadb from 'faunadb'
 import { InferGetServerSidePropsType } from 'next'

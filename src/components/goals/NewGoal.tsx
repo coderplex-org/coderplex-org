@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
-import { useSession } from 'next-auth/client'
 import { Markdown } from '@/components'
 
 type Inputs = {

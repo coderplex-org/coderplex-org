@@ -23,7 +23,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   }
 
   try {
-    const { title, description } = req.body
+    const { title, description, deadline } = req.body
     const userId = (session.user as User).id
     const response = await client.query(
       q.Let(
@@ -33,6 +33,7 @@ const FaunaCreateHandler: NextApiHandler = async (
               createdBy: q.Ref(q.Collection('users'), userId),
               title,
               description,
+              deadline: q.Time(new Date(deadline).toISOString()),
               timestamps: {
                 createdAt: q.Now(),
                 updatedAt: q.Now(),
