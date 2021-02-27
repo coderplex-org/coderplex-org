@@ -12,7 +12,7 @@ import {
 } from 'tabler-icons'
 import { A, FollowModal } from '@/components'
 import useFollowUser from '../profile/useFollowUser'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/client'
 
@@ -22,20 +22,10 @@ export default function Member({ user }: { user: User }) {
   const socials = user.socials
   const account = user.account
   const [isHoveringFollowButton, setIsHoveringFollowButton] = useState(false)
-  const {
-    shouldShowFollowButton,
-    isFollowing: isFollowingData,
-    toggleFollow,
-    isLoading,
-  } = useFollowUser(user.id)
+  const { shouldShowFollowButton, toggleFollow } = useFollowUser(user.id)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const [isFollowing, setIsFollowing] = useState(false)
-  useEffect(() => {
-    if (!isLoading) {
-      setIsFollowing(isFollowingData)
-    }
-  }, [isFollowingData, isLoading])
+  const [isFollowing, setIsFollowing] = useState(user.isFollowing)
 
   const toggle = () => {
     setIsFollowing(!isFollowing)
@@ -145,47 +135,45 @@ export default function Member({ user }: { user: User }) {
         {shouldShowFollowButton && (
           <>
             <dt className="sr-only">Follow</dt>
-            {!isLoading && (
-              <dd className="mt-4">
-                {isFollowing ? (
-                  <>
-                    <Button
-                      size="xs"
-                      onClick={() => toggle()}
-                      variant="solid"
-                      variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
-                      onMouseEnter={() => setIsHoveringFollowButton(true)}
-                      onMouseLeave={() => setIsHoveringFollowButton(false)}
-                    >
-                      {isHoveringFollowButton ? 'Unfollow' : 'Following'}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      size="xs"
-                      onClick={() => {
-                        if (!session) {
-                          setIsModalOpen(true)
-                          return
-                        }
-                        toggle()
-                      }}
-                      leadingIcon={IconPlus}
-                    >
-                      Follow
-                    </Button>
-                    {!session && (
-                      <FollowModal
-                        user={user}
-                        isOpen={isModalOpen}
-                        setIsOpen={setIsModalOpen}
-                      />
-                    )}
-                  </>
-                )}
-              </dd>
-            )}
+            <dd className="mt-4">
+              {isFollowing ? (
+                <>
+                  <Button
+                    size="xs"
+                    onClick={() => toggle()}
+                    variant="solid"
+                    variantColor={isHoveringFollowButton ? 'danger' : 'brand'}
+                    onMouseEnter={() => setIsHoveringFollowButton(true)}
+                    onMouseLeave={() => setIsHoveringFollowButton(false)}
+                  >
+                    {isHoveringFollowButton ? 'Unfollow' : 'Following'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    size="xs"
+                    onClick={() => {
+                      if (!session) {
+                        setIsModalOpen(true)
+                        return
+                      }
+                      toggle()
+                    }}
+                    leadingIcon={IconPlus}
+                  >
+                    Follow
+                  </Button>
+                  {!session && (
+                    <FollowModal
+                      user={user}
+                      isOpen={isModalOpen}
+                      setIsOpen={setIsModalOpen}
+                    />
+                  )}
+                </>
+              )}
+            </dd>
           </>
         )}
         {!shouldShowFollowButton && (

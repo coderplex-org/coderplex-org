@@ -59,4 +59,5 @@ export type User = Partial<{
     company: string
     technologiesFamiliarWith: string[]
   }>
+  isFollowing: boolean
 }>
