@@ -10,13 +10,14 @@ import {
   Trash,
   UserCircle,
   Users,
+  X,
 } from 'phosphor-react'
 import * as React from 'react'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import classNames from 'classnames'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { signIn, useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
 import useFollowUser from './profile/useFollowUser'
@@ -332,6 +333,7 @@ export default function HomePageFeed({
 }) {
   const [session, loading] = useSession()
   const [goalId, setgoalId] = useState('')
+  const [isGoalPreviewOpen, setIsGoalPreviewOpen] = useState(false)
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -379,7 +381,10 @@ export default function HomePageFeed({
                     <HomePageFeedUpdate
                       update={update}
                       key={update.id}
-                      setGoalId={() => setgoalId(update.goal.id)}
+                      setGoalId={() => {
+                        setIsGoalPreviewOpen(true)
+                        setgoalId(update.goal.id)
+                      }}
                     />
                   ))}
                 </ul>
@@ -387,7 +392,11 @@ export default function HomePageFeed({
             </div>
           </main>
           <aside className="hidden lg:block lg:col-span-5 xl:col-span-4">
-            <HomePageAside goalId={goalId} />
+            <HomePageAside
+              goalId={goalId}
+              isGoalPreviewOpen={isGoalPreviewOpen}
+              setIsGoalPreviewOpen={setIsGoalPreviewOpen}
+            />
           </aside>
         </div>
       </div>
@@ -534,8 +543,15 @@ function FollowButton({ user }: { user: User }) {
   )
 }
 
-function HomePageAside({ goalId }: { goalId: string }) {
-  const [session] = useSession()
+function GoalPreview({
+  goalId,
+  isOpen,
+  setIsOpen,
+}: {
+  goalId: string
+  isOpen: boolean
+  setIsOpen: (open: boolean) => void
+}) {
   const { isLoading, isError, data } = useQuery<{ response: GoalResponse }>(
     ['/api/fauna/recent-updates', goalId],
     () => {
@@ -558,6 +574,93 @@ function HomePageAside({ goalId }: { goalId: string }) {
       })
     }
   )
+  const shouldShowRecentUpdates =
+    Boolean(goalId) && goalId !== '' && !isLoading && !isError
+
+  const goal: GoalResponse = data?.response
+
+  if (!isOpen) {
+    return <></>
+  }
+  return (
+    <section
+      aria-labelledby="trending-heading"
+      className="max-h-150 overflow-y-auto"
+    >
+      <div className="bg-white rounded-lg shadow">
+        <div className="absolute top-0 right-0 pt-4 pr-4">
+          <button
+            type="button"
+            className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={() => setIsOpen(false)}
+          >
+            <span className="sr-only">Close</span>
+            <svg
+              className="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="p-6">
+          {isLoading && <p>loading...</p>}
+          {isError && <p>Something went wrong!!!</p>}
+          {shouldShowRecentUpdates && (
+            <>
+              <Goal.Title createdBy={goal.createdBy} showEditButton={false}>
+                {goal.title}
+              </Goal.Title>
+              <Goal.Description>{goal.description}</Goal.Description>
+              <Goal.Updates>
+                <Goal.UpdatesList>
+                  {goal.updates.data.map((update, index) => (
+                    <Goal.Update
+                      postedBy={update.postedBy}
+                      key={update.id}
+                      postedOn={DateTime.fromMillis(update.createdAt)}
+                      isLastUpdate={index === goal.updates.data.length - 1}
+                    >
+                      {update.description}
+                    </Goal.Update>
+                  ))}
+                </Goal.UpdatesList>
+              </Goal.Updates>
+              <div className="mt-6">
+                <A
+                  href={`/${goal.createdBy.username}`}
+                  className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                >
+                  View more details
+                </A>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function HomePageAside({
+  isGoalPreviewOpen,
+  setIsGoalPreviewOpen,
+  goalId,
+}: {
+  goalId: string
+  isGoalPreviewOpen: boolean
+  setIsGoalPreviewOpen: (open: boolean) => void
+}) {
+  const [session] = useSession()
   const {
     isLoading: isWhoToFollowLoading,
     isError: isWhoToFollowError,
@@ -566,61 +669,15 @@ function HomePageAside({ goalId }: { goalId: string }) {
     return fetch(`/api/fauna/who-to-follow`).then((res) => res.json())
   })
 
-  const shouldShowRecentUpdates =
-    Boolean(goalId) && goalId !== '' && !isLoading && !isError
-  const goal: GoalResponse = data?.response
-
   return (
     <>
       <div className="sticky top-20 space-y-4">
-        {Boolean(goalId) && (
-          <section
-            aria-labelledby="trending-heading"
-            className="max-h-150 overflow-y-auto"
-          >
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-6">
-                {isLoading && <p>loading...</p>}
-                {isError && <p>Something went wrong!!!</p>}
-                {shouldShowRecentUpdates && (
-                  <>
-                    <Goal.Title
-                      createdBy={goal.createdBy}
-                      showEditButton={false}
-                    >
-                      {goal.title}
-                    </Goal.Title>
-                    <Goal.Description>{goal.description}</Goal.Description>
-                    <Goal.Updates>
-                      <Goal.UpdatesList>
-                        {goal.updates.data.map((update, index) => (
-                          <Goal.Update
-                            postedBy={update.postedBy}
-                            key={update.id}
-                            postedOn={DateTime.fromMillis(update.createdAt)}
-                            isLastUpdate={
-                              index === goal.updates.data.length - 1
-                            }
-                          >
-                            {update.description}
-                          </Goal.Update>
-                        ))}
-                      </Goal.UpdatesList>
-                    </Goal.Updates>
-                    <div className="mt-6">
-                      <A
-                        href={`/${goal.createdBy.username}`}
-                        className="w-full block text-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                      >
-                        View more details
-                      </A>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </section>
-        )}
+        <GoalPreview
+          isOpen={isGoalPreviewOpen}
+          setIsOpen={setIsGoalPreviewOpen}
+          goalId={goalId}
+        />
+
         {!isWhoToFollowLoading &&
           !isWhoToFollowError &&
           whoToFollowResponse.users.length > 0 && (
