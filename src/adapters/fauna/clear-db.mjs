@@ -9,7 +9,7 @@ const client = new faunadb.Client({
 })
 
 async function main() {
-  client.query(
+  await client.query(
     q.Do(
       q.Map(q.Paginate(q.Documents(q.Collection('users'))), (userRef) =>
         q.Delete(userRef)
@@ -49,6 +49,7 @@ async function main() {
       )
     )
   )
+  console.log('THE END')
 }
 
 main().catch((e) => console.error(e))
