@@ -2,6 +2,7 @@ import { Avatar, Button, Menu } from '@/ui'
 import {
   ChatCenteredDots,
   DotsThreeOutlineVertical,
+  Eye,
   Gear,
   Pencil,
   RocketLaunch,
@@ -121,6 +122,8 @@ export function HomePageFeedUpdate({
   const { count: likesCount, hasLiked, toggleLike } = useLikes({
     initialCount: update.likes.data.length,
     initialHasLiked: update.hasLiked,
+    updateId: update.id,
+    type: 'UPDATE_LIKE',
     mutation: {
       endpoint: '/api/fauna/toggle-update-like',
       body: {
@@ -176,44 +179,52 @@ export function HomePageFeedUpdate({
                     </p>
                   </div>
 
-                  {session && (session.user as User).id === update.postedBy.id && (
-                    <div className="flex-shrink-0 self-center flex">
-                      <div className="relative inline-block text-left">
-                        <Menu
-                          trigger={
-                            <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
-                              <span className="sr-only">
-                                Open quick actions
-                              </span>
-                              <DotsThreeOutlineVertical
-                                className="h-5 w-5"
-                                aria-hidden={true}
-                              />
-                            </button>
-                          }
+                  <div className="flex-shrink-0 self-center flex">
+                    <div className="relative inline-block text-left">
+                      <Menu
+                        trigger={
+                          <button className="-m-2 p-2 rounded-full flex items-center text-gray-400 hover:text-gray-600">
+                            <span className="sr-only">Open quick actions</span>
+                            <DotsThreeOutlineVertical
+                              className="h-5 w-5"
+                              aria-hidden={true}
+                            />
+                          </button>
+                        }
+                      >
+                        {session &&
+                          (session.user as User).id === update.postedBy.id && (
+                            <>
+                              <Menu.Item
+                                icon={Pencil}
+                                onClick={() => setIsInEditMode(true)}
+                              >
+                                Edit
+                              </Menu.Item>
+                              <Menu.Item
+                                icon={Trash}
+                                onClick={() => {
+                                  deleteUpdate()
+                                  const id = toast.loading(
+                                    'Deleting your update...'
+                                  )
+                                  toastId.current = id
+                                }}
+                              >
+                                Delete
+                              </Menu.Item>
+                            </>
+                          )}
+
+                        <Menu.Item
+                          icon={ThumbsUp}
+                          onClick={() => setIsOpen(true)}
                         >
-                          <Menu.Item
-                            icon={Pencil}
-                            onClick={() => setIsInEditMode(true)}
-                          >
-                            Edit
-                          </Menu.Item>
-                          <Menu.Item
-                            icon={Trash}
-                            onClick={() => {
-                              deleteUpdate()
-                              const id = toast.loading(
-                                'Deleting your update...'
-                              )
-                              toastId.current = id
-                            }}
-                          >
-                            Delete
-                          </Menu.Item>
-                        </Menu>
-                      </div>
+                          See who liked
+                        </Menu.Item>
+                      </Menu>
                     </div>
-                  )}
+                  </div>
                 </div>
                 <div className="mt-4 flex">
                   <button
@@ -282,15 +293,6 @@ export function HomePageFeedUpdate({
                       <span className="sr-only">replies</span>
                     </button>
                   </span>
-                  {likesCount > 0 && (
-                    <Button
-                      variant="link"
-                      onClick={() => setIsOpen(true)}
-                      variantColor="brand"
-                    >
-                      See who liked
-                    </Button>
-                  )}
                 </div>
               </div>
             </article>
