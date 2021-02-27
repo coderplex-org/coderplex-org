@@ -13,7 +13,6 @@ function Repl({ replLink }: { replLink: string }) {
         src={`https://repl.it/${replLink}?lite=true`}
         scrolling="no"
         frameBorder="no"
-        allowTransparency={true}
         allowFullScreen={true}
         sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"
       />

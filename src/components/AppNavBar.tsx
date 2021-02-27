@@ -20,9 +20,14 @@ const navbarItems = [
     href: '/members',
   },
   {
-    title: 'Our Chatroom',
-    value: 'our-chatroom',
+    title: 'Chatroom',
+    value: 'chatroom',
     href: '/chat',
+  },
+  {
+    title: 'Report Bug',
+    value: 'report-bug',
+    href: 'https://github.com/coderplex-org/coderplex-org/issues/new',
   },
 ]
 

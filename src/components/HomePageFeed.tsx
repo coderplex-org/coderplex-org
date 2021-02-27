@@ -41,7 +41,7 @@ import {
 } from '@/components'
 import type { GoalResponse } from 'src/pages/[username]'
 import { scrollToContentWithId } from 'src/utils'
-import { IconBrandDiscord } from 'tabler-icons'
+import { IconBrandDiscord, IconBug } from 'tabler-icons'
 import toast, { Toaster } from 'react-hot-toast'
 import ListModal from './modal/ListModal'
 
@@ -452,6 +452,15 @@ function HomePageSideNavBar() {
               >
                 <IconBrandDiscord className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                 <span className="truncate">Our Chatroom</span>
+              </A>
+
+              <A
+                href="https://github.com/coderplex-org/coderplex-org/issues/new"
+                className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                aria-current="false"
+              >
+                <IconBug className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+                <span className="truncate">Report a Bug</span>
               </A>
             </>
           )}
