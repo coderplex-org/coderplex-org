@@ -10,7 +10,7 @@ export type UpdateCommentType = {
   postedBy: User
   hasLiked: boolean
   likes: {
-    data: number
+    data: User[]
   }
 }
 
@@ -22,7 +22,7 @@ export type HomePageFeedUpdateType = {
   postedBy: User
   hasLiked: boolean
   likes: {
-    data: number
+    data: User[]
   }
   comments: {
     data: UpdateCommentType[]

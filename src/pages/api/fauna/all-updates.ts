@@ -3,6 +3,7 @@ import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import faunadb from 'faunadb'
 import { getSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
+import { getUserFromUserRef } from 'src/utils/fauna'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -79,7 +80,7 @@ const FaunaCreateHandler: NextApiHandler = async (
                   q.Select(['data', 'timestamps', 'createdAt'], commentDoc)
                 ),
                 hasLiked,
-                likes: q.Count(
+                likes: q.Map(
                   q.Filter(
                     q.Paginate(
                       q.Match(q.Index('all_likes_by_comment'), commentRef)
@@ -87,7 +88,12 @@ const FaunaCreateHandler: NextApiHandler = async (
                     (commentLikeRef) => {
                       return q.Select(['data', 'liked'], q.Get(commentLikeRef))
                     }
-                  )
+                  ),
+                  (likeRef) => {
+                    const likeDoc = q.Get(likeRef)
+                    const userRef = q.Select(['data', 'user'], likeDoc)
+                    return getUserFromUserRef({ ref: userRef, session })
+                  }
                 ),
                 postedBy: {
                   id: q.Select(['ref', 'id'], postedByDoc),
@@ -106,7 +112,7 @@ const FaunaCreateHandler: NextApiHandler = async (
             }
           ),
           hasLiked,
-          likes: q.Count(
+          likes: q.Map(
             q.Filter(
               q.Paginate(
                 q.Match(q.Index('all_likes_by_update'), goalUpdateRef)
@@ -114,7 +120,13 @@ const FaunaCreateHandler: NextApiHandler = async (
               (updateLikeRef) => {
                 return q.Select(['data', 'liked'], q.Get(updateLikeRef))
               }
-            )
+            ),
+            (likeRef) => {
+              const likeDoc = q.Get(likeRef)
+              const userRef = q.Select(['data', 'user'], likeDoc)
+              
+              return getUserFromUserRef({ ref: userRef, session })
+            }
           ),
           description,
           createdAt,

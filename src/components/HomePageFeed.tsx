@@ -1,4 +1,4 @@
-import { Avatar, Menu } from '@/ui'
+import { Avatar, Button, Menu } from '@/ui'
 import {
   ChatCenteredDots,
   DotsThreeOutlineVertical,
@@ -41,6 +41,7 @@ import type { GoalResponse } from 'src/pages/[username]'
 import { scrollToContentWithId } from 'src/utils'
 import { IconBrandDiscord } from 'tabler-icons'
 import toast, { Toaster } from 'react-hot-toast'
+import ListModal from './modal/ListModal'
 
 export function HomePageFeedUpdate({
   update,
@@ -93,7 +94,7 @@ export function HomePageFeedUpdate({
   )
 
   const { count: likesCount, hasLiked, toggleLike } = useLikes({
-    initialCount: update.likes.data,
+    initialCount: update.likes.data.length,
     initialHasLiked: update.hasLiked,
     mutation: {
       endpoint: '/api/fauna/toggle-update-like',
@@ -103,8 +104,15 @@ export function HomePageFeedUpdate({
     },
   })
 
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
     <>
+      <ListModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        users={update.likes.data}
+      />
       <Toaster />
       <li
         className="bg-white px-4 py-6 shadow sm:p-6 sm:rounded-lg"
@@ -249,6 +257,15 @@ export function HomePageFeedUpdate({
                       <span className="sr-only">replies</span>
                     </button>
                   </span>
+                  {likesCount > 0 && (
+                    <Button
+                      variant="link"
+                      onClick={() => setIsOpen(true)}
+                      variantColor="brand"
+                    >
+                      See who liked
+                    </Button>
+                  )}
                 </div>
               </div>
             </article>
