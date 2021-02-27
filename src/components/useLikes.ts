@@ -5,7 +5,6 @@ type LikeData = {
   count: number
   hasLiked: boolean
 }
-const initialState: LikeData = { count: 0, hasLiked: false }
 
 function reducer(state: LikeData, action: { type: string; payload?: any }) {
   switch (action.type) {
@@ -39,6 +38,7 @@ export function useLikes({
     body: any
   }
 }) {
+  const initialState: LikeData = { count: initialCount, hasLiked: false }
   const { isLoading, isError, data } = useQuery(query.key, () => {
     return fetch(query.endpoint, {
       method: 'POST',
