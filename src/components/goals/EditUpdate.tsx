@@ -6,6 +6,8 @@ import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
 import { Markdown, A } from '@/components'
+import { GoalResponse } from 'src/pages/[username]'
+import { HomePageFeedUpdateType } from 'src/pages'
 
 type Inputs = {
   description: string
@@ -47,14 +49,69 @@ export default function EditUpdate({
         return res.json()
       }),
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success('You have successfully edited the update.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries('/api/fauna/goals/all-goals-by-user')
+
+        queryClient.setQueryData<GoalResponse[]>(
+          '/api/fauna/goals/all-goals-by-user',
+          (oldData) => {
+            if (!oldData) {
+              return oldData
+            }
+            return oldData.map((goalResponse) => {
+              if (goalResponse.id === goalId) {
+                goalResponse.updates = {
+                  data: [
+                    ...goalResponse.updates.data,
+                    {
+                      id: data.id,
+                      description: data.description,
+                      createdAt: data.createdAt,
+                      postedBy: data.postedBy,
+                    },
+                  ],
+                }
+              }
+              return goalResponse
+            })
+          }
+        )
+
         if (updateFromHomePage) {
-          queryClient.refetchQueries('/api/fauna/all-updates')
-          queryClient.refetchQueries(['/api/fauna/recent-updates', goalId])
+          if (queryClient.getQueryState('/api/fauna/all-updates')) {
+            queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
+              '/api/fauna/all-updates',
+              (oldData) => ({
+                updates: [data, ...oldData.updates],
+              })
+            )
+          }
+
+          if (
+            queryClient.getQueryState(['/api/fauna/recent-updates', goalId])
+          ) {
+            queryClient.setQueryData<{ response: GoalResponse }>(
+              ['/api/fauna/recent-updates', goalId],
+              (oldData) => ({
+                response: {
+                  ...oldData.response,
+                  updates: {
+                    data: [
+                      ...oldData.response.updates.data,
+                      {
+                        id: data.id,
+                        description: data.description,
+                        createdAt: data.createdAt,
+                        postedBy: data.postedBy,
+                      },
+                    ],
+                  },
+                },
+              })
+            )
+          }
         }
         reset()
         cancelEditMode()

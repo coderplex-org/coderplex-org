@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/client'
 
 import faunadb from 'faunadb'
 import { User } from 'src/pages/members'
+import { getUpdateFromUpdateRef } from 'src/utils/fauna'
 const q = faunadb.query
 const isProduction = process.env.NODE_ENV === 'production'
 const client = new faunadb.Client({
@@ -29,16 +30,24 @@ const FaunaCreateHandler: NextApiHandler = async (
     const response = await client.query(
       q.If(
         q.Equals(updatePostedById, userId),
-        q.Update(q.Ref(q.Collection('goal_updates'), id), {
-          data: {
-            description,
+        q.Let(
+          {
+            updateDoc: q.Update(q.Ref(q.Collection('goal_updates'), id), {
+              data: {
+                description,
+              },
+            }),
           },
-        }),
+          getUpdateFromUpdateRef({
+            ref: q.Select(['ref'], q.Var('updateDoc')),
+            session,
+          })
+        ),
         q.Abort('You are not authorized to edit this!!!')
       )
     )
 
-    res.status(200).json({ response })
+    res.status(200).json(response)
   } catch (error) {
     console.error(error)
     console.error({ msg: error.message })

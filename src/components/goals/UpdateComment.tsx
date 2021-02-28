@@ -105,7 +105,6 @@ export default function UpdateComment({
       <li>
         {isInEditMode ? (
           <EditComment
-            updateId={comment.updateId}
             comment={comment}
             cancelEditMode={() => setIsInEditMode(false)}
           />
