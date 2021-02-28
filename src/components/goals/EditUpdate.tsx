@@ -63,15 +63,17 @@ export default function EditUpdate({
             return oldData.map((goalResponse) => {
               if (goalResponse.id === goalId) {
                 goalResponse.updates = {
-                  data: [
-                    ...goalResponse.updates.data,
-                    {
-                      id: data.id,
-                      description: data.description,
-                      createdAt: data.createdAt,
-                      postedBy: data.postedBy,
-                    },
-                  ],
+                  data: goalResponse.updates.data.map((_update) => {
+                    if (_update.id === update.id) {
+                      _update = {
+                        id: data.id,
+                        description: data.description,
+                        createdAt: data.createdAt,
+                        postedBy: data.postedBy,
+                      }
+                    }
+                    return _update
+                  }),
                 }
               }
               return goalResponse
@@ -84,7 +86,12 @@ export default function EditUpdate({
             queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
               '/api/fauna/all-updates',
               (oldData) => ({
-                updates: [data, ...oldData.updates],
+                updates: oldData.updates.map((_update) => {
+                  if (_update.id === update.id) {
+                    _update = data
+                  }
+                  return _update
+                }),
               })
             )
           }
@@ -98,15 +105,17 @@ export default function EditUpdate({
                 response: {
                   ...oldData.response,
                   updates: {
-                    data: [
-                      ...oldData.response.updates.data,
-                      {
-                        id: data.id,
-                        description: data.description,
-                        createdAt: data.createdAt,
-                        postedBy: data.postedBy,
-                      },
-                    ],
+                    data: oldData.response.updates.data.map((_update) => {
+                      if (_update.id === update.id) {
+                        _update = {
+                          id: data.id,
+                          description: data.description,
+                          createdAt: data.createdAt,
+                          postedBy: data.postedBy,
+                        }
+                      }
+                      return _update
+                    }),
                   },
                 },
               })
