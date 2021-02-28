@@ -1,8 +1,7 @@
-import { Avatar, Button, Menu } from '@/ui'
+import { Avatar, Menu } from '@/ui'
 import {
   ChatCenteredDots,
   DotsThreeOutlineVertical,
-  Eye,
   Gear,
   Pencil,
   RocketLaunch,
@@ -10,14 +9,13 @@ import {
   Trash,
   UserCircle,
   Users,
-  X,
 } from 'phosphor-react'
 import * as React from 'react'
 import { HomePageFeedUpdateType } from 'src/pages'
 import { DateTime } from 'luxon'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import classNames from 'classnames'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { signIn, useSession } from 'next-auth/client'
 import { User } from 'src/pages/members'
 import useFollowUser from './profile/useFollowUser'
@@ -446,7 +444,7 @@ function HomePageSideNavBar() {
               </A>
 
               <A
-                href="/chat"
+                href="https://chat.coderplex.org"
                 className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
                 aria-current="false"
               >
@@ -475,7 +473,7 @@ function HomePageSideNavBar() {
                 <span className="truncate">Members</span>
               </A>
               <A
-                href="/chat"
+                href="https://chat.coderplex.org"
                 target="_blank"
                 className="text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"
                 aria-current="false"
