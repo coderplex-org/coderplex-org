@@ -1,4 +1,4 @@
-import { Avatar, Menu } from '@/ui'
+import { Avatar, Button, Menu } from '@/ui'
 import React, { useRef, useState } from 'react'
 import { Markdown, A, LikeModal, useLikes, EditComment } from '@/components'
 import { DateTime } from 'luxon'
@@ -6,6 +6,7 @@ import { HomePageFeedUpdateType, UpdateCommentType } from 'src/pages'
 import { useSession } from 'next-auth/client'
 import classNames from 'classnames'
 import {
+  Chats,
   DotsThreeOutlineVertical,
   Pencil,
   ThumbsUp,
@@ -195,7 +196,7 @@ export default function UpdateComment({
                 </div>
 
                 <div className="mt-3 flex justify-between space-x-8">
-                  <div className="flex space-x-6">
+                  <div className="flex space-x-4">
                     <span className="inline-flex items-center text-sm">
                       <button
                         className="inline-flex space-x-2 text-gray-400 hover:text-gray-500"
@@ -225,6 +226,13 @@ export default function UpdateComment({
                         setIsOpen={setIsLikeModalOpen}
                       />
                     </span>
+                    <Button
+                      variant="ghost"
+                      leadingIcon={Chats}
+                      isDisabled={true}
+                    >
+                      Reply
+                    </Button>
                   </div>
                 </div>
               </div>
