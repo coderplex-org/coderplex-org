@@ -1,6 +1,13 @@
 import { Avatar, Button, Menu } from '@/ui'
 import React, { useRef, useState } from 'react'
-import { Markdown, A, LikeModal, useLikes, EditComment } from '@/components'
+import {
+  Markdown,
+  A,
+  LikeModal,
+  useLikes,
+  EditComment,
+  NewComment,
+} from '@/components'
 import { DateTime } from 'luxon'
 import { HomePageFeedUpdateType, UpdateCommentType } from 'src/pages'
 import { useSession } from 'next-auth/client'
@@ -27,9 +34,11 @@ export type GoalUpdateType = {
 export default function UpdateComment({
   comment,
   children,
+  canAddNewComment = false,
 }: {
   children: string
   comment: UpdateCommentType
+  canAddNewComment?: boolean
 }) {
   const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
@@ -244,6 +253,7 @@ export default function UpdateComment({
             </div>
           </div>
         )}
+        {canAddNewComment && <NewComment updateId={comment.updateId} />}
       </li>
     </>
   )
