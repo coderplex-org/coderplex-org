@@ -19,12 +19,7 @@ const navbarItems = [
   {
     title: 'Chatroom',
     value: 'chatroom',
-    href: '/chat',
-  },
-  {
-    title: 'Report Bug',
-    value: 'report-bug',
-    href: 'https://github.com/coderplex-org/coderplex-org/issues/new',
+    href: 'https://chat.coderplex.org',
   },
 ]
 
@@ -50,6 +45,11 @@ export default function AppNavBar() {
             title: 'Settings',
             value: 'settings',
             href: '/profile/settings',
+          },
+          {
+            title: 'Report Bug',
+            value: 'report-bug',
+            href: 'https://github.com/coderplex-org/coderplex-org/issues/new',
           },
         ]
       : []),
