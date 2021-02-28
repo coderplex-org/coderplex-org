@@ -50,3 +50,7 @@ pre > code {
 .prose > a {
   @apply text-brand-600;
 }
+
+.prose {
+  @apply break-all;
+}
