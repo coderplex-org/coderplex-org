@@ -31,7 +31,7 @@ export type HomePageFeedUpdateType = {
 }
 
 export default function Home() {
-  const [session] = useSession()
+  const [session, loading] = useSession()
 
   const { isLoading, isError, data } = useQuery<{
     updates: HomePageFeedUpdateType[]
@@ -57,6 +57,10 @@ export default function Home() {
     })
   })
 
+  if (isGoalLoading || loading || isLoading) {
+    return <p>loading...</p>
+  }
+
   if (isError || isGoalError) {
     return <p>Something went wrong!!!</p>
   }
@@ -66,9 +70,7 @@ export default function Home() {
       <Title suffix="Learn. Code. Collaborate.">Coderplex Community</Title>
       <HomePageFeed
         updates={data?.updates ?? []}
-        showGoal={Boolean(
-          !isGoalLoading && !isGoalError && session && goalData?.goal
-        )}
+        showGoal={Boolean(session && goalData?.goal)}
         goal={goalData?.goal}
       />
     </>
