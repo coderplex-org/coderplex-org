@@ -52,5 +52,5 @@ pre > code {
 }
 
 .prose {
-  @apply break-all;
+  @apply break-words;
 }
