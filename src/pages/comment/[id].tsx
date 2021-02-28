@@ -16,7 +16,11 @@ const client = new faunadb.Client({
 })
 
 export default function Update({ comment }: { comment: UpdateCommentType }) {
-  return <UpdateComment comment={comment}>{comment.description}</UpdateComment>
+  return (
+    <UpdateComment comment={comment} canAddNewComment={true}>
+      {comment.description}
+    </UpdateComment>
+  )
 }
 
 export const getServerSideProps = async ({ req, query }) => {
