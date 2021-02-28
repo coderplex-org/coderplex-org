@@ -101,8 +101,8 @@ export default function EditGoal({
                 defaultValue={goal.description}
                 name="description"
                 label="What is your plan to achieve this goal?"
-                rows={5}
-                placeholder="I will code for atleast 2 hours everyday."
+                rows={8}
+                placeholder="My plan is to..."
                 helpText="[Basic Markdown](/markdown) is supported."
                 hasError={Boolean(errors.description)}
                 errorMessage="Something went wrong!!!"
