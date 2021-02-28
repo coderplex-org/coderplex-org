@@ -16,6 +16,7 @@ import { User } from 'src/pages/members'
 import { useMutation, useQueryClient } from 'react-query'
 import toast from 'react-hot-toast'
 import ListModal from '../modal/ListModal'
+import { scrollToContentWithId } from 'src/utils'
 
 export type GoalUpdateType = {
   id: string
@@ -229,7 +230,11 @@ export default function UpdateComment({
                     <Button
                       variant="ghost"
                       leadingIcon={Chats}
-                      isDisabled={true}
+                      onClick={() => {
+                        const id = `new-comment-${comment.updateId}`
+                        document.getElementById(id).focus()
+                        scrollToContentWithId(id)
+                      }}
                     >
                       Reply
                     </Button>

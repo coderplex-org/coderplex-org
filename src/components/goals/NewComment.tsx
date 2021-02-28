@@ -87,6 +87,7 @@ export default function NewComment({ updateId }: { updateId: string }) {
           <div className="min-w-0 flex-1">
             <form onSubmit={handleSubmit(onSubmit)}>
               <TextArea
+                id={`new-comment-${updateId}`}
                 ref={register({ required: true })}
                 label="Comment"
                 name="description"
