@@ -1,4 +1,5 @@
 import { A, Markdown } from '@/components'
+import classNames from 'classnames'
 import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/client'
 import { useEffect } from 'react'
@@ -48,7 +49,13 @@ function message({ notification }: { notification: NotificationType }) {
   return ''
 }
 
-function Notification({ notification }: { notification: NotificationType }) {
+function Notification({
+  notification,
+  isRead,
+}: {
+  notification: NotificationType
+  isRead: boolean
+}) {
   const [session] = useSession()
   const currentUserId = (session.user as User).id
   if (currentUserId === notification.user.id) {
@@ -68,7 +75,7 @@ function Notification({ notification }: { notification: NotificationType }) {
     notification.user.account?.firstName ?? notification.user.username
 
   return (
-    <li className="py-4">
+    <li className={classNames('p-4', !isRead && 'bg-gray-200')}>
       <div className="flex items-center space-x-4">
         <div className="flex-shrink-0">
           <A href={`/${notification.user.username}`}>
@@ -101,12 +108,18 @@ function NotificationsList({
 }: {
   notifications: NotificationType[]
 }) {
+  const queryClient = useQueryClient()
+  const count = queryClient.getQueryData('api/fauna/has-notifications')
   return (
     <div>
       <div className="flow-root mt-6">
         <ul className="-my-5 divide-y divide-gray-200">
-          {notifications.map((notification) => (
-            <Notification notification={notification} key={notification.id} />
+          {notifications.map((notification, index) => (
+            <Notification
+              notification={notification}
+              key={notification.id}
+              isRead={index >= count}
+            />
           ))}
         </ul>
       </div>
@@ -147,7 +160,11 @@ export default function Notifications() {
   }
   return (
     <>
-      <NotificationsList notifications={data} />
+      <NotificationsList
+        notifications={data.map(
+          (_, index: number) => data[data.length - 1 - index]
+        )}
+      />
     </>
   )
 }
