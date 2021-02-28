@@ -1,0 +1,13 @@
+CreateCollection({ 
+  name: 'notification_statuses' 
+})
+
+/**
+# "data": {
+#   "userId": String,
+#   "count": Number,
+#   "timestamps: {
+#       "createdAt": Time,
+#       "updatedAt": Time,
+#   }
+**/
