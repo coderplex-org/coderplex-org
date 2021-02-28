@@ -12,6 +12,11 @@ import classNames from 'classnames'
 
 const navbarItems = [
   {
+    title: 'Home',
+    value: 'home',
+    href: '/',
+  },
+  {
     title: 'Members',
     value: 'members',
     href: '/members',

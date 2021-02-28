@@ -1,7 +1,6 @@
 html,
 body {
-  max-width: 100%;
-  overflow-x: hidden;
+  @apply max-w-full overflow-x-hidden lg:overflow-x-visible;
 }
 
 .bar-of-progress::after {
