@@ -1,0 +1,10 @@
+CreateIndex({
+  name: 'notification_status_by_user',
+  source: Collection('notification_statuses'),
+  unique: true,
+  terms: [
+    {
+      field: ['data', 'user'],
+    },
+  ],
+})

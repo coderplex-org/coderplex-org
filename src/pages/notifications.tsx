@@ -1,7 +1,8 @@
 import { A, Markdown } from '@/components'
 import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/client'
-import { useQuery } from 'react-query'
+import { useEffect } from 'react'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { PaddedLayout } from 'src/layouts'
 import { User } from './members'
 
@@ -79,11 +80,11 @@ function Notification({ notification }: { notification: NotificationType }) {
           </A>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">
+          <div className="text-sm font-medium text-gray-900 truncate">
             <div className="prose prose-sm">
               <Markdown>{message({ notification })}</Markdown>
             </div>
-          </p>
+          </div>
           <p className="text-sm text-gray-500 truncate">
             <time dateTime={createdAt.toISO()}>
               {DateTime.now().minus(createdAt.diffNow().negate()).toRelative()}
@@ -114,12 +115,27 @@ function NotificationsList({
 }
 export default function Notifications() {
   const [session, loading] = useSession()
+  const queryClient = useQueryClient()
   const { isLoading, isError, data } = useQuery(
     'api/fauna/notifications',
     () => {
       return fetch(`/api/fauna/notifications`).then((res) => res.json())
     }
   )
+  const { mutate } = useMutation(
+    () =>
+      fetch('/api/fauna/update-notification-status').then((res) => res.json()),
+    {
+      onSuccess: (data) => {
+        queryClient.refetchQueries('api/fauna/has-notifications')
+      },
+    }
+  )
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
+
   if (isLoading || loading) {
     return <p>loading...</p>
   }

@@ -85,20 +85,26 @@ const FaunaCreateHandler: NextApiHandler = async (
               },
             },
           }),
-          notificationDoc: q.Create(q.Collection('notifications'), {
-            data: {
-              user: q.Ref(q.Collection('users'), userId),
-              activity: q.Ref(
-                q.Collection('activities'),
-                q.Select(['ref', 'id'], q.Var('activityDoc'))
-              ),
-              isRead: false,
-              timestamps: {
-                createdAt: q.Now(),
-                updatedAt: q.Now(),
+          notificationDoc: q.If(
+            q.Equals(
+              q.Select(['data', 'type'], q.Var('activityDoc')),
+              'FOLLOWED'
+            ),
+            q.Create(q.Collection('notifications'), {
+              data: {
+                user: q.Ref(q.Collection('users'), userId),
+                activity: q.Ref(
+                  q.Collection('activities'),
+                  q.Select(['ref', 'id'], q.Var('activityDoc'))
+                ),
+                timestamps: {
+                  createdAt: q.Now(),
+                  updatedAt: q.Now(),
+                },
               },
-            },
-          }),
+            }),
+            null
+          ),
         },
         {}
       )

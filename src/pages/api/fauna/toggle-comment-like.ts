@@ -78,23 +78,41 @@ const FaunaCreateHandler: NextApiHandler = async (
               },
             },
           }),
-          notificationDoc: q.Create(q.Collection('notifications'), {
-            data: {
-              user: q.Select(
-                ['data', 'postedBy'],
-                q.Get(q.Ref(q.Collection('update_comments'), commentId))
+          notificationDoc: q.If(
+            q.And(
+              q.Equals(
+                q.Select(['data', 'type'], q.Var('activityDoc')),
+                'LIKED_COMMENT'
               ),
-              activity: q.Ref(
-                q.Collection('activities'),
-                q.Select(['ref', 'id'], q.Var('activityDoc'))
-              ),
-              isRead: false,
-              timestamps: {
-                createdAt: q.Now(),
-                updatedAt: q.Now(),
+              q.Not(
+                q.Equals(
+                  q.Select(
+                    ['data', 'postedBy', 'id'],
+                    q.Get(q.Ref(q.Collection('update_comments'), commentId))
+                  ),
+                  q.Select(['data', 'user', 'id'], q.Var('activityDoc'))
+                )
+              )
+            ),
+            q.Create(q.Collection('notifications'), {
+              data: {
+                user: q.Select(
+                  ['data', 'postedBy'],
+                  q.Get(q.Ref(q.Collection('update_comments'), commentId))
+                ),
+                activity: q.Ref(
+                  q.Collection('activities'),
+                  q.Select(['ref', 'id'], q.Var('activityDoc'))
+                ),
+                isRead: false,
+                timestamps: {
+                  createdAt: q.Now(),
+                  updatedAt: q.Now(),
+                },
               },
-            },
-          }),
+            }),
+            null
+          ),
         },
         {}
       )
