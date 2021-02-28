@@ -3,14 +3,14 @@ import React from 'react'
 import { A, Pre } from '@/components'
 import { CodePen, Gist, Tweet, YouTube, CodeSandbox } from 'mdx-embed'
 
-function Repl({ replLink }: { replLink: string }) {
+function Repl({ id }: { id: string }) {
   return (
     <>
       <iframe
-        title={`repl-${replLink}`}
+        title={`repl-${id}`}
         height="400px"
         width="100%"
-        src={`https://repl.it/${replLink}?lite=true`}
+        src={`https://repl.it/${id}?lite=true`}
         scrolling="no"
         frameBorder="no"
         allowFullScreen={true}
@@ -20,14 +20,14 @@ function Repl({ replLink }: { replLink: string }) {
   )
 }
 
-function Glitch({ glitchId }: { glitchId: string }) {
+function Glitch({ id }: { id: string }) {
   return (
     <div
       className="glitch-embed-wrap"
       style={{ height: '420px', width: '100%' }}
     >
       <iframe
-        src={`https://glitch.com/embed/#!/embed/${glitchId}`}
+        src={`https://glitch.com/embed/#!/embed/${id}`}
         title="probable-stellar-gull on Glitch"
         allow="geolocation; microphone; camera; midi; vr; encrypted-media"
         style={{ height: '100%', width: '100%', border: 0 }}
@@ -56,19 +56,21 @@ export default function Markdown(props: {
             component: Pre,
           },
           CodePen: {
-            component: CodePen,
+            component: ({ id }: { id: string }) => <CodePen codePenId={id} />,
           },
           Gist: {
-            component: Gist,
+            component: ({ id }: { id: string }) => <Gist gistLink={id} />,
           },
           Tweet: {
-            component: Tweet,
+            component: ({ id }: { id: string }) => <Tweet tweetLink={id} />,
           },
           YouTube: {
-            component: YouTube,
+            component: ({ id }: { id: string }) => <YouTube youTubeId={id} />,
           },
           CodeSandbox: {
-            component: CodeSandbox,
+            component: ({ id }: { id: string }) => (
+              <CodeSandbox codeSandboxId={id} />
+            ),
           },
           Repl: {
             component: Repl,
