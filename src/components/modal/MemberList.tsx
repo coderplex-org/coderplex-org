@@ -26,12 +26,12 @@ function Member({ user }: { user: User }) {
           <img
             className="h-8 w-8 rounded-full"
             src={user.image}
-            alt={user.account?.firstName}
+            alt={user.account?.firstName ?? user.username}
           />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-900 truncate">
-            {user.name}
+            {user.account?.firstName ?? user.username}
           </p>
           <p className="text-sm text-gray-500 truncate">@{user.username}</p>
         </div>

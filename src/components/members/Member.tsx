@@ -40,7 +40,7 @@ export default function Member({ user }: { user: User }) {
             <img
               className="w-full h-full inline-block text-black focus:ring object-cover"
               src={user.image}
-              alt={user.name}
+              alt={user.account?.firstName ?? user.username}
               tabIndex={0}
             />
           </div>

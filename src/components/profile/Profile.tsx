@@ -39,7 +39,7 @@ export default function Profile({ user }: { user: User }) {
                 <img
                   className="mx-auto h-20 w-20 rounded-full"
                   src={user.image}
-                  alt={user.name}
+                  alt={user.account?.firstName ?? user.username}
                 />
               </A>
             </div>
