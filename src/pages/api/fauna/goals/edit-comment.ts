@@ -1,3 +1,4 @@
+import { getCommentFromCommentRef } from 'src/utils/fauna'
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 
@@ -29,11 +30,19 @@ const FaunaCreateHandler: NextApiHandler = async (
     const response = await client.query(
       q.If(
         q.Equals(commentPostedById, userId),
-        q.Update(q.Ref(q.Collection('update_comments'), id), {
-          data: {
-            description,
+        q.Let(
+          {
+            commentDoc: q.Update(q.Ref(q.Collection('update_comments'), id), {
+              data: {
+                description,
+              },
+            }),
           },
-        }),
+          getCommentFromCommentRef({
+            ref: q.Select(['ref'], q.Var('commentDoc')),
+            session,
+          })
+        ),
         q.Abort('You are not authorized to edit this!!!')
       )
     )

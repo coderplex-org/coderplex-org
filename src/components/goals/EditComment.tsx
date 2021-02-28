@@ -6,18 +6,17 @@ import { useMutation, useQueryClient } from 'react-query'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRef, useState } from 'react'
 import { Markdown, A } from '@/components'
+import { HomePageFeedUpdateType, UpdateCommentType } from 'src/pages'
 
 type Inputs = {
   description: string
 }
 
 export default function EditComment({
-  updateId,
   comment,
   cancelEditMode,
 }: {
-  updateId: string
-  comment: { id: string; description: string }
+  comment: UpdateCommentType
   cancelEditMode: () => void
 }) {
   const [descriptionStorage, setDescriptionStorage] = useState(
@@ -45,11 +44,30 @@ export default function EditComment({
         return res.json()
       }),
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success('You have successfully updated your comment.', {
           id: toastId.current,
         })
-        queryClient.refetchQueries('/api/fauna/all-updates')
+        if (queryClient.getQueryState('/api/fauna/all-updates')) {
+          queryClient.setQueryData<{ updates: HomePageFeedUpdateType[] }>(
+            '/api/fauna/all-updates',
+            (oldData) => ({
+              updates: oldData.updates.map((_update) => {
+                if (_update.id === comment.updateId) {
+                  _update.comments.data = _update.comments.data.map(
+                    (_comment) => {
+                      if (_comment.id === comment.id) {
+                        _comment = data.response
+                      }
+                      return _comment
+                    }
+                  )
+                }
+                return _update
+              }),
+            })
+          )
+        }
         cancelEditMode()
         reset()
       },
