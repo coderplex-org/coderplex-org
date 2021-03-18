@@ -2731,10 +2731,10 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
-fauna-schema-migrate@0.1.10:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/fauna-schema-migrate/-/fauna-schema-migrate-0.1.10.tgz#7aee55d25942d1811c0eba03400c7973de8d22c1"
-  integrity sha512-V8yi7ketlHyKQe2dFaNynLgdUJ0QH/1MybsHnTaUhYLLB8T02FFWWB5uto/uretYzp5bn1wdJM4LcCLgrs38YQ==
+fauna-schema-migrate@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/fauna-schema-migrate/-/fauna-schema-migrate-2.1.0.tgz#3d55d532481725ef7e057a824c8a210362e98f53"
+  integrity sha512-VZSkttVtTHHzP+ngJ4EUo7tjZdsMmWzKAhyorEfrfcchnifaPkFMs2+YyJWoKKOTyFfAtT9GaYqqd7jHe/3TIQ==
   dependencies:
     "@babel/parser" "^7.12.7"
     "@types/deep-equal" "^1.0.1"
@@ -2765,10 +2765,10 @@ fauna-schema-migrate@0.1.10:
     ink-syntax-highlight "^1.0.1"
     js-beautify "^1.13.0"
     lodash.clonedeep "^4.5.0"
-    prettier "^2.2.1"
     react ">=16.8.2"
     react-hookstore "^1.5.1"
     shelljs "^0.8.4"
+    uuid "^8.3.2"
 
 faunadb@4.1.0:
   version "4.1.0"
@@ -5210,7 +5210,7 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier@2.2.1, prettier@^2.2.1:
+prettier@2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
   integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
@@ -6715,6 +6715,11 @@ util@^0.11.0:
   integrity sha512-HShAsny+zS2TZfaXxD9tYj4HQGlBezXZMZuM/S5PKLLoZkShZiGk9o5CzukI1LVHZvjdvZ2Sj1aW/Ndn2NB/HQ==
   dependencies:
     inherits "2.0.3"
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.3:
   version "2.2.0"
