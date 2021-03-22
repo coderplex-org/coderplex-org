@@ -22,7 +22,7 @@ const FaunaCreateHandler: NextApiHandler = async (
   try {
     const response: any = await client.query(
       q.Map(
-        q.Paginate(q.Documents(q.Collection('users')), { size: 100 }),
+        q.Paginate(q.Documents(q.Collection('users')), { size: 1000 }),
         (userRef) => {
           return getUserFromUserRef({ ref: userRef, session })
         }
